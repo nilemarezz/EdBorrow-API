@@ -1,0 +1,39 @@
+image: docker
+services:
+  - docker:dind
+before_script:
+  - ls
+  - cd ./server
+#   - echo '{test:'$test',test2:'$test2'}' > config.json
+  - echo '{"NODE_ENV":"'$NODE_ENV'","MARIADB":"'$MARIADB'","DBUSER":"'$DBUSER'","DBPASSWORD":"'$DBPASSWORD'","EMAIL_PASS":"'$EMAIL_PASS'","ACCESSKEY_ID":"'$ACCESSKEY_ID'","ACCESSKEY_SECRET":"'$ACCESSKEY_SECRET'","ACCESS_TOKEN_SECRET":"'$ACCESS_TOKEN_SECRET'"}' > config.json
+  - cd ..
+stages:
+  - test
+  - deploy
+test:
+  image: node:10
+  stage: test
+  only:
+    - back-develop
+    - master
+  script:
+    - cd ./server
+    - ls
+    # - cat config.json
+    - npm install
+    - npm test
+deploy:
+  stage: deploy
+  image: node:10
+  only:
+    - master
+  script:
+    
+    - ls
+    - pwd
+    # - docker-compose stop
+    # - docker ps
+    - docker-compose down
+    - docker-compose up --build -d
+    
+  when: manual
