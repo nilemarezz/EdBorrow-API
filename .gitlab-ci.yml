@@ -14,7 +14,7 @@ test:
   image: node:10
   stage: test
   only:
-    - back-develop
+    - develop
     - master
   script:
     - cd ./server
