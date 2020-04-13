@@ -11,7 +11,7 @@ exports.postCreateRequest = async (req, res, next) => {
     if (config.NODE_ENV === "development") {
       url = `http://localhost:3000/api/request/approve?requestId=${borrowRequest[0].requestId}&approver=advisor`;
     } else {
-      url = `http://18.141.147.137/api/request/approve?requestId=${borrowRequest[0].requestId}&approver=advisor`;
+      url = `http://edborrow.ga/api/request/approve?requestId=${borrowRequest[0].requestId}&approver=advisor`;
     }
     await sendEmailRequest(
       { data: borrowRequest },
@@ -62,7 +62,7 @@ exports.advisorApprove = async (req, res, next) => {
               if (config.NODE_ENV === "development") {
                 url = `http://localhost:3000/api/request/approve/?requestId=${itemInfra[0].requestId}&approver=department&departmentId=${itemInfra[0].departmentId}`;
               } else {
-                url = `http://18.141.147.137/api/request/approve/?requestId=${itemInfra[0].requestId}&approver=department&departmentId=${itemInfra[0].departmentId}`;
+                url = `http://edborrow.ga/api/request/approve/?requestId=${itemInfra[0].requestId}&approver=department&departmentId=${itemInfra[0].departmentId}`;
               }
               await sendEmailRequest(
                 { data: itemInfra },
@@ -75,7 +75,7 @@ exports.advisorApprove = async (req, res, next) => {
               if (config.NODE_ENV === "development") {
                 url = `http://localhost:3000/api/request/approve/?requestId=${itemSRM[0].requestId}&approver=department&departmentId=${itemSRM[0].departmentId}`;
               } else {
-                url = `http://18.141.147.137/api/request/approve/?requestId=${itemSRM[0].requestId}&approver=department&departmentId=${itemSRM[0].departmentId}`;
+                url = `http://edborrow.ga/api/request/approve/?requestId=${itemSRM[0].requestId}&approver=department&departmentId=${itemSRM[0].departmentId}`;
               }
               await sendEmailRequest(
                 { data: itemSRM },
@@ -88,7 +88,7 @@ exports.advisorApprove = async (req, res, next) => {
               if (config.NODE_ENV === "development") {
                 url = `http://localhost:3000/api/request/approve/?requestId=${itemLAB[0].requestId}&approver=department&departmentId=${itemLAB[0].departmentId}`;
               } else {
-                url = `http://18.141.147.137/api/request/approve/?requestId=${itemLAB[0].requestId}&approver=department&departmentId=${itemLAB[0].departmentId}`;
+                url = `http://edborrow.ga/api/request/approve/?requestId=${itemLAB[0].requestId}&approver=department&departmentId=${itemLAB[0].departmentId}`;
               }
               await sendEmailRequest(
                 { data: itemLAB },
