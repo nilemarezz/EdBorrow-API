@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.get("/api", (req, res) => {
-  res.redirect("https://matas-nile.gitbook.io/api-doc/");
+  res.redirect("https://edborrow.gitbook.io/api-doc/");
 });
 
 app.use("/api/items", BorrowitemRoute);
