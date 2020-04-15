@@ -32,10 +32,11 @@ exports.advisorApprove = async (req, res, next) => {
     let borrowRequest;
     borrowRequest = await requests.getRequest(req.query.requestId);
 
-    if (borrowRequest[0].requestApprove === 2) {
-      let approvedRequest;
-
-      if (req.query.approver === "advisor") {
+    if (req.query.approver === "advisor") {
+      if (borrowRequest[0].requestApprove !== 2) {
+        printlog("Yellow", "Advisor Already Action this report");
+        res.redirect("https://edborrow.netlify.com/#/approve/type/already");
+      } else {
         if (req.query.status === "TRUE") {
           approvedRequest = await requests.advisorApprove(req.query);
 
@@ -102,29 +103,24 @@ exports.advisorApprove = async (req, res, next) => {
           }
         } else {
           approvedRequest = await requests.advisorApprove(req.query);
-
+          rejectAdvisorApproveItem = await requests.rejectApproveItem(req.query,type="advisor")
           printlog("Yellow", "Advisor Reject the request");
-          res.redirect("https://edborrow.netlify.com/#/approve/type/fail");
-        }
-      } else {
-        if (req.query.status === "TRUE") {
-          approvedRequest = await requests.departmentApprove(req.query);
-
-          printlog("Green", "Department Approve the request");
-          res.redirect("https://edborrow.netlify.com/#/approve/type/success");
-        } else {
-          approvedRequest = await requests.departmentApprove(req.query);
-          printlog("Yellow", "Department Reject the request");
-
           res.redirect("https://edborrow.netlify.com/#/approve/type/fail");
         }
       }
     } else {
-      printlog("Yellow", "Already Approve the Request");
+      if (req.query.status === "TRUE") {
+        approvedRequest = await requests.departmentApprove(req.query);
 
-      res.redirect(
-        `https://edborrow.netlify.com/#/approve/type/already?requestId=${borrowRequest[0].requestId}`
-      );
+        printlog("Green", "Department Approve the request");
+        res.redirect("https://edborrow.netlify.com/#/approve/type/success");
+      } else {
+        approvedRequest = await requests.departmentApprove(req.query);
+        rejectApproveItem = await requests.rejectApproveItem(req.query,type="department")
+        printlog("Yellow", "Department Reject the request");
+
+        res.redirect("https://edborrow.netlify.com/#/approve/type/fail");
+      }
     }
   } catch (err) {
     printlog("Red", err);
