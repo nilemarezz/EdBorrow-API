@@ -28,6 +28,16 @@ exports.postCreateRequest = async (req, res, next) => {
   }
 };
 
+exports.departmentApproveEachItem = async (req, res, next) => {
+  try {
+    await requests.departmentApproveEachItem(body);
+    res.status(200).json({result: "success", msg: "Item Approve."});
+  } catch (err) {
+    res.status(500).json({result: "false", msg: err});
+  }
+}
+
+exports.advisorApprove = async (req, res, next) => {
 exports.approveAllItem = async (req, res, next) => {
   try {
     let borrowRequest;
