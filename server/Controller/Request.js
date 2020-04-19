@@ -37,7 +37,7 @@ exports.departmentApproveEachItem = async (req, res, next) => {
   }
 }
 
-exports.advisorApprove = async (req, res, next) => {
+
 exports.approveAllItem = async (req, res, next) => {
   try {
     let borrowRequest;
@@ -189,4 +189,5 @@ exports.getRequestItemAdmin = async (req, res, next) => {
     console.log(err);
     res.status(500).json({ result: "false", msg: err });
   }
-};
+}
+
