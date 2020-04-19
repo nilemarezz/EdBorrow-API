@@ -34,10 +34,28 @@ exports.userLogin = async (req, res, next) => {
 exports.getUserDetail = async (req, res, next) => {
   try {
     let userDetails;
-    
-    userDetails = await users.getUserDetails(res.locals.authData.user[0].userId);
-    console.log(userDetails)
+
+    userDetails = await users.getUserDetails(
+      res.locals.authData.user[0].userId
+    );
+    console.log(userDetails);
     res.status(200).json({ result: "success", data: userDetails });
+  } catch (err) {
+    res.status(500).json({ result: "false", msg: err });
+  }
+};
+
+exports.getUserRole = async (id) => {
+  try {
+    let userRole;
+
+    userRole = await users.getUserRole(id);
+    let role = [];
+    for(let i = 0;i<userRole.length;i++){
+      role.push(userRole[i].roleId)
+    }
+    
+    return role
   } catch (err) {
     res.status(500).json({ result: "false", msg: err });
   }

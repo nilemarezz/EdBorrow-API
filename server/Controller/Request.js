@@ -4,6 +4,7 @@ const requests = new RequestModel();
 const config = require("../config.json");
 const printlog = require("../config/logColor");
 const jwt = require("jsonwebtoken");
+const { getUserRole } = require("./User");
 exports.postCreateRequest = async (req, res, next) => {
   try {
     let borrowRequest = await requests.createRequest(req.body);
@@ -27,7 +28,7 @@ exports.postCreateRequest = async (req, res, next) => {
   }
 };
 
-exports.advisorApprove = async (req, res, next) => {
+exports.approveAllItem = async (req, res, next) => {
   try {
     let borrowRequest;
     borrowRequest = await requests.getRequest(req.query.requestId);
@@ -102,21 +103,27 @@ exports.advisorApprove = async (req, res, next) => {
             res.redirect("https://edborrow.netlify.com/#/approve/type/success");
           }
         } else {
-          approvedRequest = await requests.advisorApprove(req.query);
-          rejectAdvisorApproveItem = await requests.rejectApproveItem(req.query,type="advisor")
+          approvedRequest = await requests.advisorAllApprove(req.query);
+          rejectAdvisorApproveItem = await requests.rejectAllRequest(
+            req.query,
+            (type = "advisor")
+          );
           printlog("Yellow", "Advisor Reject the request");
-          res.redirect("https://edborrow.netlify.com/#/approve/type/fail");
+          res.redirect("https://edborrow.netlify.com/#/approve/type/fail?requestId=123");
         }
       }
     } else {
       if (req.query.status === "TRUE") {
-        approvedRequest = await requests.departmentApprove(req.query);
+        approvedRequest = await requests.departmentAllApprove(req.query);
 
         printlog("Green", "Department Approve the request");
         res.redirect("https://edborrow.netlify.com/#/approve/type/success");
       } else {
-        approvedRequest = await requests.departmentApprove(req.query);
-        rejectApproveItem = await requests.rejectApproveItem(req.query,type="department")
+        approvedRequest = await requests.departmentAllApprove(req.query);
+        rejectApproveItem = await requests.rejectAllRequest(
+          req.query,
+          (type = "department")
+        );
         printlog("Yellow", "Department Reject the request");
 
         res.redirect("https://edborrow.netlify.com/#/approve/type/fail");
@@ -125,13 +132,6 @@ exports.advisorApprove = async (req, res, next) => {
   } catch (err) {
     printlog("Red", err);
     next(err);
-  }
-};
-
-exports.putDepartmentApprove = async (req, res, next) => {
-  try {
-  } catch (err) {
-    res.status(500).json({ result: "false", msg: err });
   }
 };
 
@@ -152,6 +152,31 @@ exports.getRequestItem = async (req, res, next) => {
     let requestItem = await requests.getRequestItem(req.params.requestId);
     res.status(200).json({ result: "success", data: requestItem });
   } catch (err) {
+    res.status(500).json({ result: "false", msg: err });
+  }
+};
+
+exports.getRequestItemAdmin = async (req, res, next) => {
+  try {
+    let data = [];
+    
+    let role = await getUserRole(res.locals.authData.user[0].userId);
+    
+    let itemonUser = await requests.getRequestItemAdmin(
+      res.locals.authData.user[0].userId,
+      "user"
+    );
+    data = [...data, ...itemonUser];
+    let itemonDepartment = await requests.getRequestItemAdmin(
+      role[0],
+      "department"
+    );
+    console.log(role[0],res.locals.authData.user[0].userId)
+    data = [...data, ...itemonDepartment];
+      console.log(data)
+    res.status(200).json({ result: "success", data: data });
+  } catch (err) {
+    console.log(err);
     res.status(500).json({ result: "false", msg: err });
   }
 };

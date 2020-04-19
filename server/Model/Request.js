@@ -63,7 +63,7 @@ class ItemRequest {
     return this.request;
   }
 
-  async advisorApprove(query) {
+  async advisorAllApprove(query) {
     if (query.approver === "advisor" && query.status === "TRUE") {
       await pool.query(
         `UPDATE BorrowRequest SET requestApprove = TRUE WHERE requestId = ${query.requestId};`
@@ -89,10 +89,9 @@ class ItemRequest {
     return this.request;
   }
 
-  async departmentApprove(query) {
-    
+  async departmentAllApprove(query) {
     if (query.approver === "department" && query.status === "TRUE") {
-      console.log('in query')
+      console.log("in query");
       await pool.query(`
       UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
       SET ri.itemApprove = TRUE , ri.itemBorrowingStatusId = 6 , i.itemAvailability = FALSE 
@@ -107,22 +106,32 @@ class ItemRequest {
     return this.request;
   }
 
-  async rejectApproveItem(query, type) {
-    console.log(query)
+  async rejectAllRequest(query, type) {
+    console.log(query);
     if (type === "advisor") {
       await pool.query(`
           UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-          SET ri.itemBorrowingStatusId = 5 , ri.itemApprove = 0 
+          SET ri.itemBorrowingStatusId = 7 , ri.itemApprove = 3 
           WHERE ri.requestId = ${query.requestId}
       `);
     } else if (type === "department") {
-      console.log('in department query')
+      console.log("in department query");
       await pool.query(`
       UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
       SET ri.itemBorrowingStatusId = 5 , ri.itemApprove = 0 
       WHERE ri.requestId = ${query.requestId} AND i.departmentId = ${query.departmentId}
   `);
     }
+  }
+
+  async getRequestItemAdmin(id, type) {
+    this.request = await pool.query(
+      `select * from RequestItem ri join Items i on ri.itemId = i.itemId join BorrowRequest b ON 
+      b.requestId  = ri.requestId where ${
+        type === "user" ? `i.userId` : `i.departmentId`
+      }  = "${id}" and b.requestApprove = 1`
+    );
+    return this.request;
   }
 }
 

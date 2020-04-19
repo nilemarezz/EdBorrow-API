@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const {getAllBorrowItems, getCategoryNameOrDepartmentName, getBorrowItemById, getSearchBorrowItems} = require("../Controller/Item")
+const verifyToken = require('../middleware/verify')
+const validUser = require('../middleware/validUser')
+
+
+const {getAllBorrowItems, getCategoryNameOrDepartmentName, getBorrowItemById, getSearchBorrowItems,addItem} = require("../Controller/Item")
 router
     .route("/")
     .get(getAllBorrowItems)
@@ -16,5 +20,9 @@ router
 router
     .route("/:id")
     .get(getBorrowItemById)
+router
+    .route("/")
+    .post(verifyToken,validUser,addItem)
+
     
 module.exports = router;

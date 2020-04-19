@@ -8,7 +8,8 @@ const userRoute = require("./Route/userRoute");
 const requestRoute = require("./Route/requestRoute");
 const port = 3000;
 const configDB = require("./config.json");
-
+var multer  = require('multer')
+var upload = multer() 
 app.use(morgan("dev"));
 
 

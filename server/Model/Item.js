@@ -263,6 +263,14 @@ class BorrowItem {
     this.borrowItem = await pool.query (`DELETE FROM Items;`);
     return this.borrowItem;
   }
+
+  async addItem(value){
+    console.log(value)
+    this.borrowItem = await pool.query(
+    `INSERT INTO Items (itemBrand ,itemModel , itemName, createDate ,categoryId ,userId ,itemStatusId ,itemImage ,itemDescription ,itemBorrowable ,itemAvailability ) 
+    values ('${value.itemBrand}','${value.itemModel}','${value.itemName}','${value.createDate}',1,'${value.userId}',1,${value.itemImage === null ? 'NULL': `'${value.itemImage }'`},'${value.itemDescription}',1,1) ` )
+    return this.borrowItem
+  }
 }
 
 module.exports = BorrowItem;
