@@ -8,7 +8,15 @@ class ItemRequest {
   async departmentApproveEachItem(body) {
     this.request = await pool.query(`
       UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-      SET ri.itemApprove = ${body.itemApprove} , ri.itemBorrowingStatusId = 1 , i.itemAvailability = FALSE
+      SET ri.itemApprove = ${body.itemApprove} , ri.itemBorrowingStatusId = ${body.itemApprove === 1 ? 6 : 5} , i.itemAvailability = ${body.itemApprove === 1 ? 'FALSE' : 'TRUE'}
+      WHERE (ri.requestId = ${body.requestId} AND ri.itemId = ${body.itemId}) AND i.itemId = ${body.itemId};
+    `);
+    return this.request;
+  }
+  async departmentChangeStatus(body) {
+    this.request = await pool.query(`
+      UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
+      SET ri.itemBorrowingStatusId = ${body.itemBorrowingStatusId} 
       WHERE (ri.requestId = ${body.requestId} AND ri.itemId = ${body.itemId}) AND i.itemId = ${body.itemId};
     `);
     return this.request;
@@ -116,7 +124,7 @@ class ItemRequest {
   }
 
   async rejectAllRequest(query, type) {
-    console.log(query);
+    
     if (type === "advisor") {
       await pool.query(`
           UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
@@ -124,7 +132,7 @@ class ItemRequest {
           WHERE ri.requestId = ${query.requestId}
       `);
     } else if (type === "department") {
-      console.log("in department query");
+      
       await pool.query(`
       UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
       SET ri.itemBorrowingStatusId = 5 , ri.itemApprove = 0 

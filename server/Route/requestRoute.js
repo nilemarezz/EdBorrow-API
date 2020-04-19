@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require('../middleware/verify')
 const validUser = require('../middleware/validUser')
-const {postCreateRequest, getRequestList, getRequestItem, approveAllItem,getRequestItemAdmin,departmentApproveEachItem} = require("../Controller/Request")
+const {postCreateRequest, getRequestList, getRequestItem, approveAllItem,getRequestItemAdmin,departmentApproveEachItem,departmentChangeStatus} = require("../Controller/Request")
 router
     .route("/")
     .post(verifyToken,validUser,postCreateRequest)
@@ -22,7 +22,9 @@ router
 router
     .route("/approve")
     .post(departmentApproveEachItem)
-
+router
+    .route("/changestatus")
+    .post(departmentChangeStatus)
     
 
 module.exports = router;

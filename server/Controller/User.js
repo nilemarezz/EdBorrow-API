@@ -14,7 +14,7 @@ exports.userLogin = async (req, res, next) => {
         { user: userLogin },
         config.ACCESS_TOKEN_SECRET,
         (err, accessToken) => {
-          console.log("Tokrn" + accessToken);
+          
           res.status(200).json({
             result: "success",
             accessToken,
@@ -38,7 +38,7 @@ exports.getUserDetail = async (req, res, next) => {
     userDetails = await users.getUserDetails(
       res.locals.authData.user[0].userId
     );
-    console.log(userDetails);
+    
     res.status(200).json({ result: "success", data: userDetails });
   } catch (err) {
     res.status(500).json({ result: "false", msg: err });

@@ -30,8 +30,19 @@ exports.postCreateRequest = async (req, res, next) => {
 
 exports.departmentApproveEachItem = async (req, res, next) => {
   try {
-    await requests.departmentApproveEachItem(body);
-    res.status(200).json({result: "success", msg: "Item Approve."});
+    
+    await requests.departmentApproveEachItem(req.body);
+    res.status(200).json({result: "success", msg: "Item Approve Success"});
+  } catch (err) {
+    res.status(500).json({result: "false", msg: err});
+  }
+}
+
+exports.departmentChangeStatus = async (req, res, next) => {
+  try {
+    
+    await requests.departmentChangeStatus(req.body);
+    res.status(200).json({result: "success", msg: "Item Change Status Success"});
   } catch (err) {
     res.status(500).json({result: "false", msg: err});
   }
@@ -181,9 +192,9 @@ exports.getRequestItemAdmin = async (req, res, next) => {
       role[0],
       "department"
     );
-    console.log(role[0],res.locals.authData.user[0].userId)
+    
     data = [...data, ...itemonDepartment];
-      console.log(data)
+      
     res.status(200).json({ result: "success", data: data });
   } catch (err) {
     console.log(err);
