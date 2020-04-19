@@ -5,6 +5,15 @@ class ItemRequest {
     this.request;
   }
 
+  async departmentApproveEachItem(body) {
+    this.request = await pool.query(`
+      UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
+      SET ri.itemApprove = ${body.itemApprove} , ri.itemBorrowingStatusId = 1 , i.itemAvailability = FALSE
+      WHERE (ri.requestId = ${body.requestId} AND ri.itemId = ${body.itemId}) AND i.itemId = ${body.itemId};
+    `);
+    return this.request;
+  }
+
   async createRequest(body) {
     if (body.personalInformation) {
       this.request = await pool.query(
