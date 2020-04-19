@@ -60,7 +60,7 @@ exports.approveAllItem = async (req, res, next) => {
         res.redirect("https://edborrow.netlify.com/#/approve/type/already");
       } else {
         if (req.query.status === "TRUE") {
-          approvedRequest = await requests.advisorApprove(req.query);
+          approvedRequest = await requests.advisorAllApprove(req.query);
 
           printlog("Green", "Advisor Approve the request");
           let itemInfra = [];
