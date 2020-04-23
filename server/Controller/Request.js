@@ -30,24 +30,23 @@ exports.postCreateRequest = async (req, res, next) => {
 
 exports.departmentApproveEachItem = async (req, res, next) => {
   try {
-    
     await requests.departmentApproveEachItem(req.body);
-    res.status(200).json({result: "success", msg: "Item Approve Success"});
+    res.status(200).json({ result: "success", msg: "Item Approve Success" });
   } catch (err) {
-    res.status(500).json({result: "false", msg: err});
+    res.status(500).json({ result: "false", msg: err });
   }
-}
+};
 
 exports.departmentChangeStatus = async (req, res, next) => {
   try {
-    
     await requests.departmentChangeStatus(req.body);
-    res.status(200).json({result: "success", msg: "Item Change Status Success"});
+    res
+      .status(200)
+      .json({ result: "success", msg: "Item Change Status Success" });
   } catch (err) {
-    res.status(500).json({result: "false", msg: err});
+    res.status(500).json({ result: "false", msg: err });
   }
-}
-
+};
 
 exports.approveAllItem = async (req, res, next) => {
   try {
@@ -124,13 +123,16 @@ exports.approveAllItem = async (req, res, next) => {
             res.redirect("https://edborrow.netlify.com/#/approve/type/success");
           }
         } else {
+          console.log(req.query)
           approvedRequest = await requests.advisorAllApprove(req.query);
           rejectAdvisorApproveItem = await requests.rejectAllRequest(
             req.query,
             (type = "advisor")
           );
           printlog("Yellow", "Advisor Reject the request");
-          res.redirect("https://edborrow.netlify.com/#/approve/type/fail?requestId=123");
+          res.redirect(
+            `https://edborrow.netlify.com/#/approve/type/fail?requestId=${req.query.requestId}`
+          );
         }
       }
     } else {
@@ -180,9 +182,9 @@ exports.getRequestItem = async (req, res, next) => {
 exports.getRequestItemAdmin = async (req, res, next) => {
   try {
     let data = [];
-    
+
     let role = await getUserRole(res.locals.authData.user[0].userId);
-    
+
     let itemonUser = await requests.getRequestItemAdmin(
       res.locals.authData.user[0].userId,
       "user"
@@ -192,13 +194,28 @@ exports.getRequestItemAdmin = async (req, res, next) => {
       role[0],
       "department"
     );
-    
+
     data = [...data, ...itemonDepartment];
-      
+
     res.status(200).json({ result: "success", data: data });
   } catch (err) {
     console.log(err);
     res.status(500).json({ result: "false", msg: err });
   }
-}
+};
 
+exports.rejectPurpose = async (req, res, next) => {
+  try {
+    
+    
+    let itemonUser = await requests.rejectPurpose(
+      req.body.requestId,
+      req.body.text
+    );
+    console.log(itemonUser)
+    res.status(200).json({ result: "success" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ result: "false", msg: err });
+  }
+};
