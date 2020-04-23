@@ -153,10 +153,17 @@ class ItemRequest {
     return this.request;
   }
 
-  async rejectPurpose(id, text) {
-    this.request = await pool.query(
-      `UPDATE BorrowRequest set rejectPurpose = "${text}" where requestId = ${id}`
-    );
+  async rejectPurpose(id, text,itemId,type) {
+    if(type === "advisor"){
+      this.request = await pool.query(
+        `UPDATE BorrowRequest set rejectPurpose = "${text}" where requestId = ${id}`
+      );
+    }else{
+      this.request = await pool.query(
+        `UPDATE RequestItem r set r.rejectPurpose = "${text}" where r.requestId = ${id} AND r.itemId = ${itemId}`
+      );
+    }
+    
 
     return this.request;
   }

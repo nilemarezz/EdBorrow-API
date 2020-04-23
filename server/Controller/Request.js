@@ -123,7 +123,7 @@ exports.approveAllItem = async (req, res, next) => {
             res.redirect("https://edborrow.netlify.com/#/approve/type/success");
           }
         } else {
-          console.log(req.query)
+          console.log(req.query);
           approvedRequest = await requests.advisorAllApprove(req.query);
           rejectAdvisorApproveItem = await requests.rejectAllRequest(
             req.query,
@@ -206,13 +206,13 @@ exports.getRequestItemAdmin = async (req, res, next) => {
 
 exports.rejectPurpose = async (req, res, next) => {
   try {
-    
-    
     let itemonUser = await requests.rejectPurpose(
       req.body.requestId,
-      req.body.text
+      req.body.text,
+      req.body.itemId,
+      req.body.type
     );
-    console.log(itemonUser)
+    console.log(itemonUser);
     res.status(200).json({ result: "success" });
   } catch (err) {
     console.log(err);
