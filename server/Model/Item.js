@@ -17,17 +17,7 @@ class BorrowItem {
 
   async getItemById (id) {
     this.borrowItem = await pool.query (
-      `select i.itemId , i.itemBrand , i.itemModel , i.itemName ,c.categoryName , d.departmentName, 
-        u.userId, r.roleTag , s.itemStatusId, i.itemBorrowable , i.itemAvailability , p.placeBuilding, 
-        p.placeFloor, p.placeRoom , i.itemDescription , i.itemImage
-      from Items i left join Users u on i.userId = u.userId
-			  left joiN ItemDepartment d on i.departmentId = d.departmentId 
-			  left join DepartmentPlace p on d.placeId = p.placeId 
-			  left join RoleBorrowable rb on i.itemId = rb.itemId
-			  left join Roles r on rb.roleId = r.roleId 
-			  join ItemCategory c on i.categoryId = c.categoryId
-			  join itemStatus s on i.itemStatusId = s.itemStatusId 
-      where i.itemId = ${id};`
+      `SELECT * from Items i join ItemDepartment d on i.departmentId = d.departmentId join DepartmentPlace dp on dp.placeId = d.placeId where i.itemId = ${id};`
     );
     return this.borrowItem;
   }
