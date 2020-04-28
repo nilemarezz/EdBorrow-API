@@ -14,6 +14,8 @@ exports.postCreateRequest = async (req, res, next) => {
     } else {
       url = `http://edborrow.ga/api/request/approve?requestId=${borrowRequest[0].requestId}&approver=advisor`;
     }
+    // เขียนตรงนี้
+    console.log(borrowRequest)
     await sendEmailRequest(
       { data: borrowRequest },
       borrowRequest[0].advisorEmail,

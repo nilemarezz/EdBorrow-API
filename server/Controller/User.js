@@ -1,7 +1,6 @@
 const UserModel = require("../Model/User");
 const jwt = require("jsonwebtoken");
 const config = require("../config.json");
-
 const users = new UserModel();
 
 exports.userLogin = async (req, res, next) => {
@@ -52,7 +51,7 @@ exports.getUserDetail = async (req, res, next) => {
     for (let i = 0; i < userRole.length; i++) {
       role.push(userRole[i].roleId);
     }
-    let adminlist = [1, 2, 3];
+    let adminlist = [1, 2, 3,4,5,6,7,8,9];
 
     let op = role.every((element) => adminlist.indexOf(element) > -1);
 
