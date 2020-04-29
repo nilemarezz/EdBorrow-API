@@ -30,10 +30,10 @@ class Users {
     return this.users;
   }
   
-  async createUser(email, password) {
+  async createUser(email, password,firstname,lastname,phonenumber) {
     this.users = await pool.query(`
-      INSERT INTO Users (userId, password, email, firstName, lastName) 
-      VALUES ("${email}", "${password}", "${email}", "Mr.Test", "MaringKingKong");
+      INSERT INTO Users (userId, password, email, firstName, lastName, userTelNo) 
+      VALUES ("${email}", "${password}", "${email}", "${firstname}", "${lastname}" , "${phonenumber}");
     `)
   }
 
