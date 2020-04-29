@@ -18,7 +18,8 @@ exports.userRegister = async (req, res, next) => {
         req.body.lastname,
         req.body.phonenumber
       );
-      await users.assignRole(req.body.email);
+      const role = await users.assignRole(req.body.email);
+      console.log(role)
       await sendEmailUser(req.body.email, password);
       res.status(200).json({
         result: "success",
@@ -28,6 +29,7 @@ exports.userRegister = async (req, res, next) => {
       res.status(200).json({ result: "false", msg: "Email is already." });
     }
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: "false", msg: err });
   }
 };

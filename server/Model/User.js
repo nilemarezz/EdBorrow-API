@@ -44,14 +44,15 @@ class Users {
     return this.users;
   }
   async assignRole(id) {
+    console.log(id)
     this.users = await pool.query(
-      `INSERT INTO UserRole values (${id} , 10) `
+      `INSERT INTO UserRole values ('${id}' , 10) `
     );
     return this.users;
   }
   async getPassword(id) {
     this.users = await pool.query(
-      `SELECT password FROM Users u WHERE userId = ${id} `
+      `SELECT password FROM Users u WHERE userId = '${id}' `
     );
     return this.users;
   }
