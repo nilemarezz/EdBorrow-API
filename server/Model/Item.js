@@ -17,7 +17,9 @@ class BorrowItem {
 
   async getItemById (id) {
     this.borrowItem = await pool.query (
-      `SELECT * from Items i join ItemDepartment d on i.departmentId = d.departmentId join DepartmentPlace dp on dp.placeId = d.placeId where i.itemId = ${id};`
+      `SELECT * from Items i left join ItemDepartment d on i.departmentId = d.departmentId 
+                            left join DepartmentPlace dp on dp.placeId = d.placeId 
+      WHERE i.itemId = ${id};`
     );
     return this.borrowItem;
   }

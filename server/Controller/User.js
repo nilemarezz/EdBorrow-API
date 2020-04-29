@@ -1,8 +1,29 @@
 const UserModel = require("../Model/User");
 const jwt = require("jsonwebtoken");
 const config = require("../config.json");
+const { sendEmailUser } = require("../Controller/UserEmail");
 
 const users = new UserModel();
+
+exports.userRegister = async (req, res, next) => {
+  try { 
+    let userCheck = await users.getUserByEmail(req.body.email);
+
+    if (userCheck.length === 0) {
+      let password = require('crypto').randomBytes(4).toString('hex');
+      await users.createUser(req.body.email, password);
+      await sendEmailUser(
+        req.body.email,
+        password
+      );
+      res.status(200).json({result: "success", msg: "Register success. Please check your email to see your password."})
+    } else {
+      res.status(200).json({result: "false", msg: "Email is already."})
+    }
+  } catch (err) {
+    res.status(500).json({ result: "false", msg: err });
+  }
+}
 
 exports.userLogin = async (req, res, next) => {
   try {

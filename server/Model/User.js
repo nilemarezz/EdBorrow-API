@@ -21,6 +21,22 @@ class Users {
     return this.users;
   }
 
+  async getUserByEmail(email) {
+    this.users = await pool.query(`
+      SELECT *
+      FROM Users
+      WHERE email = '${email}';
+    `)
+    return this.users;
+  }
+  
+  async createUser(email, password) {
+    this.users = await pool.query(`
+      INSERT INTO Users (userId, password, email, firstName, lastName) 
+      VALUES ("${email}", "${password}", "${email}", "Mr.Test", "MaringKingKong");
+    `)
+  }
+
   async getUserRole(id) {
     this.users = await pool.query(
       `select * from UserRole ur where userId = "${id}" `
