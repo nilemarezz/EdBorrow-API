@@ -263,6 +263,27 @@ class BorrowItem {
     values ('${value.itemBrand}','${value.itemModel}','${value.itemName}','${value.createDate}',1,'${value.userId}',1,${value.itemImage === null ? 'NULL': `'${value.itemImage }'`},'${value.itemDescription}',1,1) ` )
     return this.borrowItem
   }
+
+  async getItemByDepartment(id,type){
+    
+    this.borrowItem = await pool.query(
+      `SELECT i.* , d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage 
+      FROM Items i left join ItemDepartment d on i.departmentId = d.departmentId 
+            join ItemCategory c on i.categoryId = c.categoryId
+     where ${type === "department" ? "i.departmentId" : "i.userId"} = "${id}" ORDER BY i.itemName asc`
+    );
+    return this.borrowItem;
+  }
+
+  async updateItem(value){
+    
+    this.borrowItem = await pool.query(
+      `UPDATE Items 
+      SET itemName = "${value.itemName}", itemBrand = "${value.itemBrand}" , itemModel = "${value.itemModel}", categoryId = "${value.categoryId}", itemDescription = "${value.itemDescription}" ${value.itemImage === null ? '' : `, itemImage = "${value.itemImage}"`}
+      WHERE itemId = ${value.itemId}`
+    );
+    return this.borrowItem;
+  }
 }
 
 module.exports = BorrowItem;

@@ -4,13 +4,15 @@ const verifyToken = require('../middleware/verify')
 const validUser = require('../middleware/validUser')
 
 
-const {getAllBorrowItems, getCategoryNameOrDepartmentName, getBorrowItemById, getSearchBorrowItems,addItem} = require("../Controller/Item")
+const {getAllBorrowItems, getCategoryNameOrDepartmentName, getBorrowItemById, getSearchBorrowItems,addItem,getItemByDepartment,updateItem} = require("../Controller/Item")
 router
     .route("/")
     .get(getAllBorrowItems)
-    // .delete(deleteItem)
-    // .post(addItem)
-    // .put(updateItem)
+    .post(verifyToken,validUser,addItem)
+    .put(verifyToken,validUser,updateItem)
+router
+    .route("/admin")
+    .get(verifyToken,validUser,getItemByDepartment)
 router
     .route("/search")
     .get(getSearchBorrowItems)
@@ -20,9 +22,8 @@ router
 router
     .route("/:id")
     .get(getBorrowItemById)
-router
-    .route("/")
-    .post(verifyToken,validUser,addItem)
+
+
 
     
 module.exports = router;

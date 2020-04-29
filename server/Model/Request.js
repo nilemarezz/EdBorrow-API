@@ -48,7 +48,7 @@ class ItemRequest {
       }
       this.request = await pool.query(`
       SELECT br.requestId , br.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.curriculum , u.email , u.studentYear , u.userTelNo , 
-		      i.itemName , d.departmentId , br.borrowPurpose , br.usePlace , ri.returnDate , ri.borrowDate , a.userId as studentAdvisor, a.email as advisorEmail
+		      i.itemName ,i.departmentId , i.userId , d.departmentId , br.borrowPurpose , br.usePlace , ri.returnDate , ri.borrowDate , a.userId as studentAdvisor, a.email as advisorEmail
       FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
           join Items i on ri.itemId = i.itemId 
           join ItemDepartment d on i.departmentId = d.departmentId
