@@ -1,12 +1,8 @@
 const UserModel = require("../Model/User");
 const jwt = require("jsonwebtoken");
 const config = require("../config.json");
-<<<<<<< HEAD
-const { sendEmailUser } = require("../Controller/UserEmail");
-
-=======
->>>>>>> master
 const users = new UserModel();
+const { sendEmailUser } = require("../Controller/UserEmail");
 
 exports.userRegister = async (req, res, next) => {
   try { 
