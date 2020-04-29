@@ -43,6 +43,27 @@ class Users {
     );
     return this.users;
   }
+  async assignRole(id) {
+    this.users = await pool.query(
+      `INSERT INTO UserRole values (${id} , 10) `
+    );
+    return this.users;
+  }
+  async getPassword(id) {
+    this.users = await pool.query(
+      `SELECT password FROM Users u WHERE userId = ${id} `
+    );
+    return this.users;
+  }
+  async changePassword(id,password) {
+    this.users = await pool.query(
+      `  UPDATE Users SET password = '${password}' WHERE userId = '${id}'`
+    );
+    return this.users;
+  }
+
+
+
 }
 
 module.exports = Users;

@@ -18,14 +18,12 @@ exports.userRegister = async (req, res, next) => {
         req.body.lastname,
         req.body.phonenumber
       );
+      await users.assignRole(req.body.email);
       await sendEmailUser(req.body.email, password);
-      res
-        .status(200)
-        .json({
-          result: "success",
-          msg:
-            "Register success. Please check your email to see your password.",
-        });
+      res.status(200).json({
+        result: "success",
+        msg: "Register success. Please check your email to see your password.",
+      });
     } else {
       res.status(200).json({ result: "false", msg: "Email is already." });
     }
@@ -49,7 +47,6 @@ exports.userLogin = async (req, res, next) => {
     let op = role.every((element) => adminlist.indexOf(element) > -1);
 
     if (userLogin.length > 0) {
-      
       jwt.sign(
         { user: userLogin },
         config.ACCESS_TOKEN_SECRET,
@@ -107,6 +104,28 @@ exports.getUserRole = async (id) => {
 
     return role;
   } catch (err) {
+    res.status(500).json({ result: "false", msg: err });
+  }
+};
+
+exports.ChangePassword = async (req, res, next) => {
+  try {
+    const userPassword = await users.getPassword(
+      res.locals.authData.user[0].userId
+    );
+    console.log(userPassword[0].password === req.body.password);
+    console.log(req.body.password);
+    if (userPassword[0].password === req.body.password) {
+      console.log("check");
+      const userPass = await users.changePassword(res.locals.authData.user[0].userId, req.body.newPassword);
+      console.log(userPass);
+      res.status(200).json({ result: "success" });
+    } else {
+      console.log("not check");
+      res.status(500).json({ result: "false", msg: "password not correct" });
+    }
+  } catch (err) {
+    console.log(err);
     res.status(500).json({ result: "false", msg: err });
   }
 };
