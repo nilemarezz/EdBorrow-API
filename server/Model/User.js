@@ -37,12 +37,6 @@ class Users {
     `)
   }
 
-  async changeNewPassword(userId, newPassword) {
-    this.users = await pool.query(`
-      UPDATE Users SET password = ${newPassword} WHERE userId = ${userId};
-    `)
-  }
-
   async getUserRole(id) {
     this.users = await pool.query(
       `select * from UserRole ur where userId = "${id}" `
