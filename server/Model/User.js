@@ -30,10 +30,10 @@ class Users {
     return this.users;
   }
   
-  async createUser(email, password) {
+  async createUser(email, password,firstname,lastname,phonenumber) {
     this.users = await pool.query(`
-      INSERT INTO Users (userId, password, email, firstName, lastName) 
-      VALUES ("${email}", "${password}", "${email}", "Mr.Test", "MaringKingKong");
+      INSERT INTO Users (userId, password, email, firstName, lastName, userTelNo) 
+      VALUES ("${email}", "${password}", "${email}", "${firstname}", "${lastname}" , "${phonenumber}");
     `)
   }
 
@@ -49,6 +49,28 @@ class Users {
     );
     return this.users;
   }
+  async assignRole(id) {
+    console.log(id)
+    this.users = await pool.query(
+      `INSERT INTO UserRole values ('${id}' , 10) `
+    );
+    return this.users;
+  }
+  async getPassword(id) {
+    this.users = await pool.query(
+      `SELECT password FROM Users u WHERE userId = '${id}' `
+    );
+    return this.users;
+  }
+  async changePassword(id,password) {
+    this.users = await pool.query(
+      `  UPDATE Users SET password = '${password}' WHERE userId = '${id}'`
+    );
+    return this.users;
+  }
+
+
+
 }
 
 module.exports = Users;
