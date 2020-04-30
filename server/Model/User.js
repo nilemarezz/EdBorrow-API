@@ -5,9 +5,9 @@ class Users {
     this.users;
   }
 
-  async getLogin(body) {
+  async getLogin(userId) {
     this.users = await pool.query(
-      `SELECT userId,firstName FROM Users WHERE userId = '${body.userId}';`
+      `SELECT userId,firstName,password FROM Users WHERE userId = '${userId}';`
     );
     return this.users;
   }
@@ -34,6 +34,12 @@ class Users {
     this.users = await pool.query(`
       INSERT INTO Users (userId, password, email, firstName, lastName) 
       VALUES ("${email}", "${password}", "${email}", "Mr.Test", "MaringKingKong");
+    `)
+  }
+
+  async changeNewPassword(userId, newPassword) {
+    this.users = await pool.query(`
+      UPDATE Users SET password = ${newPassword} WHERE userId = ${userId};
     `)
   }
 
