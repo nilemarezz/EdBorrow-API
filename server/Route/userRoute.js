@@ -23,7 +23,7 @@ router
 router.post("/createAdvisor", async (req, res) => {
     console.log(req.body.password)
     var cipherPassword = CryptoJS.AES.encrypt(
-        req.params.password,
+        req.body.password,
         config.CRYPTO_SECRET_KEY
     ).toString();
       
