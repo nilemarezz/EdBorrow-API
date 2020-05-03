@@ -21,19 +21,19 @@ class Users {
     return this.users;
   }
 
-  async getUserByEmail(email) {
+  async getUserById(userId) {
     this.users = await pool.query(`
       SELECT *
       FROM Users
-      WHERE email = '${email}';
+      WHERE userId = '${userId}';
     `)
     return this.users;
   }
   
   async createUser(email, password,firstname,lastname,phonenumber) {
     this.users = await pool.query(`
-      INSERT INTO Users (userId, password, email, firstName, lastName, userTelNo) 
-      VALUES ("${email}", "${password}", "${email}", "${firstname}", "${lastname}" , "${phonenumber}");
+      INSERT INTO Users (userId, password, email, firstName, lastName, userTelNo , studentAdvisor) 
+      VALUES ("${email}", "${password}", "${email}", "${firstname}", "${lastname}" , "${phonenumber}" , "testAdvisor");
     `)
   }
 
