@@ -3,7 +3,10 @@ const router = express.Router();
 const {getUserDetail, userLogin, getUserRole,userRegister,ChangePassword} = require("../Controller/User")
 const verifyToken = require('../middleware/verify')
 const validUser = require('../middleware/validUser')
+const config = require('../config.json')
 
+const CryptoJS = require("crypto-js");
+const pool = require("../config/BorrowSystemDB");
 router
     .route("/")
     .put(verifyToken,validUser,ChangePassword)
