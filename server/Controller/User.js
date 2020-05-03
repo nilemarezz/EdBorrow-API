@@ -49,7 +49,9 @@ exports.userLogin = async (req, res, next) => {
     //get password in database to decrypt
     var bytes  = CryptoJS.AES.decrypt(userLogin[0].password, config.CRYPTO_SECRET_KEY);
     var passwordDecrypt = bytes.toString(CryptoJS.enc.Utf8);
-
+    console.log(passwordDecrypt)
+    console.log(req.body.password)
+    console.log(passwordDecrypt === req.body.password)
     let role = [];
     if (passwordDecrypt === req.body.password) {
       
