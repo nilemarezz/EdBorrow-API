@@ -21,10 +21,10 @@ router
     .get(verifyToken,validUser,getRequestItemAdmin)
 router
     .route("/approve")
-    .post(departmentApproveEachItem)
+    .post(verifyToken,validUser,departmentApproveEachItem)
 router
     .route("/changestatus")
-    .post(departmentChangeStatus)
+    .post(verifyToken,validUser,departmentChangeStatus)
 router
     .route("/rejectpurpose")
     .put(rejectPurpose)

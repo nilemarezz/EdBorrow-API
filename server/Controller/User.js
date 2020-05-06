@@ -32,6 +32,7 @@ exports.userRegister = async (req, res, next) => {
     } else {
       
       printlog('Red',`Register Failed : ${req.body.email}`)
+      
       res.status(200).json({ result: "false", msg: "Email is already." });
     }
   } catch (err) {
@@ -42,16 +43,14 @@ exports.userRegister = async (req, res, next) => {
 
 exports.userLogin = async (req, res, next) => {
   try {
-    console.log('in login')
+    
     let userLogin, userRole;
     userLogin = await users.getLogin(req.body.userId);
 
     //get password in database to decrypt
     var bytes  = CryptoJS.AES.decrypt(userLogin[0].password, config.CRYPTO_SECRET_KEY);
     var passwordDecrypt = bytes.toString(CryptoJS.enc.Utf8);
-    console.log(passwordDecrypt)
-    console.log(req.body.password)
-    console.log(passwordDecrypt === req.body.password)
+    
     let role = [];
     if (passwordDecrypt === req.body.password) {
       
@@ -77,11 +76,13 @@ exports.userLogin = async (req, res, next) => {
       );
     } else {
       printlog('Red',`Login Fail : ${req.body.userId}`)
+      console.log('password not correct')
       res.status(403).json({ result: "false", msg: "Invalid user id or password" });
     }
   } catch (err) {
-    console.log(err)
+    
     printlog('Red',`Login Fail : ${req.body.userId}`)
+    console.log(err)
     res.status(403).json({ result: "false", msg: "Invalid user id or password" });
   }
 };
@@ -141,10 +142,12 @@ exports.ChangePassword = async (req, res, next) => {
       res.status(200).json({ result: "success", msg: "Change password success."});
     } else {
       printlog('Red',`Change Password Fail : ${res.locals.authData.user[0].userId}`)
+      console.log("password not correct")
       res.status(403).json({ result: "false", msg: "password not correct" });
     }
   } catch (err) {
     printlog('Red',`Change Password Fail : ${res.locals.authData.user[0].userId}`)
+    console.log(err)
     res.status(500).json({ result: "false", msg: err });
   }
 };

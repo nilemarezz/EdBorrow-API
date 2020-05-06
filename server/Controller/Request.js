@@ -16,16 +16,19 @@ exports.postCreateRequest = async (req, res, next) => {
       url = `http://edborrow.ga/api/request/approve?requestId=${borrowRequest[0].requestId}&approver=advisor`;
     }
     // เขียนตรงนี้
-    console.log(borrowRequest)
+    
     await sendEmailRequest(
       { data: borrowRequest },
       borrowRequest[0].advisorEmail,
       url
     );
+    printlog("Green",`Send request success - ${res.locals.authData.user[0].userId}`)
     res
       .status(200)
       .json({ result: "success", msg: "[Email] sent request success" });
   } catch (err) {
+    printlog("Red",`Send request Fail - ${res.locals.authData.user[0].userId}`)
+    console.log(err)
     res.status(500).json({ result: "false", msg: err });
     next(err);
   }
@@ -34,8 +37,11 @@ exports.postCreateRequest = async (req, res, next) => {
 exports.departmentApproveEachItem = async (req, res, next) => {
   try {
     await requests.departmentApproveEachItem(req.body);
+    printlog("Green",`Approve Item success - ${res.locals.authData.user[0].userId}`)
     res.status(200).json({ result: "success", msg: "Item Approve Success" });
   } catch (err) {
+    printlog("Red",`Approve request Fail - ${res.locals.authData.user[0].userId}`)
+    console.log(err)
     res.status(500).json({ result: "false", msg: err });
   }
 };
@@ -43,10 +49,13 @@ exports.departmentApproveEachItem = async (req, res, next) => {
 exports.departmentChangeStatus = async (req, res, next) => {
   try {
     await requests.departmentChangeStatus(req.body);
+    printlog('Green',`Change Status Success - ${res.locals.authData.user[0].userId}`)
     res
       .status(200)
       .json({ result: "success", msg: "Item Change Status Success" });
   } catch (err) {
+    printlog('Red',`Change Status Fail - ${res.locals.authData.user[0].userId}`)
+    console.log(err)
     res.status(500).json({ result: "false", msg: err });
   }
 };
@@ -126,7 +135,7 @@ exports.approveAllItem = async (req, res, next) => {
             res.redirect("https://edborrow.netlify.com/#/approve/type/success");
           }
         } else {
-          console.log(req.query);
+          
           approvedRequest = await requests.advisorAllApprove(req.query);
           rejectAdvisorApproveItem = await requests.rejectAllRequest(
             req.query,
@@ -199,7 +208,7 @@ exports.getRequestItemAdmin = async (req, res, next) => {
     );
 
     data = [...data, ...itemonDepartment];
-
+      
     res.status(200).json({ result: "success", data: data });
   } catch (err) {
     console.log(err);
@@ -215,7 +224,7 @@ exports.rejectPurpose = async (req, res, next) => {
       req.body.itemId,
       req.body.type
     );
-    console.log(itemonUser);
+    printlog('Yellow',"Add reject Purpose")
     res.status(200).json({ result: "success" });
   } catch (err) {
     console.log(err);

@@ -12,7 +12,7 @@ var multer = require("multer");
 var upload = multer();
 
 
-app.use(morgan("dev"));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :date'));
 
 app.use(cors());
 

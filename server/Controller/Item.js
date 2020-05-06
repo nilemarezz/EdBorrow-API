@@ -1,6 +1,7 @@
 const BorrowItemModel = require("../Model/Item");
 const pool = require("../config/BorrowSystemDB");
 const upload = require("./upload");
+const printlog = require("../config/logColor");
 const borrowItem = new BorrowItemModel();
 const singleUpload = upload.single("image");
 const noneUpload = upload.none();
@@ -40,7 +41,6 @@ exports.getBorrowItemById = async (req, res, next) => {
 exports.getCategoryNameOrDepartmentName = async (req, res, next) => {
   try {
     let borrowItems;
-    console.log(req.body.command);
 
     if (req.body.command === "Category") {
       borrowItems = await borrowItem.getCategory();
@@ -67,13 +67,18 @@ exports.addItem = async (req, res, next) => {
       } else {
         image = null;
       }
-      console.log(image);
+
       let data = {
         ...req.body,
         itemImage: image,
         userId: res.locals.authData.user[0].userId,
       };
+      printlog(
+        "Green",
+        `Add item success : ${addItem.insertId} - ${res.locals.authData.user[0].userId}`
+      );
       let addItem = await borrowItem.addItem(data);
+
       res.status(500).json({ result: "success", msg: "Add Item Success" });
     });
   } catch (err) {
@@ -113,14 +118,19 @@ exports.updateItem = async (req, res, next) => {
       } else {
         image = null;
       }
-      console.log(req.body);
+
       let data = {
         ...req.body,
         itemImage: image,
         userId: res.locals.authData.user[0].userId,
       };
-      
+
       let editItem = await borrowItem.updateItem(data);
+
+      printlog(
+        "Green",
+        `Update item success : ${data.itemId} - ${res.locals.authData.user[0].userId}`
+      );
       res.status(500).json({ result: "success", msg: "Edit Item Success" });
     });
 
