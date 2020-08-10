@@ -1,7 +1,6 @@
 const config = require("./config.json");
 
-const temp = (value,url) => {
-  console.log(value)
+const temp = (value, url) => {
   return ` 
     <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
@@ -192,13 +191,13 @@ const temp = (value,url) => {
                                 </th>
                                 <td width="80%">
                                 ${value.data[0].borrowDate
-                                  .toString()
-                                  .substring(
-                                    4,
-                                    16
-                                  )} to ${value.data[0].borrowDate
-    .toString()
-    .substring(4, 16)}
+      .toString()
+      .substring(
+        4,
+        16
+      )} to ${value.data[0].borrowDate
+        .toString()
+        .substring(4, 16)}
                                 </td>
                               </tr>
                               <tr>
@@ -207,8 +206,8 @@ const temp = (value,url) => {
                                 </th>
                                 <td width="80%">
                                   ${value.data.map(item => {
-                                    return `${item.itemName}`;
-                                  })}
+          return `${item.itemName}`;
+        })}
                                 </td>
                               </tr>
                             </table>

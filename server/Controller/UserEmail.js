@@ -2,9 +2,9 @@ const nodemailer = require("nodemailer");
 const AWS = require("aws-sdk");
 const config = require("../config.json");
 const printlog = require('../config/logColor')
-exports.sendEmailUser = async (email,password) => {
+exports.sendEmailUser = async (email, password) => {
   try {
-    printlog("Magenta",`Send mail to ${email}`)
+    printlog("Magenta", `Send mail to ${email}`)
 
     AWS.config.update({
       accessKeyId: config.ACCESSKEY_ID,
@@ -28,7 +28,6 @@ exports.sendEmailUser = async (email,password) => {
               <b>Email : ${email}</b><br>
               <b>Password: ${password}</b>`
     });
-    console.log(info.messageId);
     return true;
   } catch (err) {
     console.log(err);

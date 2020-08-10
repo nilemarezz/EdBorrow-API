@@ -29,11 +29,12 @@ exports.getSearchBorrowItems = async (req, res, next) => {
 exports.getBorrowItemById = async (req, res, next) => {
   try {
     let borrowItemById;
-
+    console.log(req.params.id)
     borrowItemById = await borrowItem.getItemById(req.params.id);
-
+    console.log(borrowItemById)
     res.status(200).json({ result: "success", data: borrowItemById });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: "false", msg: err });
   }
 };

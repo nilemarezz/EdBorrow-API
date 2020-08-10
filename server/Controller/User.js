@@ -7,9 +7,8 @@ const { sendEmailUser } = require("../Controller/UserEmail");
 const printlog = require("../config/logColor");
 exports.userRegister = async (req, res, next) => {
   try {
-    
+
     let userCheck = await users.getUserById(req.body.email);
-    console.log(userCheck)
     if (userCheck.length === 0) {
       let password = require("crypto").randomBytes(4).toString("hex");
       await sendEmailUser(req.body.email, password);
@@ -21,47 +20,46 @@ exports.userRegister = async (req, res, next) => {
         req.body.lastname,
         req.body.phonenumber
       );
-      
+
       const role = await users.assignRole(req.body.email);
-      console.log(role)
-      printlog('Green',`Register Success : ${req.body.email}`)
+      printlog('Green', `Register Success : ${req.body.email}`)
       res.status(200).json({
         result: "success",
         msg: "Register success. Please check your email to see your password.",
       });
     } else {
-      
-      printlog('Red',`Register Failed : ${req.body.email}`)
-      
+
+      printlog('Red', `Register Failed : ${req.body.email}`)
+
       res.status(200).json({ result: "false", msg: "Email is already." });
     }
   } catch (err) {
-    printlog('Red',err)
+    printlog('Red', err)
     res.status(500).json({ result: "false", msg: err });
   }
 };
 
 exports.userLogin = async (req, res, next) => {
   try {
-    
+
     let userLogin, userRole;
     userLogin = await users.getLogin(req.body.userId);
 
     //get password in database to decrypt
-    var bytes  = CryptoJS.AES.decrypt(userLogin[0].password, config.CRYPTO_SECRET_KEY);
+    var bytes = CryptoJS.AES.decrypt(userLogin[0].password, config.CRYPTO_SECRET_KEY);
     var passwordDecrypt = bytes.toString(CryptoJS.enc.Utf8);
-    
+
     let role = [];
     if (passwordDecrypt === req.body.password) {
-      
+
       userRole = await users.getUserRole(req.body.userId);
       for (let i = 0; i < userRole.length; i++) {
         role.push(userRole[i].roleId);
       }
       let adminlist = [1, 2, 3];
-  
+
       let op = role.every((element) => adminlist.indexOf(element) > -1);
-      printlog('Green',`Login Success : ${req.body.userId}`)
+      printlog('Green', `Login Success : ${req.body.userId}`)
       jwt.sign(
         { user: userLogin },
         config.ACCESS_TOKEN_SECRET,
@@ -75,13 +73,12 @@ exports.userLogin = async (req, res, next) => {
         }
       );
     } else {
-      printlog('Red',`Login Fail : ${req.body.userId}`)
-      console.log('password not correct')
+      printlog('Red', `Login Fail : ${req.body.userId}`)
       res.status(403).json({ result: "false", msg: "Invalid user id or password" });
     }
   } catch (err) {
-    
-    printlog('Red',`Login Fail : ${req.body.userId}`)
+
+    printlog('Red', `Login Fail : ${req.body.userId}`)
     console.log(err)
     res.status(403).json({ result: "false", msg: "Invalid user id or password" });
   }
@@ -131,22 +128,20 @@ exports.ChangePassword = async (req, res, next) => {
   try {
     const userPassword = await users.getPassword(res.locals.authData.user[0].userId);
 
-    var bytes  = CryptoJS.AES.decrypt(userPassword[0].password, config.CRYPTO_SECRET_KEY);
+    var bytes = CryptoJS.AES.decrypt(userPassword[0].password, config.CRYPTO_SECRET_KEY);
     var passwordDecrypt = bytes.toString(CryptoJS.enc.Utf8);
 
     if (passwordDecrypt === req.body.password) {
-      console.log("check");
       var cipherPassword = CryptoJS.AES.encrypt(req.body.newPassword, config.CRYPTO_SECRET_KEY).toString();
       const userPass = await users.changePassword(res.locals.authData.user[0].userId, cipherPassword);
-      printlog('Green',`Change Password Success : ${res.locals.authData.user[0].userId}`)
-      res.status(200).json({ result: "success", msg: "Change password success."});
+      printlog('Green', `Change Password Success : ${res.locals.authData.user[0].userId}`)
+      res.status(200).json({ result: "success", msg: "Change password success." });
     } else {
-      printlog('Red',`Change Password Fail : ${res.locals.authData.user[0].userId}`)
-      console.log("password not correct")
+      printlog('Red', `Change Password Fail : ${res.locals.authData.user[0].userId}`)
       res.status(403).json({ result: "false", msg: "password not correct" });
     }
   } catch (err) {
-    printlog('Red',`Change Password Fail : ${res.locals.authData.user[0].userId}`)
+    printlog('Red', `Change Password Fail : ${res.locals.authData.user[0].userId}`)
     console.log(err)
     res.status(500).json({ result: "false", msg: err });
   }

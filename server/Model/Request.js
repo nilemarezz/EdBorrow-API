@@ -1,169 +1,102 @@
 const pool = require("../config/BorrowSystemDB");
-
+const { DEPARTMENT_APPROVE_EACH_ITEM, DEPARTMENT_CHANGE_STATUS, CREATE_REQUEST
+  , GET_REQUEST, GET_REQUEST_LIST,
+  GET_REQUEST_ITEM, ADVISOR_CHANGE_REQUEST_STATUS, DEPARTMENT_CHANGE_REQUEST_STATUS, REJECT_ALL_REQUEST
+  , GET_REQUEST_ADMIN, SET_REJECT_PURPOSE } = require("./queries/Request")
 class ItemRequest {
   constructor() {
     this.request;
   }
 
   async departmentApproveEachItem(body) {
-    this.request = await pool.query(`
-      UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-      SET ri.itemApprove = ${body.itemApprove} , ri.itemBorrowingStatusId = ${
-      body.itemApprove === 1 ? 6 : 5
-    } , i.itemAvailability = ${body.itemApprove === 1 ? "FALSE" : "TRUE"}
-      WHERE (ri.requestId = ${body.requestId} AND ri.itemId = ${
-      body.itemId
-    }) AND i.itemId = ${body.itemId};
-    `);
+    this.request = await pool.query(DEPARTMENT_APPROVE_EACH_ITEM(body));
     return this.request;
   }
   async departmentChangeStatus(body) {
-    this.request = await pool.query(`
-      UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-      SET ri.itemBorrowingStatusId = ${body.itemBorrowingStatusId} 
-      WHERE (ri.requestId = ${body.requestId} AND ri.itemId = ${body.itemId}) AND i.itemId = ${body.itemId};
-    `);
+    this.request = await pool.query(DEPARTMENT_CHANGE_STATUS(body));
     return this.request;
   }
 
   async createRequest(body) {
     if (body.personalInformation) {
       this.request = await pool.query(
-        `INSERT INTO BorrowRequest (userId , borrowPurpose , usePlace) 
-          VALUES('${body.personalInformation.userId}' , '${body.personalInformation.borrowPurpose}' , '${body.personalInformation.usePlace}');`
+        CREATE_REQUEST(body, lastInsertId).INSERT_ITEMREQUEST_TO_DB
       );
       let lastInsertId = this.request.insertId;
-      // console.log(lastInsertId);
       if (body.items) {
         for (var i = 0; i < body.items.length; i++) {
           await pool.query(
-            `INSERT INTO RequestItem (requestId , itemId, borrowDate , returnDate ) 
-                      VALUES(${lastInsertId}, ${body.items[i].itemId} , '${body.personalInformation.borrowDate}', '${body.personalInformation.returnDate}');`
+            CREATE_REQUEST(body, lastInsertId).INSERT_ITEMREQUEST_TO_DB
           );
           await pool.query(
-            `UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-            SET ri.itemBorrowingStatusId = 4 , i.itemAvailability = FALSE WHERE ri.itemId = ${body.items[i].itemId};`
+            CREATE_REQUEST(body, lastInsertId).UPDATE_ITEM_AVALIBILITY
           ); //chage status to Booking and availability to FALSE (booking and can't borrow in other request)
         }
       }
-      this.request = await pool.query(`
-      SELECT br.requestId , br.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.curriculum , u.email , u.studentYear , u.userTelNo , 
-		      i.itemName ,i.departmentId , i.userId , d.departmentId , br.borrowPurpose , br.usePlace , ri.returnDate , ri.borrowDate , a.userId as studentAdvisor, a.email as advisorEmail
-      FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
-          join Items i on ri.itemId = i.itemId 
-          join ItemDepartment d on i.departmentId = d.departmentId
-					left join Users u on br.userId = u.userId 
-					inner join Users a on a.userId = u.studentAdvisor 
-      WHERE br.requestId = ${lastInsertId};`);
+      this.request = await pool.query(CREATE_REQUEST(body, lastInsertId).RETURN_REQUEST);
     }
     return this.request;
   }
 
   async getRequest(requestId) {
-    this.request = await pool.query(
-      `SELECT * FROM BorrowRequest WHERE requestId = ${requestId}`
-    );
+    this.request = await pool.query(GET_REQUEST(requestId));
     return this.request;
   }
   async getRequestItem(requestId) {
-    this.request = await pool.query(
-      `SELECT ri.* , i.*
-      FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId
-                            join Items i on ri.itemId = i.itemId
-      WHERE br.requestId = ${requestId};`
-    );
+    this.request = await pool.query(GET_REQUEST_ITEM(requestId));
     return this.request;
   }
 
   async getRequestList(userId) {
-    this.request = await pool.query(`
-    SELECT br.*, u.firstName , u.*
-    FROM BorrowRequest br left join Users u on br.userId = u.userId
-    WHERE br.userId = '${userId}';
-    `);
+    this.request = await pool.query(GET_REQUEST_LIST(userId));
     return this.request;
   }
 
   async advisorAllApprove(query) {
     if (query.approver === "advisor" && query.status === "TRUE") {
       await pool.query(
-        `UPDATE BorrowRequest SET requestApprove = TRUE WHERE requestId = ${query.requestId};`
+        ADVISOR_CHANGE_REQUEST_STATUS(query).APPROVE_ALL_APPROVE
       );
     } else if (query.approver === "advisor" && query.status === "FALSE") {
-      await pool.query(`
-      UPDATE BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
-          join Items i on ri.itemId = i.itemId 
-      SET br.requestApprove = FALSE, ri.itemBorrowingStatusId = NULL, i.itemAvailability = TRUE 
-      WHERE br.requestId = ${query.requestId};`);
+      await pool.query(ADVISOR_CHANGE_REQUEST_STATUS(query).REJECT_ALL_APPROVE);
     }
-    this.request = await pool.query(`
-    SELECT br.requestId , br.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.curriculum , u.email , u.studentYear , u.userTelNo , 
-		      i.itemId , i.itemName , d.departmentId , d.departmentName , d.departmentEmail , br.borrowPurpose , br.usePlace , ri.returnDate , ri.borrowDate , 
-		      a.userId as studentAdvisor, CONCAT(a.firstName, " ", a.lastName) as advisorName, a.email as advisorEmail , br.requestApprove 
-    FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
-					join Items i on ri.itemId = i.itemId 
-					left join Users u on br.userId = u.userId 
-					inner join Users a on a.userId = u.studentAdvisor 
-					join ItemDepartment d on i.departmentId = d.departmentId 
-    WHERE br.requestId = ${query.requestId};
-    `);
+    this.request = await pool.query(ADVISOR_CHANGE_REQUEST_STATUS(query).RETURN_REQUEST);
     return this.request;
   }
 
   async departmentAllApprove(query) {
     if (query.approver === "department" && query.status === "TRUE") {
-      console.log("in query");
-      await pool.query(`
-      UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-      SET ri.itemApprove = TRUE , ri.itemBorrowingStatusId = 6 , i.itemAvailability = FALSE 
-      WHERE ri.requestId = ${query.requestId} AND i.departmentId = ${query.departmentId};`);
+      await pool.query(DEPARTMENT_CHANGE_REQUEST_STATUS(query).DEPARTMENT_ALL_APPROVE)
     } else if (query.approver === "department" && query.status === "FALSE") {
-      await pool.query(`
-      UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-      SET ri.itemApprove = FALSE , ri.itemBorrowingStatusId = 5 , i.itemAvailability = TRUE 
-      WHERE ri.requestId = ${query.requestId} AND i.departmentId = ${query.departmentId};
-      `);
+      await pool.query(pool.query(DEPARTMENT_CHANGE_REQUEST_STATUS(query).DEPARTMENT_ALL_REJECT));
     }
     return this.request;
   }
 
   async rejectAllRequest(query, type) {
     if (type === "advisor") {
-      await pool.query(`
-          UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-          SET ri.itemBorrowingStatusId = 7 , ri.itemApprove = 3 
-          WHERE ri.requestId = ${query.requestId}
-      `);
+      await pool.query(REJECT_ALL_REQUEST(query).ADVISOR_REJECT);
     } else if (type === "department") {
-      await pool.query(`
-      UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-      SET ri.itemBorrowingStatusId = 5 , ri.itemApprove = 0 
-      WHERE ri.requestId = ${query.requestId} AND i.departmentId = ${query.departmentId}
-  `);
+      await pool.query(REJECT_ALL_REQUEST(query).DEPARTMENT_REJECT);
     }
   }
 
   async getRequestItemAdmin(id, type) {
-    this.request = await pool.query(
-      `select * from RequestItem ri join Items i on ri.itemId = i.itemId join BorrowRequest b ON 
-      b.requestId  = ri.requestId where ${
-        type === "user" ? `i.userId` : `i.departmentId`
-      }  = "${id}" and b.requestApprove = 1`
-    );
+    this.request = await pool.query(GET_REQUEST_ADMIN(id, type));
     return this.request;
   }
 
-  async rejectPurpose(id, text,itemId,type) {
-    if(type === "advisor"){
+  async rejectPurpose(id, text, itemId, type) {
+    if (type === "advisor") {
       this.request = await pool.query(
-        `UPDATE BorrowRequest set rejectPurpose = "${text}" where requestId = ${id}`
+        SET_REJECT_PURPOSE(id, text, itemId).ADVISOR_SET_PURPOSE
       );
-    }else{
+    } else {
       this.request = await pool.query(
-        `UPDATE RequestItem r set r.rejectPurpose = "${text}" where r.requestId = ${id} AND r.itemId = ${itemId}`
+        SET_REJECT_PURPOSE(id, text, itemId).DEPARTMENT_SET_PURPOSE
       );
     }
-    
+
 
     return this.request;
   }

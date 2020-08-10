@@ -29,8 +29,8 @@ class Users {
     `)
     return this.users;
   }
-  
-  async createUser(email, password,firstname,lastname,phonenumber) {
+
+  async createUser(email, password, firstname, lastname, phonenumber) {
     this.users = await pool.query(`
       INSERT INTO Users (userId, password, email, firstName, lastName, userTelNo , studentAdvisor) 
       VALUES ("${email}", "${password}", "${email}", "${firstname}", "${lastname}" , "${phonenumber}" , "testAdvisor");
@@ -44,7 +44,6 @@ class Users {
     return this.users;
   }
   async assignRole(id) {
-    console.log(id)
     this.users = await pool.query(
       `INSERT INTO UserRole values ('${id}' , 10) `
     );
@@ -56,7 +55,7 @@ class Users {
     );
     return this.users;
   }
-  async changePassword(id,password) {
+  async changePassword(id, password) {
     this.users = await pool.query(
       `  UPDATE Users SET password = '${password}' WHERE userId = '${id}'`
     );

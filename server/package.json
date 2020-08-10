@@ -6,8 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "NODE_ENV=test mocha --timeout 10000 --exit test",
-    "testdev": "SET NODE_ENV=test&mocha --exit test "
+    "test": "NODE_ENV=test mocha --timeout 10000 --exit test/**/*.js",
+    "testdev": "SET NODE_ENV=test&mocha --exit test ",
+    "test:coverage" : "DEBUG=TRUE nyc --reporter=lcov mocha test/**/*.js --exit --inspect=0.0.0.0:9229 --timeout 120000"
   },
   "author": "",
   "license": "ISC",
@@ -35,6 +36,7 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "nyc": "^15.1.0"
   }
 }

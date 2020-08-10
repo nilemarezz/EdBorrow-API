@@ -9,7 +9,6 @@ module.exports = function validUser(req, res, next) {
         res.status(403).json({ result: "false", msg: "Invalid access token" });
       } else {
         res.locals.authData = authData;
-        console.log(authData)
         next();
       }
     }
