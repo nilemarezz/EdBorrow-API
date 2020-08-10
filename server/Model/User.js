@@ -1,5 +1,6 @@
 const pool = require("../config/BorrowSystemDB");
-
+const { ASSIGN_ROLE, CHANGE_PASSWORD, CREATE_USER,
+  GET_LOGIN, GET_PASSWORD, GET_USER_BY_ID, GET_USER_DETAIL, USER_ROLE } = require("./queries/User")
 class Users {
   constructor() {
     this.users;
@@ -57,7 +58,7 @@ class Users {
   }
   async changePassword(id, password) {
     this.users = await pool.query(
-      `  UPDATE Users SET password = '${password}' WHERE userId = '${id}'`
+      `UPDATE Users SET password = '${password}' WHERE userId = '${id}'`
     );
     return this.users;
   }
