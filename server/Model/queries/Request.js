@@ -38,18 +38,18 @@ const DEPARTMENT_CHANGE_STATUS = (body) => {
 `
 }
 
-const CREATE_REQUEST = (body, lastInsertId) => {
+const CREATE_REQUEST = () => {
   return {
-    INSERT_BORROWREQUEST_TO_DB:
+    INSERT_BORROWREQUEST_TO_DB: (body) =>
       `INSERT INTO BorrowRequest (userId , borrowPurpose , usePlace) 
     VALUES('${body.personalInformation.userId}' , '${body.personalInformation.borrowPurpose}' , '${body.personalInformation.usePlace}');`,
-    INSERT_ITEMREQUEST_TO_DB:
+    INSERT_ITEMREQUEST_TO_DB: (body, lastInsertId, i) =>
       `INSERT INTO RequestItem (requestId , itemId, borrowDate , returnDate ) 
     VALUES(${lastInsertId}, ${body.items[i].itemId} , '${body.personalInformation.borrowDate}', '${body.personalInformation.returnDate}');`,
-    UPDATE_ITEM_AVALIBILITY:
+    UPDATE_ITEM_AVALIBILITY: (body, i) =>
       `UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
     SET ri.itemBorrowingStatusId = 4 , i.itemAvailability = FALSE WHERE ri.itemId = ${body.items[i].itemId};`,
-    RETURN_REQUEST: `
+    RETURN_REQUEST: (lastInsertId) => `
     SELECT br.requestId , br.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.curriculum , u.email , u.studentYear , u.userTelNo , 
     i.itemName ,i.departmentId , i.userId , d.departmentId , br.borrowPurpose , br.usePlace , ri.returnDate , ri.borrowDate , a.userId as studentAdvisor, a.email as advisorEmail 
     FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 

@@ -1,8 +1,8 @@
-const temp = require("../sendmail");
+const temp = require("./mailTemplate");
 const nodemailer = require("nodemailer");
 const AWS = require("aws-sdk");
-const config = require("../config.json");
-const printlog = require('../config/logColor')
+const config = require("../../config.json");
+const printlog = require('../../config/logColor')
 exports.sendEmailRequest = async (value, email, url) => {
   try {
     printlog("Magenta", `Send mail to ${email}`)

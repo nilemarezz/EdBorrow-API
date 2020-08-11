@@ -1,6 +1,6 @@
 const BorrowItemModel = require("../Model/Item");
 const pool = require("../config/BorrowSystemDB");
-const upload = require("./upload");
+const upload = require("../Utilities/Upload/Upload");
 const printlog = require("../config/logColor");
 const borrowItem = new BorrowItemModel();
 const singleUpload = upload.single("image");
