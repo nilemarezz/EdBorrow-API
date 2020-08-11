@@ -20,20 +20,20 @@ class ItemRequest {
   async createRequest(body) {
     if (body.personalInformation) {
       this.request = await pool.query(
-        CREATE_REQUEST(body, lastInsertId).INSERT_ITEMREQUEST_TO_DB
+        CREATE_REQUEST().INSERT_ITEMREQUEST_TO_DB(body)
       );
       let lastInsertId = this.request.insertId;
       if (body.items) {
         for (var i = 0; i < body.items.length; i++) {
           await pool.query(
-            CREATE_REQUEST(body, lastInsertId).INSERT_ITEMREQUEST_TO_DB
+            CREATE_REQUEST().INSERT_ITEMREQUEST_TO_DB(body, lastInsertId, i)
           );
           await pool.query(
-            CREATE_REQUEST(body, lastInsertId).UPDATE_ITEM_AVALIBILITY
+            CREATE_REQUEST().UPDATE_ITEM_AVALIBILITY(body, i)
           ); //chage status to Booking and availability to FALSE (booking and can't borrow in other request)
         }
       }
-      this.request = await pool.query(CREATE_REQUEST(body, lastInsertId).RETURN_REQUEST);
+      this.request = await pool.query(CREATE_REQUEST().RETURN_REQUEST(lastInsertId));
     }
     return this.request;
   }
