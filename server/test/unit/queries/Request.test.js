@@ -127,7 +127,6 @@ describe('/queries/Request', () => {
         const expectedqueries = `UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
       SET ri.itemApprove = TRUE , ri.itemBorrowingStatusId = 6 , i.itemAvailability = FALSE 
       WHERE ri.requestId = 1 AND i.departmentId = 1;`
-
         expect(DEPARTMENT_CHANGE_REQUEST_STATUS({ requestId: 1, departmentId: 1 }).DEPARTMENT_ALL_APPROVE).to.equal(expectedqueries)
       })
     })
@@ -136,7 +135,6 @@ describe('/queries/Request', () => {
         const expectedqueries = ` UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
     SET ri.itemApprove = FALSE , ri.itemBorrowingStatusId = 5 , i.itemAvailability = TRUE 
     WHERE ri.requestId = 1 AND i.departmentId = 1;`
-
         expect(DEPARTMENT_CHANGE_REQUEST_STATUS({ requestId: 1, departmentId: 1 }).DEPARTMENT_ALL_REJECT).to.equal(expectedqueries)
       })
     })
@@ -207,8 +205,5 @@ describe('/queries/Request', () => {
       const expectedqueries = `UPDATE RequestItem r set r.rejectPurpose = "123" where r.requestId = 1 AND r.itemId = 1`
       expect(SET_REJECT_PURPOSE(id = 1, text = "123", itemId = 1).DEPARTMENT_SET_PURPOSE).to.equal(expectedqueries)
     })
-
   })
-
-
 })
