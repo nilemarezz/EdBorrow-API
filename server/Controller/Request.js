@@ -3,7 +3,6 @@ const { sendEmailRequest } = require("../Utilities/EmailService/SendEmail");
 const requests = new RequestModel();
 const config = require("../config.json");
 const printlog = require("../config/logColor");
-const jwt = require("jsonwebtoken");
 const { getUserRole } = require("./User");
 
 exports.postCreateRequest = async (req, res, next) => {
