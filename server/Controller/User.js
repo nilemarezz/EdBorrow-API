@@ -3,11 +3,10 @@ const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 const config = require("../config.json");
 const users = new UserModel();
-const { sendEmailUser } = require("../Controller/UserEmail");
+const { sendEmailUser } = require("../Utilities/EmailService/RegisterEmail");
 const printlog = require("../config/logColor");
 exports.userRegister = async (req, res, next) => {
   try {
-
     let userCheck = await users.getUserById(req.body.email);
     if (userCheck.length === 0) {
       let password = require("crypto").randomBytes(4).toString("hex");

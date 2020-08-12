@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const AWS = require("aws-sdk");
-const config = require("../config.json");
-const printlog = require('../config/logColor')
+const config = require("../../config.json");
+const printlog = require('../../config/logColor')
 exports.sendEmailUser = async (email, password) => {
   try {
     printlog("Magenta", `Send mail to ${email}`)
