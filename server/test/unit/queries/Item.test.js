@@ -102,6 +102,4 @@ describe('/queries/Item', () => {
       expect(UPDATE_ITEM(item)).to.equal(expectedqueries);
     });
   })
-
-
 });
