@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 const { ASSIGN_ROLE, CHANGE_PASSWORD, CREATE_USER, GET_LOGIN, GET_PASSWORD,
-  GET_USER_BY_ID, GET_USER_DETAIL, USER_ROLE } = require('../../../Model/queries/User')
+  GET_USER_BY_ID, GET_USER_DETAIL, USER_ROLE } = require('../../Model/queries/User')
 
 describe('/queries/User', () => {
   describe('GET_USER_DETAIL', () => {

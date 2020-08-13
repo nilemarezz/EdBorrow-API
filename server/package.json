@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test:unit": "NODE_ENV=test mocha --timeout 10000 --exit test/unit/**/*.js",
-    "test:sit": "NODE_ENV=test mocha --timeout 10000 --exit test/connection/**/*.js",
+    "test:unit": "NODE_ENV=test mocha --timeout 10000 --exit test/unit/*.test.js",
+    "test:sit": "NODE_ENV=test mocha --timeout 10000 --exit test/connection/*.test.js",
     "testdev": "SET NODE_ENV=test&mocha --exit test ",
     "test:coverage" : "DEBUG=TRUE nyc --reporter=lcov mocha \"./{,!(node_modules)/**/}*.test.js\" --exit --timeout 120000"
   },

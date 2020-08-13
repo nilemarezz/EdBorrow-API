@@ -195,7 +195,7 @@ const temp = (value, url) => {
       .substring(
         4,
         16
-      )} to ${value.data[0].borrowDate
+      )} to ${value.data[0].returnDate
         .toString()
         .substring(4, 16)}
                                 </td>
