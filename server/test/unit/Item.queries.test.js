@@ -1,4 +1,4 @@
-const { ADD_ITEM, DELETE_ALL_ITEMS, GET_ALL_ITEM, GET_CATEGORY, GET_DEPARTMENT, GET_DEPARTMENT_BY_ID, GET_ITEM_BY_ID, GET_OWNER, UPDATE_ITEM } = require('../../../Model/queries/Item');
+const { ADD_ITEM, DELETE_ALL_ITEMS, GET_ALL_ITEM, GET_CATEGORY, GET_DEPARTMENT, GET_DEPARTMENT_BY_ID, GET_ITEM_BY_ID, GET_OWNER, UPDATE_ITEM } = require('../../Model/queries/Item');
 const { expect } = require('chai')
 const item = {
   itemBrand: "a",
