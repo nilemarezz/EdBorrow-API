@@ -1,11 +1,8 @@
 const BorrowItemModel = require("../Model/Item");
-const pool = require("../config/BorrowSystemDB");
 const upload = require("../Utilities/Upload/Upload");
 const printlog = require("../config/logColor");
 const borrowItem = new BorrowItemModel();
 const singleUpload = upload.single("image");
-const noneUpload = upload.none();
-const path = require("path");
 const { getUserRole } = require("./User");
 
 exports.getAllBorrowItems = async (req, res, next) => {

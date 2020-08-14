@@ -4,15 +4,16 @@ const requests = new RequestModel();
 const config = require("../config.json");
 const printlog = require("../config/logColor");
 const { getUserRole } = require("./User");
+const {CREATE_REQUEST, CHANGE_STATUS_APPROVE} = require("./RequestUrl");
 
 exports.postCreateRequest = async (req, res, next) => {
   try {
-    let borrowRequest = await requests.createRequest(req.body);
+    let borrowRequest = await requests.createRequest (req.body);
     let url;
-    if (config.NODE_ENV === "development") {
-      url = `http://localhost:3000/api/request/approve?requestId=${borrowRequest[0].requestId}&approver=advisor`;
+    if (config.NODE_ENV === 'development') {
+      CREATE_REQUEST(borrowRequest[0].requestId).ON_LOCAL;
     } else {
-      url = `http://edborrow.ga/api/request/approve?requestId=${borrowRequest[0].requestId}&approver=advisor`;
+      CREATE_REQUEST(borrowRequest[0].requestId).ON_SERVER;
     }
     // เขียนตรงนี้
 
@@ -23,8 +24,8 @@ exports.postCreateRequest = async (req, res, next) => {
     );
     printlog("Green", `Send request success - ${res.locals.authData.user[0].userId}`)
     res
-      .status(200)
-      .json({ result: "success", msg: "[Email] sent request success" });
+      .status (200)
+      .json ({result: 'success', msg: '[Email] sent request success'});
   } catch (err) {
     printlog("Red", `Send request Fail - ${res.locals.authData.user[0].userId}`)
     console.log(err)
@@ -50,8 +51,8 @@ exports.departmentChangeStatus = async (req, res, next) => {
     await requests.departmentChangeStatus(req.body);
     printlog('Green', `Change Status Success - ${res.locals.authData.user[0].userId}`)
     res
-      .status(200)
-      .json({ result: "success", msg: "Item Change Status Success" });
+      .status (200)
+      .json ({result: 'success', msg: 'Item Change Status Success'});
   } catch (err) {
     printlog('Red', `Change Status Fail - ${res.locals.authData.user[0].userId}`)
     console.log(err)
@@ -62,131 +63,152 @@ exports.departmentChangeStatus = async (req, res, next) => {
 exports.approveAllItem = async (req, res, next) => {
   try {
     let borrowRequest;
-    borrowRequest = await requests.getRequest(req.query.requestId);
+    borrowRequest = await requests.getRequest (req.query.requestId);
 
-    if (req.query.approver === "advisor") {
+    if (req.query.approver === 'advisor') {
       if (borrowRequest[0].requestApprove !== 2) {
-        printlog("Yellow", "Advisor Already Action this report");
-        res.redirect("https://edborrow.netlify.com/#/approve/type/already");
+        printlog ('Yellow', 'Advisor Already Action this report');
+        res.redirect ('https://edborrow.netlify.com/#/approve/type/already');
       } else {
-        if (req.query.status === "TRUE") {
-          approvedRequest = await requests.advisorAllApprove(req.query);
+        if (req.query.status === 'TRUE') {
+          approvedRequest = await requests.advisorAllApprove (req.query);
 
-          printlog("Green", "Advisor Approve the request");
+          printlog ('Green', 'Advisor Approve the request');
+
           let itemInfra = [];
           let itemSRM = [];
           let itemLAB = [];
 
           if (approvedRequest[0].requestApprove === 1) {
             for (let i = 0; i < approvedRequest.length; i++) {
-              if (approvedRequest[i].departmentName === "SRM") {
-                itemSRM.push(approvedRequest[i]);
+              if (approvedRequest[i].departmentName === 'SRM') {
+                itemSRM.push (approvedRequest[i]);
               } else if (
-                approvedRequest[i].departmentName === "IT Infrastructure"
+                approvedRequest[i].departmentName === 'IT Infrastructure'
               ) {
-                itemInfra.push(approvedRequest[i]);
-              } else if (approvedRequest[i].departmentName === "LAB") {
-                itemLAB.push(approvedRequest[i]);
+                itemInfra.push (approvedRequest[i]);
+              } else if (approvedRequest[i].departmentName === 'LAB') {
+                itemLAB.push (approvedRequest[i]);
               }
             }
 
             if (itemInfra.length > 0) {
               let url;
-              if (config.NODE_ENV === "development") {
-                url = `http://localhost:3000/api/request/approve/?requestId=${itemInfra[0].requestId}&approver=department&departmentId=${itemInfra[0].departmentId}`;
+              if (config.NODE_ENV === 'development') {
+                CHANGE_STATUS_APPROVE(itemInfra[0]).ITEM_APPROVE_ON_LOCAL;
               } else {
-                url = `http://edborrow.ga/api/request/approve/?requestId=${itemInfra[0].requestId}&approver=department&departmentId=${itemInfra[0].departmentId}`;
+                CHANGE_STATUS_APPROVE(itemInfra[0]).ITEM_APPROVE_ON_SERVER;
               }
-              await sendEmailRequest(
-                { data: itemInfra },
+              await sendEmailRequest (
+                {data: itemInfra},
                 itemInfra[0].departmentEmail,
                 url
               );
             }
             if (itemSRM.length > 0) {
               let url;
-              if (config.NODE_ENV === "development") {
-                url = `http://localhost:3000/api/request/approve/?requestId=${itemSRM[0].requestId}&approver=department&departmentId=${itemSRM[0].departmentId}`;
+              if (config.NODE_ENV === 'development') {
+                CHANGE_STATUS_APPROVE(itemSRM[0]).ITEM_APPROVE_ON_LOCAL;
               } else {
-                url = `http://edborrow.ga/api/request/approve/?requestId=${itemSRM[0].requestId}&approver=department&departmentId=${itemSRM[0].departmentId}`;
+                CHANGE_STATUS_APPROVE(itemSRM[0]).ITEM_APPROVE_ON_SERVER;
               }
-              await sendEmailRequest(
-                { data: itemSRM },
+              await sendEmailRequest (
+                {data: itemSRM},
                 itemSRM[0].departmentEmail,
                 url
               );
             }
             if (itemLAB.length > 0) {
               let url;
-              if (config.NODE_ENV === "development") {
-                url = `http://localhost:3000/api/request/approve/?requestId=${itemLAB[0].requestId}&approver=department&departmentId=${itemLAB[0].departmentId}`;
+              if (config.NODE_ENV === 'development') {
+                CHANGE_STATUS_APPROVE(itemLAB[0]).ITEM_APPROVE_ON_LOCAL;
               } else {
-                url = `http://edborrow.ga/api/request/approve/?requestId=${itemLAB[0].requestId}&approver=department&departmentId=${itemLAB[0].departmentId}`;
+                CHANGE_STATUS_APPROVE(itemLAB[0]).ITEM_APPROVE_ON_SERVER;
               }
-              await sendEmailRequest(
-                { data: itemLAB },
+              await sendEmailRequest (
+                {data: itemLAB},
                 itemLAB[0].departmentEmail,
                 url
               );
             }
 
-            printlog("Green", "Success sending email to the department");
-            res.redirect("https://edborrow.netlify.com/#/approve/type/success");
+            printlog ('Green', 'Success sending email to the department');
+            res.redirect (
+              'https://edborrow.netlify.com/#/approve/type/success'
+            );
           }
         } else {
 
           approvedRequest = await requests.advisorAllApprove(req.query);
           rejectAdvisorApproveItem = await requests.rejectAllRequest(
             req.query,
-            (type = "advisor")
+            (type = 'advisor')
           );
-          printlog("Yellow", "Advisor Reject the request");
-          res.redirect(
+          printlog ('Yellow', 'Advisor Reject the request');
+          res.redirect (
             `https://edborrow.netlify.com/#/approve/type/fail?requestId=${req.query.requestId}`
           );
         }
       }
     } else {
-      if (req.query.status === "TRUE") {
-        approvedRequest = await requests.departmentAllApprove(req.query);
+      if (req.query.status === 'TRUE') {
+        approvedRequest = await requests.departmentAllApprove (req.query);
 
-        printlog("Green", "Department Approve the request");
-        res.redirect("https://edborrow.netlify.com/#/approve/type/success");
+        printlog ('Green', 'Department Approve the request');
+        res.redirect ('https://edborrow.netlify.com/#/approve/type/success');
       } else {
-        approvedRequest = await requests.departmentAllApprove(req.query);
-        rejectApproveItem = await requests.rejectAllRequest(
+        approvedRequest = await requests.departmentAllApprove (req.query);
+        rejectApproveItem = await requests.rejectAllRequest (
           req.query,
-          (type = "department")
+          (type = 'department')
         );
-        printlog("Yellow", "Department Reject the request");
+        printlog ('Yellow', 'Department Reject the request');
 
-        res.redirect("https://edborrow.netlify.com/#/approve/type/fail");
+        res.redirect ('https://edborrow.netlify.com/#/approve/type/fail');
       }
     }
   } catch (err) {
-    printlog("Red", err);
-    next(err);
+    printlog ('Red', err);
+    next (err);
   }
 };
 
+exports.checkLateItem = async () => {
+  const todayDate = await new Date();
+  const request = await requests.getAllRequestItem();
+  printlog("Yellow", "Check late...");
+  
+  for (let i = 0; i < requests.length; i++) {
+    if (request[i].returnDate < todayDate) {
+      printlog("Yellow", `Late: ${request[i].requestId}`);
+
+      requests.departmentChangeStatus({
+        itemBorrowingStatusId: 3,
+        requestId: request[i].requestId,
+        itemId: request[i].itemId
+      });
+    }
+  }
+}
+
 exports.getRequestList = async (req, res, next) => {
   try {
-    let requestList = await requests.getRequestList(
+    let requestList = await requests.getRequestList (
       res.locals.authData.user[0].userId
     );
-    res.status(200).json({ result: "success", data: requestList });
+    res.status (200).json ({result: 'success', data: requestList});
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ result: "false", msg: err });
+    console.log (err);
+    res.status (500).json ({result: 'false', msg: err});
   }
 };
 
 exports.getRequestItem = async (req, res, next) => {
   try {
-    let requestItem = await requests.getRequestItem(req.params.requestId);
-    res.status(200).json({ result: "success", data: requestItem });
+    let requestItem = await requests.getRequestItem (req.params.requestId);
+    res.status (200).json ({result: 'success', data: requestItem});
   } catch (err) {
-    res.status(500).json({ result: "false", msg: err });
+    res.status (500).json ({result: 'false', msg: err});
   }
 };
 
@@ -194,30 +216,30 @@ exports.getRequestItemAdmin = async (req, res, next) => {
   try {
     let data = [];
 
-    let role = await getUserRole(res.locals.authData.user[0].userId);
+    let role = await getUserRole (res.locals.authData.user[0].userId);
 
-    let itemonUser = await requests.getRequestItemAdmin(
+    let itemonUser = await requests.getRequestItemAdmin (
       res.locals.authData.user[0].userId,
-      "user"
+      'user'
     );
     data = [...data, ...itemonUser];
-    let itemonDepartment = await requests.getRequestItemAdmin(
+    let itemonDepartment = await requests.getRequestItemAdmin (
       role[0],
-      "department"
+      'department'
     );
 
     data = [...data, ...itemonDepartment];
 
     res.status(200).json({ result: "success", data: data });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ result: "false", msg: err });
+    console.log (err);
+    res.status (500).json ({result: 'false', msg: err});
   }
 };
 
 exports.rejectPurpose = async (req, res, next) => {
   try {
-    let itemonUser = await requests.rejectPurpose(
+    let itemonUser = await requests.rejectPurpose (
       req.body.requestId,
       req.body.text,
       req.body.itemId,
@@ -226,7 +248,7 @@ exports.rejectPurpose = async (req, res, next) => {
     printlog('Yellow', "Add reject Purpose")
     res.status(200).json({ result: "success" });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ result: "false", msg: err });
+    console.log (err);
+    res.status (500).json ({result: 'false', msg: err});
   }
 };
