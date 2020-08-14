@@ -5,9 +5,9 @@ const { ASSIGN_ROLE, CHANGE_PASSWORD, CREATE_USER, GET_LOGIN, GET_PASSWORD,
 describe('/queries/User', () => {
   describe('GET_USER_DETAIL', () => {
     it('should return the string same as expected queries', () => {
-      const expectedqueries = `SELECT u.* , CONCAT(a.firstName , " " , a.lastName) as advisorName
+      const expectedqueries = `SELECT u.userId ,u.firstName ,u.lastName ,u.email , CONCAT(a.firstName , " " , a.lastName) as advisorName
   FROM Users u left join Users a on a.userId = u.studentAdvisor
-  WHERE u.userId = '1';`
+  WHERE u.userId = '1'`
       expect(GET_USER_DETAIL(1)).to.equal(expectedqueries)
     })
   })
