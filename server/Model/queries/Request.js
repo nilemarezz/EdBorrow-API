@@ -7,13 +7,13 @@ const GET_REQUEST_LIST = (userId) => {
 const GET_REQUEST_DETAIL = (requestId, userId) => {
   return `SELECT br.requestId , br.userId ,CONCAT(u.firstName , " " , u.lastName ) AS Name, 
   u.email , u.userTelNo , u.studentAdvisor ,br.transactionDate , br.borrowPurpose, br.rejectPurpose  
-  FROM BorrowRequest br join Users u on u.userId = br.userId WHERE br.requestId  = "317" AND br.userId = "nilenon@gmail.com";
+  FROM BorrowRequest br join Users u on u.userId = br.userId WHERE br.requestId  = "${requestId}" AND br.userId = "${userId}";
   `
 }
 const GET_REQUEST_ITEMS = (requestId) => {
   return `
   SELECT ri.itemId  , i.itemName , i.itemImage ,ri.itemApprove ,ri.itemBorrowingStatusId ,ri.rejectPurpose , ri.borrowDate  , ri.returnDate 
-  FROM RequestItem ri join Items i on i.itemId = ri.itemId WHERE requestId  = "317";
+  FROM RequestItem ri join Items i on i.itemId = ri.itemId WHERE requestId  = "${requestId}";
   `
 }
 const GET_REQUEST_ADMIN = (id, type) => {
