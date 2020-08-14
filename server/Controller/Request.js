@@ -174,6 +174,7 @@ exports.getRequestList = async (req, res, next) => {
     let requestList = await requests.getRequestList(
       res.locals.authData.user[0].userId
     );
+
     res.status(200).json({ result: "success", data: requestList });
   } catch (err) {
     console.log(err);
@@ -183,8 +184,13 @@ exports.getRequestList = async (req, res, next) => {
 
 exports.getRequestItem = async (req, res, next) => {
   try {
-    let requestItem = await requests.getRequestItem(req.params.requestId);
-    res.status(200).json({ result: "success", data: requestItem });
+    let requestDetail = await requests.getRequestDetail(req.params.requestId, res.locals.authData.user[0].userId);
+    let requestItem = await requests.getRequestItem(req.params.requestId)
+    let ResData = {
+      requestDetail: { ...requestDetail[0], borrowDate: requestItem[0].borrowDate, returnDate: requestItem[0].returnDate },
+      requestItem: requestItem
+    }
+    res.status(200).json({ result: "success", data: ResData });
   } catch (err) {
     res.status(500).json({ result: "false", msg: err });
   }
