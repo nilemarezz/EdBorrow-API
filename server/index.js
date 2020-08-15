@@ -10,6 +10,8 @@ const port = 3000;
 const configDB = require("./config.json");
 var multer = require("multer");
 var upload = multer();
+const cron = require("node-cron");
+const {checkLateItem} = require("./Controller/Request");
 
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :date'));
@@ -27,7 +29,10 @@ app.use("/api/items", BorrowitemRoute);
 app.use("/api/users", userRoute);
 app.use("/api/request", requestRoute);
 
-
+// Check item late by cron-job (every 1.00 AM)
+cron.schedule("0 1 * * *", () => {
+  checkLateItem();
+})
 
 
 if (process.env.NODE_ENV !== "test") {
