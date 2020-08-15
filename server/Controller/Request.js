@@ -1,62 +1,80 @@
-const RequestModel = require("../Model/Request");
-const { sendEmailRequest } = require("../Utilities/EmailService/SendEmail");
-const requests = new RequestModel();
-const config = require("../config.json");
-const printlog = require("../config/logColor");
-const { getUserRole } = require("./User");
-const {CREATE_REQUEST, CHANGE_STATUS_APPROVE} = require("./RequestUrl");
+const RequestModel = require ('../Model/Request');
+const {sendEmailRequest} = require ('../Utilities/EmailService/SendEmail');
+const requests = new RequestModel ();
+const config = require ('../config.json');
+const printlog = require ('../config/logColor');
+const {getUserRole} = require ('./User');
+const {
+  CREATE_REQUEST,
+  CHANGE_STATUS_APPROVE,
+  REDIRECT_APPROVE_URL,
+} = require ('./RequestUrl');
 
 exports.postCreateRequest = async (req, res, next) => {
   try {
     let borrowRequest = await requests.createRequest (req.body);
     let url;
-    if (config.NODE_ENV === 'development') {
-      CREATE_REQUEST(borrowRequest[0].requestId).ON_LOCAL;
-    } else {
-      CREATE_REQUEST(borrowRequest[0].requestId).ON_SERVER;
-    }
+    url = CREATE_REQUEST (borrowRequest[0].requestId);
     // เขียนตรงนี้
 
-    await sendEmailRequest(
-      { data: borrowRequest },
+    await sendEmailRequest (
+      {data: borrowRequest},
       borrowRequest[0].advisorEmail,
       url
     );
-    printlog("Green", `Send request success - ${res.locals.authData.user[0].userId}`)
+    printlog (
+      'Green',
+      `Send request success - ${res.locals.authData.user[0].userId}`
+    );
     res
       .status (200)
       .json ({result: 'success', msg: '[Email] sent request success'});
   } catch (err) {
-    printlog("Red", `Send request Fail - ${res.locals.authData.user[0].userId}`)
-    console.log(err)
-    res.status(500).json({ result: "false", msg: err });
-    next(err);
+    printlog (
+      'Red',
+      `Send request Fail - ${res.locals.authData.user[0].userId}`
+    );
+    console.log (err);
+    res.status (500).json ({result: 'false', msg: err});
+    next (err);
   }
 };
 
 exports.departmentApproveEachItem = async (req, res, next) => {
   try {
-    await requests.departmentApproveEachItem(req.body);
-    printlog("Green", `Approve Item success - ${res.locals.authData.user[0].userId}`)
-    res.status(200).json({ result: "success", msg: "Item Approve Success" });
+    await requests.departmentApproveEachItem (req.body);
+    printlog (
+      'Green',
+      `Approve Item success - ${res.locals.authData.user[0].userId}`
+    );
+    res.status (200).json ({result: 'success', msg: 'Item Approve Success'});
   } catch (err) {
-    printlog("Red", `Approve request Fail - ${res.locals.authData.user[0].userId}`)
-    console.log(err)
-    res.status(500).json({ result: "false", msg: err });
+    printlog (
+      'Red',
+      `Approve request Fail - ${res.locals.authData.user[0].userId}`
+    );
+    console.log (err);
+    res.status (500).json ({result: 'false', msg: err});
   }
 };
 
 exports.departmentChangeStatus = async (req, res, next) => {
   try {
-    await requests.departmentChangeStatus(req.body);
-    printlog('Green', `Change Status Success - ${res.locals.authData.user[0].userId}`)
+    await requests.departmentChangeStatus (req.body);
+    printlog (
+      'Green',
+      `Change Status Success - ${res.locals.authData.user[0].userId}`
+    );
     res
       .status (200)
       .json ({result: 'success', msg: 'Item Change Status Success'});
   } catch (err) {
-    printlog('Red', `Change Status Fail - ${res.locals.authData.user[0].userId}`)
-    console.log(err)
-    res.status(500).json({ result: "false", msg: err });
+    printlog (
+      'Red',
+      `Change Status Fail - ${res.locals.authData.user[0].userId}`
+    );
+    console.log (err);
+    res.status (500).json ({result: 'false', msg: err});
   }
 };
 
@@ -94,11 +112,7 @@ exports.approveAllItem = async (req, res, next) => {
 
             if (itemInfra.length > 0) {
               let url;
-              if (config.NODE_ENV === 'development') {
-                CHANGE_STATUS_APPROVE(itemInfra[0]).ITEM_APPROVE_ON_LOCAL;
-              } else {
-                CHANGE_STATUS_APPROVE(itemInfra[0]).ITEM_APPROVE_ON_SERVER;
-              }
+              url = CHANGE_STATUS_APPROVE (itemInfra[0]);
               await sendEmailRequest (
                 {data: itemInfra},
                 itemInfra[0].departmentEmail,
@@ -107,11 +121,7 @@ exports.approveAllItem = async (req, res, next) => {
             }
             if (itemSRM.length > 0) {
               let url;
-              if (config.NODE_ENV === 'development') {
-                CHANGE_STATUS_APPROVE(itemSRM[0]).ITEM_APPROVE_ON_LOCAL;
-              } else {
-                CHANGE_STATUS_APPROVE(itemSRM[0]).ITEM_APPROVE_ON_SERVER;
-              }
+              url = CHANGE_STATUS_APPROVE (itemSRM[0]);
               await sendEmailRequest (
                 {data: itemSRM},
                 itemSRM[0].departmentEmail,
@@ -120,11 +130,7 @@ exports.approveAllItem = async (req, res, next) => {
             }
             if (itemLAB.length > 0) {
               let url;
-              if (config.NODE_ENV === 'development') {
-                CHANGE_STATUS_APPROVE(itemLAB[0]).ITEM_APPROVE_ON_LOCAL;
-              } else {
-                CHANGE_STATUS_APPROVE(itemLAB[0]).ITEM_APPROVE_ON_SERVER;
-              }
+              url = url = CHANGE_STATUS_APPROVE (itemLAB[0]);
               await sendEmailRequest (
                 {data: itemLAB},
                 itemLAB[0].departmentEmail,
@@ -138,9 +144,8 @@ exports.approveAllItem = async (req, res, next) => {
             );
           }
         } else {
-
-          approvedRequest = await requests.advisorAllApprove(req.query);
-          rejectAdvisorApproveItem = await requests.rejectAllRequest(
+          approvedRequest = await requests.advisorAllApprove (req.query);
+          rejectAdvisorApproveItem = await requests.rejectAllRequest (
             req.query,
             (type = 'advisor')
           );
@@ -174,22 +179,22 @@ exports.approveAllItem = async (req, res, next) => {
 };
 
 exports.checkLateItem = async () => {
-  const todayDate = await new Date();
-  const request = await requests.getAllRequestItem();
-  printlog("Yellow", "Check late...");
-  
+  const todayDate = await new Date ();
+  const request = await requests.getAllRequestItem ();
+  printlog ('Yellow', 'Check late...');
+
   for (let i = 0; i < requests.length; i++) {
     if (request[i].returnDate < todayDate) {
-      printlog("Yellow", `Late: ${request[i].requestId}`);
+      printlog ('Yellow', `Late: ${request[i].requestId}`);
 
-      requests.departmentChangeStatus({
+      requests.departmentChangeStatus ({
         itemBorrowingStatusId: 3,
         requestId: request[i].requestId,
-        itemId: request[i].itemId
+        itemId: request[i].itemId,
       });
     }
   }
-}
+};
 
 exports.getRequestList = async (req, res, next) => {
   try {
@@ -230,7 +235,7 @@ exports.getRequestItemAdmin = async (req, res, next) => {
 
     data = [...data, ...itemonDepartment];
 
-    res.status(200).json({ result: "success", data: data });
+    res.status (200).json ({result: 'success', data: data});
   } catch (err) {
     console.log (err);
     res.status (500).json ({result: 'false', msg: err});
@@ -245,8 +250,8 @@ exports.rejectPurpose = async (req, res, next) => {
       req.body.itemId,
       req.body.type
     );
-    printlog('Yellow', "Add reject Purpose")
-    res.status(200).json({ result: "success" });
+    printlog ('Yellow', 'Add reject Purpose');
+    res.status (200).json ({result: 'success'});
   } catch (err) {
     console.log (err);
     res.status (500).json ({result: 'false', msg: err});
