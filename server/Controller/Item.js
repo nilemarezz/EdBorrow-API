@@ -1,38 +1,38 @@
-const BorrowItemModel = require("../Model/Item");
-const upload = require("../Utilities/Upload/Upload");
-const printlog = require("../config/logColor");
+const BorrowItemModel = require('../Model/Item');
+const upload = require('../Utilities/Upload/Upload');
+const printlog = require('../config/logColor');
 const borrowItem = new BorrowItemModel();
-const singleUpload = upload.single("image");
-const { getUserRole } = require("./User");
+const singleUpload = upload.single('image');
+const { getUserRole } = require('./User');
 
 exports.getAllBorrowItems = async (req, res, next) => {
   try {
     let getborrowItems = await borrowItem.getAllItem();
-    res.status(200).json({ result: "success", data: getborrowItems });
+    res.status(200).json({ result: 'success', data: getborrowItems });
   } catch (err) {
-    res.status(500).json({ result: "false", msg: err });
+    res.status(500).json({ result: 'false', msg: err });
   }
 };
 
 exports.getSearchBorrowItems = async (req, res, next) => {
   try {
     let getborrowItems = await borrowItem.searchItem(req.query);
-    res.status(200).json({ result: "success", data: getborrowItems });
+    res.status(200).json({ result: 'success', data: getborrowItems });
   } catch (err) {
-    res.status(500).json({ result: "false", msg: err });
+    res.status(500).json({ result: 'false', msg: err });
   }
 };
 
 exports.getBorrowItemById = async (req, res, next) => {
   try {
     let borrowItemById;
-    console.log(req.params.id)
+    console.log(req.params.id);
     borrowItemById = await borrowItem.getItemById(req.params.id);
-    console.log(borrowItemById)
-    res.status(200).json({ result: "success", data: borrowItemById });
+    console.log(borrowItemById);
+    res.status(200).json({ result: 'success', data: borrowItemById });
   } catch (err) {
-    console.log(err)
-    res.status(500).json({ result: "false", msg: err });
+    console.log(err);
+    res.status(500).json({ result: 'false', msg: err });
   }
 };
 
@@ -40,17 +40,17 @@ exports.getCategoryNameOrDepartmentName = async (req, res, next) => {
   try {
     let borrowItems;
 
-    if (req.body.command === "Category") {
+    if (req.body.command === 'Category') {
       borrowItems = await borrowItem.getCategory();
-    } else if (req.body.command === "Department") {
+    } else if (req.body.command === 'Department') {
       borrowItems = await borrowItem.getDepartment();
-    } else if (req.body.command === "OwnerItem") {
+    } else if (req.body.command === 'OwnerItem') {
       borrowItems = await borrowItem.getOwner();
     }
 
-    res.status(200).json({ result: "success", data: borrowItems });
+    res.status(200).json({ result: 'success', data: borrowItems });
   } catch (err) {
-    res.status(500).json({ result: "false", msg: err });
+    res.status(500).json({ result: 'false', msg: err });
   }
 };
 
@@ -72,16 +72,16 @@ exports.addItem = async (req, res, next) => {
         userId: res.locals.authData.user[0].userId,
       };
       printlog(
-        "Green",
+        'Green',
         `Add item success : ${addItem.insertId} - ${res.locals.authData.user[0].userId}`
       );
       let addItem = await borrowItem.addItem(data);
 
-      res.status(500).json({ result: "success", msg: "Add Item Success" });
+      res.status(500).json({ result: 'success', msg: 'Add Item Success' });
     });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ result: "false", msg: err });
+    res.status(500).json({ result: 'false', msg: err });
   }
 };
 
@@ -91,19 +91,19 @@ exports.getItemByDepartment = async (req, res, next) => {
     let role = await getUserRole(res.locals.authData.user[0].userId);
     let itemByRole = await borrowItem.getItemByDepartment(
       role[0],
-      "department"
+      'department'
     );
     data = [...data, ...itemByRole];
     let itemByUser = await borrowItem.getItemByDepartment(
       res.locals.authData.user[0].userId,
-      "user"
+      'user'
     );
     data = [...data, ...itemByUser];
 
-    res.status(500).json({ result: "success", data: data });
+    res.status(500).json({ result: 'success', data: data });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ result: "false", msg: err });
+    res.status(500).json({ result: 'false', msg: err });
   }
 };
 
@@ -126,15 +126,15 @@ exports.updateItem = async (req, res, next) => {
       let editItem = await borrowItem.updateItem(data);
 
       printlog(
-        "Green",
+        'Green',
         `Update item success : ${data.itemId} - ${res.locals.authData.user[0].userId}`
       );
-      res.status(500).json({ result: "success", msg: "Edit Item Success" });
+      res.status(500).json({ result: 'success', msg: 'Edit Item Success' });
     });
 
     // let editItem = await borrowItem.updateItem(req.body);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ result: "false", msg: err });
+    res.status(500).json({ result: 'false', msg: err });
   }
 };
