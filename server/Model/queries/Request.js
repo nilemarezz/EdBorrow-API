@@ -1,16 +1,19 @@
 const GET_REQUEST = (requestId) => {
   return `SELECT * FROM BorrowRequest WHERE requestId = ${requestId}`
 }
-const GET_REQUEST_ITEM = (requestId) => {
-  return `SELECT ri.* , i.* 
-  FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
-  join Items i on ri.itemId = i.itemId 
-  WHERE br.requestId = ${requestId};`
-}
 const GET_REQUEST_LIST = (userId) => {
-  return `SELECT br.*, u.firstName , u.*
-  FROM BorrowRequest br left join Users u on br.userId = u.userId
-  WHERE br.userId = '${userId}';
+  return `SELECT br.requestId , br.transactionDate , br.requestApprove FROM BorrowRequest br WHERE userId  = "${userId}";`
+}
+const GET_REQUEST_DETAIL = (requestId, userId) => {
+  return `SELECT br.requestId , br.userId ,CONCAT(u.firstName , " " , u.lastName ) AS Name, 
+  u.email , u.userTelNo , u.studentAdvisor ,br.transactionDate , br.borrowPurpose, br.rejectPurpose  
+  FROM BorrowRequest br join Users u on u.userId = br.userId WHERE br.requestId  = "${requestId}" AND br.userId = "${userId}";
+  `
+}
+const GET_REQUEST_ITEMS = (requestId) => {
+  return `
+  SELECT ri.itemId  , i.itemName , i.itemImage ,ri.itemApprove ,ri.itemBorrowingStatusId ,ri.rejectPurpose , ri.borrowDate  , ri.returnDate 
+  FROM RequestItem ri join Items i on i.itemId = ri.itemId WHERE requestId  = "${requestId}";
   `
 }
 const GET_REQUEST_ADMIN = (id, type) => {
@@ -111,7 +114,7 @@ const SET_REJECT_PURPOSE = (id, text, itemId) => {
   }
 }
 module.exports = {
-  DEPARTMENT_APPROVE_EACH_ITEM, DEPARTMENT_CHANGE_STATUS, CREATE_REQUEST, GET_REQUEST, GET_REQUEST_ITEM,
+  DEPARTMENT_APPROVE_EACH_ITEM, DEPARTMENT_CHANGE_STATUS, CREATE_REQUEST, GET_REQUEST, GET_REQUEST_DETAIL,
   GET_REQUEST_LIST, ADVISOR_CHANGE_REQUEST_STATUS, DEPARTMENT_CHANGE_REQUEST_STATUS,
-  REJECT_ALL_REQUEST, GET_REQUEST_ADMIN, SET_REJECT_PURPOSE
+  REJECT_ALL_REQUEST, GET_REQUEST_ADMIN, SET_REJECT_PURPOSE, GET_REQUEST_ITEMS
 }

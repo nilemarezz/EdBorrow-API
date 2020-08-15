@@ -1,5 +1,5 @@
 const { ADVISOR_CHANGE_REQUEST_STATUS, CREATE_REQUEST, DEPARTMENT_APPROVE_EACH_ITEM, DEPARTMENT_CHANGE_REQUEST_STATUS
-  , DEPARTMENT_CHANGE_STATUS, GET_REQUEST, GET_REQUEST_ADMIN, GET_REQUEST_ITEM, GET_REQUEST_LIST, REJECT_ALL_REQUEST,
+  , DEPARTMENT_CHANGE_STATUS, GET_REQUEST, GET_REQUEST_ADMIN, GET_REQUEST_ITEMS, GET_REQUEST_LIST, REJECT_ALL_REQUEST,
   SET_REJECT_PURPOSE } = require('../../Model/queries/Request')
 const { expect } = require('chai')
 
@@ -156,21 +156,18 @@ describe('/queries/Request', () => {
       expect(GET_REQUEST_ADMIN(id, type)).to.equal(expectedqueries)
     })
   })
-  describe('GET_REQUEST_ITEM', () => {
+  describe('GET_REQUEST_ITES', () => {
     it('should return the string same as expected queries', () => {
-      const expectedqueries = `SELECT ri.* , i.* 
-  FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
-  join Items i on ri.itemId = i.itemId 
-  WHERE br.requestId = 1;`
-      expect(GET_REQUEST_ITEM(1)).to.equal(expectedqueries)
+      const expectedqueries = `
+  SELECT ri.itemId  , i.itemName , i.itemImage ,ri.itemApprove ,ri.itemBorrowingStatusId ,ri.rejectPurpose , ri.borrowDate  , ri.returnDate 
+  FROM RequestItem ri join Items i on i.itemId = ri.itemId WHERE requestId  = "1";
+  `
+      expect(GET_REQUEST_ITEMS(1)).to.equal(expectedqueries)
     })
   })
   describe('GET_REQUEST_LIST', () => {
     it('should return the string same as expected queries', () => {
-      const expectedqueries = `SELECT br.*, u.firstName , u.*
-  FROM BorrowRequest br left join Users u on br.userId = u.userId
-  WHERE br.userId = '1';
-  `
+      const expectedqueries = `SELECT br.requestId , br.transactionDate , br.requestApprove FROM BorrowRequest br WHERE userId  = "1";`
       expect(GET_REQUEST_LIST(1)).to.equal(expectedqueries)
     })
   })

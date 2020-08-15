@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getUserDetail, userLogin, getUserRole, userRegister, ChangePassword } = require("../Controller/User")
+const { getUserDetail, userLogin, getUserRole, userRegister, ChangePassword, GetAdvisorList } = require("../Controller/User")
 const verifyToken = require('../middleware/verify')
 const validUser = require('../middleware/validUser')
 const config = require('../config.json')
@@ -19,6 +19,9 @@ router
 router
   .route("/register")
   .post(userRegister)
+router
+  .route("/list/advisor")
+  .get(verifyToken, validUser, GetAdvisorList)
 
 router.post("/createAdvisor", async (req, res) => {
   var cipherPassword = CryptoJS.AES.encrypt(

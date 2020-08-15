@@ -1,8 +1,8 @@
 const pool = require("../config/BorrowSystemDB");
 const { DEPARTMENT_APPROVE_EACH_ITEM, DEPARTMENT_CHANGE_STATUS, CREATE_REQUEST
   , GET_REQUEST, GET_REQUEST_LIST,
-  GET_REQUEST_ITEM, ADVISOR_CHANGE_REQUEST_STATUS, DEPARTMENT_CHANGE_REQUEST_STATUS, REJECT_ALL_REQUEST
-  , GET_REQUEST_ADMIN, SET_REJECT_PURPOSE } = require("./queries/Request")
+  GET_REQUEST_DETAIL, ADVISOR_CHANGE_REQUEST_STATUS, DEPARTMENT_CHANGE_REQUEST_STATUS, REJECT_ALL_REQUEST
+  , GET_REQUEST_ADMIN, SET_REJECT_PURPOSE, GET_REQUEST_ITEMS } = require("./queries/Request")
 class ItemRequest {
   constructor() {
     this.request;
@@ -20,7 +20,7 @@ class ItemRequest {
   async createRequest(body) {
     if (body.personalInformation) {
       this.request = await pool.query(
-        CREATE_REQUEST().INSERT_ITEMREQUEST_TO_DB(body)
+        CREATE_REQUEST().INSERT_BORROWREQUEST_TO_DB(body)
       );
       let lastInsertId = this.request.insertId;
       if (body.items) {
@@ -42,8 +42,12 @@ class ItemRequest {
     this.request = await pool.query(GET_REQUEST(requestId));
     return this.request;
   }
+  async getRequestDetail(requestId, userId) {
+    this.request = await pool.query(GET_REQUEST_DETAIL(requestId, userId));
+    return this.request;
+  }
   async getRequestItem(requestId) {
-    this.request = await pool.query(GET_REQUEST_ITEM(requestId));
+    this.request = await pool.query(GET_REQUEST_ITEMS(requestId));
     return this.request;
   }
 
