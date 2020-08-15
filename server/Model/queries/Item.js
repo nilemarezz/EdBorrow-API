@@ -42,7 +42,7 @@ const ADD_ITEM = (value) => {
 }
 const GET_DEPARTMENT_BY_ID = (id, type) => {
   return `
-  SELECT i.* , d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage 
+  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage 
   FROM Items i left join ItemDepartment d on i.departmentId = d.departmentId 
   join ItemCategory c on i.categoryId = c.categoryId 
   where ${type === "department" ? "i.departmentId" : "i.userId"} = "${id}" ORDER BY i.itemName asc
