@@ -2,9 +2,9 @@ const GET_LOGIN = (userId) => {
   return `SELECT userId,firstName,password FROM Users WHERE userId = '${userId}';`
 }
 const GET_USER_DETAIL = (id) => {
-  return `SELECT u.* , CONCAT(a.firstName , " " , a.lastName) as advisorName
+  return `SELECT u.userId ,u.firstName ,u.lastName ,u.email , CONCAT(a.firstName , " " , a.lastName) as advisorName
   FROM Users u left join Users a on a.userId = u.studentAdvisor
-  WHERE u.userId = '${id}';`
+  WHERE u.userId = '${id}'`
 }
 const GET_USER_BY_ID = (userId) => {
   return `SELECT *
@@ -29,5 +29,8 @@ const GET_PASSWORD = (id) => {
 const CHANGE_PASSWORD = (id, password) => {
   return `UPDATE Users SET password = '${password}' WHERE userId = '${id}'`
 }
+const GET_ADVISOR_LIST = () => {
+  return `SELECT u.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.email FROM Users u JOIN UserRole ur ON u.userId = ur.userId WHERE ur.roleId = 20`
+}
 
-module.exports = { GET_LOGIN, GET_USER_DETAIL, GET_USER_BY_ID, CREATE_USER, USER_ROLE, ASSIGN_ROLE, GET_PASSWORD, CHANGE_PASSWORD }
+module.exports = { GET_LOGIN, GET_USER_DETAIL, GET_USER_BY_ID, CREATE_USER, USER_ROLE, ASSIGN_ROLE, GET_PASSWORD, CHANGE_PASSWORD, GET_ADVISOR_LIST }

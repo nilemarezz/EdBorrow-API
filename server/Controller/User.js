@@ -145,3 +145,12 @@ exports.ChangePassword = async (req, res, next) => {
     res.status(500).json({ result: "false", msg: err });
   }
 };
+
+exports.GetAdvisorList = async (req, res, next) => {
+  try {
+    const advisorList = await users.getAdvisorList()
+    res.status(200).json({ result: "success", data: advisorList });
+  } catch (err) {
+    res.status(500).json({ result: "false", msg: err });
+  }
+}
