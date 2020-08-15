@@ -29,7 +29,6 @@ exports.postCreateRequest = async (req, res, next) => {
     res.status(500).json({ result: "false", msg: err });
     next(err);
   }
-
 };
 
 exports.departmentApproveEachItem = async (req, res, next) => {

@@ -43,7 +43,6 @@ class Users {
     this.users = await pool.query(CHANGE_PASSWORD(id, password));
     return this.users;
   }
-
 }
 
 module.exports = Users;
