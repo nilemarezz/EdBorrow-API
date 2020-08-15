@@ -1,6 +1,6 @@
 const pool = require("../config/BorrowSystemDB");
 const { ASSIGN_ROLE, CHANGE_PASSWORD, CREATE_USER,
-  GET_LOGIN, GET_PASSWORD, GET_USER_BY_ID, GET_USER_DETAIL, USER_ROLE } = require("./queries/User")
+  GET_LOGIN, GET_PASSWORD, GET_USER_BY_ID, GET_USER_DETAIL, USER_ROLE, GET_ADVISOR_LIST } = require("./queries/User")
 class Users {
   constructor() {
     this.users;
@@ -14,6 +14,10 @@ class Users {
   }
   async getUserDetails(id) {
     this.users = await pool.query(GET_USER_DETAIL(id));
+    return this.users;
+  }
+  async getAdvisorList() {
+    this.users = await pool.query(GET_ADVISOR_LIST());
     return this.users;
   }
   async getUserById(userId) {
@@ -39,6 +43,7 @@ class Users {
     this.users = await pool.query(CHANGE_PASSWORD(id, password));
     return this.users;
   }
+
 }
 
 module.exports = Users;

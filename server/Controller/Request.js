@@ -14,11 +14,9 @@ exports.postCreateRequest = async (req, res, next) => {
     } else {
       url = `http://edborrow.ga/api/request/approve?requestId=${borrowRequest[0].requestId}&approver=advisor`;
     }
-    // เขียนตรงนี้
-
     await sendEmailRequest(
       { data: borrowRequest },
-      borrowRequest[0].advisorEmail,
+      req.body.personalInformation.advisorEmail,
       url
     );
     printlog("Green", `Send request success - ${res.locals.authData.user[0].userId}`)
@@ -31,6 +29,7 @@ exports.postCreateRequest = async (req, res, next) => {
     res.status(500).json({ result: "false", msg: err });
     next(err);
   }
+
 };
 
 exports.departmentApproveEachItem = async (req, res, next) => {

@@ -29,5 +29,8 @@ const GET_PASSWORD = (id) => {
 const CHANGE_PASSWORD = (id, password) => {
   return `UPDATE Users SET password = '${password}' WHERE userId = '${id}'`
 }
+const GET_ADVISOR_LIST = () => {
+  return `SELECT u.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.email FROM Users u JOIN UserRole ur ON u.userId = ur.userId WHERE ur.roleId = 20`
+}
 
-module.exports = { GET_LOGIN, GET_USER_DETAIL, GET_USER_BY_ID, CREATE_USER, USER_ROLE, ASSIGN_ROLE, GET_PASSWORD, CHANGE_PASSWORD }
+module.exports = { GET_LOGIN, GET_USER_DETAIL, GET_USER_BY_ID, CREATE_USER, USER_ROLE, ASSIGN_ROLE, GET_PASSWORD, CHANGE_PASSWORD, GET_ADVISOR_LIST }

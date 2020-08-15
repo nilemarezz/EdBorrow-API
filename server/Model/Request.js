@@ -20,7 +20,7 @@ class ItemRequest {
   async createRequest(body) {
     if (body.personalInformation) {
       this.request = await pool.query(
-        CREATE_REQUEST().INSERT_ITEMREQUEST_TO_DB(body)
+        CREATE_REQUEST().INSERT_BORROWREQUEST_TO_DB(body)
       );
       let lastInsertId = this.request.insertId;
       if (body.items) {
