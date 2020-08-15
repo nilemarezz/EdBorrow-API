@@ -17,10 +17,12 @@ const GET_REQUEST_ITEMS = (requestId) => {
   `
 }
 const GET_REQUEST_ADMIN = (id, type) => {
-  return `select * from RequestItem ri join Items i on ri.itemId = i.itemId join BorrowRequest b ON 
-    b.requestId  = ri.requestId where ${
-    type === "user" ? `i.userId` : `i.departmentId`
-    }  = "${id}" and b.requestApprove = 1`
+  return `
+    select ri.borrowDate , b.borrowPurpose , ri.itemApprove , ri.itemBorrowingStatusId , 
+    ri.itemId , i.itemName ,ri.requestId ,ri.returnDate ,b.transactionDate ,b.usePlace ,b.userId , CONCAT(u.firstName , " ", u.lastName) as Name 
+    from RequestItem ri join Items i on ri.itemId = i.itemId join BorrowRequest b ON 
+    b.requestId  = ri.requestId join Users u on u.userId = b.userId 
+    where ${type === "user" ? `i.userId` : `i.departmentId`}  = "${id}" and b.requestApprove = 1`
 }
 const DEPARTMENT_APPROVE_EACH_ITEM = (body) => {
   return `
