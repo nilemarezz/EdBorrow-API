@@ -26,9 +26,7 @@ exports.getSearchBorrowItems = async (req, res, next) => {
 exports.getBorrowItemById = async (req, res, next) => {
   try {
     let borrowItemById;
-    console.log(req.params.id);
     borrowItemById = await borrowItem.getItemById(req.params.id);
-    console.log(borrowItemById);
     res.status(200).json({ result: 'success', data: borrowItemById });
   } catch (err) {
     console.log(err);
@@ -56,8 +54,6 @@ exports.getCategoryNameOrDepartmentName = async (req, res, next) => {
 
 exports.addItem = async (req, res, next) => {
   try {
-    // console.log(res.locals.authData.user[0].userId)
-
     let image;
     await singleUpload(req, res, async function (err) {
       if (req.file) {
@@ -100,7 +96,7 @@ exports.getItemByDepartment = async (req, res, next) => {
     );
     data = [...data, ...itemByUser];
 
-    res.status(500).json({ result: 'success', data: data });
+    res.status(200).json({ result: 'success', data: data });
   } catch (err) {
     console.log(err);
     res.status(500).json({ result: 'false', msg: err });
@@ -122,9 +118,7 @@ exports.updateItem = async (req, res, next) => {
         itemImage: image,
         userId: res.locals.authData.user[0].userId,
       };
-
-      let editItem = await borrowItem.updateItem(data);
-
+      await borrowItem.updateItem(data);
       printlog(
         'Green',
         `Update item success : ${data.itemId} - ${res.locals.authData.user[0].userId}`
@@ -132,7 +126,6 @@ exports.updateItem = async (req, res, next) => {
       res.status(500).json({ result: 'success', msg: 'Edit Item Success' });
     });
 
-    // let editItem = await borrowItem.updateItem(req.body);
   } catch (err) {
     console.log(err);
     res.status(500).json({ result: 'false', msg: err });
