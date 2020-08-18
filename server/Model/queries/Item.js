@@ -6,11 +6,20 @@ const GET_ALL_ITEM = () => {
   ORDER BY i.itemName asc;
   `
 }
-const GET_ITEM_BY_ID = (id) => {
-  return `
+const GET_ITEM_BY_ID = (id, department) => {
+  const departmentQuery = `
   SELECT i.*, id.departmentName, id.departmentTelNo, id.departmentEmail, dp.* from Items i join ItemDepartment id  on id.departmentId  = i.departmentId 
   join  DepartmentPlace dp on id.placeId  = dp.placeId 
   WHERE i.itemId = ${id};`
+  const userQuery = `
+  select i.* ,u.email , u.userTelNo , CONCAT(u.firstName , " ", u.lastName) AS Name 
+  from Items i join Users u on i.userId  = u.userId where i.itemId = ${id} ;
+  `
+  if (department === false) {
+    return userQuery
+  } else {
+    return departmentQuery
+  }
 }
 const GET_CATEGORY = () => {
   return `
@@ -48,11 +57,21 @@ const GET_DEPARTMENT_BY_ID = (id, type) => {
   where ${type === "department" ? "i.departmentId" : "i.userId"} = "${id}" ORDER BY i.itemName asc
   `
 }
-const UPDATE_ITEM = (value) => {
-  return `
+const UPDATE_ITEM = (value, department, userId) => {
+  const departmentQuery = `
   UPDATE Items 
   SET itemName = "${value.itemName}", itemBrand = "${value.itemBrand}" , itemModel = "${value.itemModel}", categoryId = "${value.categoryId}", itemDescription = "${value.itemDescription}" ${value.itemImage === null ? '' : `, itemImage = "${value.itemImage}"`} 
-  WHERE itemId = ${value.itemId}`
+  WHERE itemId = ${value.itemId} AND departmentId  = ${department}`
+  const userQuery = `
+  UPDATE Items 
+  SET itemName = "${value.itemName}", itemBrand = "${value.itemBrand}" , itemModel = "${value.itemModel}", categoryId = "${value.categoryId}", itemDescription = "${value.itemDescription}" ${value.itemImage === null ? '' : `, itemImage = "${value.itemImage}"`} 
+  WHERE itemId = ${value.itemId} AND userId  = "${userId}"`
+  if (department === false) {
+    return userQuery
+  } else {
+    return departmentQuery
+  }
+
 }
 
 module.exports = {

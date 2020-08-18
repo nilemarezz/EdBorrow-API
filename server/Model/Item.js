@@ -1,6 +1,7 @@
 const pool = require('../config/BorrowSystemDB');
 const { GET_ALL_ITEM, GET_ITEM_BY_ID, GET_CATEGORY, GET_DEPARTMENT, GET_OWNER,
   DELETE_ALL_ITEMS, ADD_ITEM, GET_DEPARTMENT_BY_ID, UPDATE_ITEM } = require('./queries/Item')
+const refactorItemDetail = require('../Utilities/refactorItemDetail')
 class BorrowItem {
   constructor() {
     this.borrowItem;
@@ -11,8 +12,9 @@ class BorrowItem {
     return this.borrowItem;
   }
 
-  async getItemById(id) {
-    this.borrowItem = await pool.query(GET_ITEM_BY_ID(id));
+  async getItemById(id, department) {
+    const item = await pool.query(GET_ITEM_BY_ID(id, department));
+    this.borrowItem = [refactorItemDetail(item[0], department)]
     return this.borrowItem;
   }
 
@@ -46,8 +48,8 @@ class BorrowItem {
     return this.borrowItem;
   }
 
-  async updateItem(value) {
-    this.borrowItem = await pool.query(UPDATE_ITEM(value));
+  async updateItem(value, department, userId) {
+    this.borrowItem = await pool.query(UPDATE_ITEM(value, department, userId))
     return this.borrowItem;
   }
 }

@@ -57,7 +57,7 @@ exports.userLogin = async (req, res, next) => {
       for (let i = 0; i < userRole.length; i++) {
         role.push(userRole[i].roleId);
       }
-      let adminlist = [1, 2, 3];
+      let adminlist = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
       let op = role.every(element => adminlist.indexOf(element) > -1);
       printlog('Green', `Login Success : ${req.body.userId}`);

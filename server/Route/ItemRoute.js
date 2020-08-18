@@ -4,26 +4,26 @@ const verifyToken = require('../middleware/verify')
 const validUser = require('../middleware/validUser')
 
 
-const {getAllBorrowItems, getCategoryNameOrDepartmentName, getBorrowItemById, getSearchBorrowItems,addItem,getItemByDepartment,updateItem} = require("../Controller/Item")
+const { getAllBorrowItems, getCategoryNameOrDepartmentName, getBorrowItemById, getSearchBorrowItems, addItem, getItemByDepartment, updateItem } = require("../Controller/Item")
 router
-    .route("/")
-    .get(getAllBorrowItems)
-    .post(verifyToken,validUser,addItem)
-    .put(verifyToken,validUser,updateItem)
+  .route("/")
+  .get(getAllBorrowItems)
+  .post(verifyToken, validUser, addItem)
+  .put(verifyToken, validUser, updateItem)
 router
-    .route("/admin")
-    .get(verifyToken,validUser,getItemByDepartment)
+  .route("/admin")
+  .get(verifyToken, validUser, getItemByDepartment)
 router
-    .route("/search")
-    .get(getSearchBorrowItems)
+  .route("/search")
+  .get(getSearchBorrowItems)
 router
-    .route("/getColumn")
-    .post(getCategoryNameOrDepartmentName)
+  .route("/getColumn")
+  .post(getCategoryNameOrDepartmentName)
 router
-    .route("/:id")
-    .get(getBorrowItemById)
+  .route("/:id")
+  .get(getBorrowItemById)
 
 
 
-    
+
 module.exports = router;

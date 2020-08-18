@@ -4,7 +4,8 @@ const printlog = require('../config/logColor');
 const borrowItem = new BorrowItemModel();
 const singleUpload = upload.single('image');
 const { getUserRole } = require('./User');
-
+const isItemDepartment = require('../Utilities/isItemInDepartment')
+const checkDepartmentId = require('../Utilities/checkDepartmentId')
 exports.getAllBorrowItems = async (req, res, next) => {
   try {
     let getborrowItems = await borrowItem.getAllItem();
@@ -25,8 +26,8 @@ exports.getSearchBorrowItems = async (req, res, next) => {
 
 exports.getBorrowItemById = async (req, res, next) => {
   try {
-    let borrowItemById;
-    borrowItemById = await borrowItem.getItemById(req.params.id);
+    const itemDepartment = await isItemDepartment(req.params.id)
+    borrowItemById = await borrowItem.getItemById(req.params.id, itemDepartment);
     res.status(200).json({ result: 'success', data: borrowItemById });
   } catch (err) {
     console.log(err);
@@ -55,6 +56,7 @@ exports.getCategoryNameOrDepartmentName = async (req, res, next) => {
 exports.addItem = async (req, res, next) => {
   try {
     let image;
+    console.log(req.body)
     await singleUpload(req, res, async function (err) {
       if (req.file) {
         image = req.file.location;
@@ -67,11 +69,12 @@ exports.addItem = async (req, res, next) => {
         itemImage: image,
         userId: res.locals.authData.user[0].userId,
       };
+      let addItem = await borrowItem.addItem(data);
       printlog(
         'Green',
         `Add item success : ${addItem.insertId} - ${res.locals.authData.user[0].userId}`
       );
-      let addItem = await borrowItem.addItem(data);
+
 
       res.status(500).json({ result: 'success', msg: 'Add Item Success' });
     });
@@ -118,13 +121,24 @@ exports.updateItem = async (req, res, next) => {
         itemImage: image,
         userId: res.locals.authData.user[0].userId,
       };
-      await borrowItem.updateItem(data);
-      printlog(
-        'Green',
-        `Update item success : ${data.itemId} - ${res.locals.authData.user[0].userId}`
-      );
-      res.status(500).json({ result: 'success', msg: 'Edit Item Success' });
+      const userDepartment = await checkDepartmentId(res.locals.authData.user[0].userId)
+      const editItem = await borrowItem.updateItem(data, userDepartment, res.locals.authData.user[0].userId);
+      if (editItem.affectedRows === 0) {
+        printlog(
+          'Red',
+          `Update item fale : ${data.itemId} - ${res.locals.authData.user[0].userId} - Not own item`
+        );
+        res.status(500).json({ result: 'false', msg: "It's not your Item" });
+      } else {
+        printlog(
+          'Green',
+          `Update item success : ${data.itemId} - ${res.locals.authData.user[0].userId}`
+        );
+        res.status(200).json({ result: 'success', msg: 'Edit Item Success' });
+      }
+
     });
+
 
   } catch (err) {
     console.log(err);
