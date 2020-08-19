@@ -17,6 +17,7 @@ unitTest:
   only:
     - develop
     - master
+    - merge_requests
   script:
     - cd ./server
     - ls
@@ -29,6 +30,7 @@ integrationTest:
   only:
     - develop
     - master
+    - merge_requests
   script:
     - cd ./server
     - ls

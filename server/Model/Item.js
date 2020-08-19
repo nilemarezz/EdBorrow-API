@@ -43,8 +43,8 @@ class BorrowItem {
     return this.borrowItem
   }
 
-  async getItemByDepartment(id, type) {
-    this.borrowItem = await pool.query(GET_DEPARTMENT_BY_ID(id, type));
+  async getItemByDepartment(userId, department) {
+    this.borrowItem = await pool.query(GET_DEPARTMENT_BY_ID(userId, department));
     return this.borrowItem;
   }
 

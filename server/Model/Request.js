@@ -85,8 +85,8 @@ class ItemRequest {
     }
   }
 
-  async getRequestItemAdmin(id, type) {
-    this.request = await pool.query(GET_REQUEST_ADMIN(id, type));
+  async getRequestItemAdmin(userId, departmentId) {
+    this.request = await pool.query(GET_REQUEST_ADMIN(userId, departmentId));
     return this.request;
   }
 
