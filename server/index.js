@@ -6,12 +6,10 @@ const bodyParser = require("body-parser");
 const BorrowitemRoute = require("./Route/ItemRoute");
 const userRoute = require("./Route/userRoute");
 const requestRoute = require("./Route/requestRoute");
+const dataRoute = require("./Route/DataRoute")
 const port = 3000;
-const configDB = require("./config.json");
-var multer = require("multer");
-var upload = multer();
 const cron = require("node-cron");
-const {checkLateItem} = require("./Controller/Request");
+const { checkLateItem } = require("./Controller/Request");
 
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :date'));
@@ -28,6 +26,7 @@ app.get("/api", (req, res) => {
 app.use("/api/items", BorrowitemRoute);
 app.use("/api/users", userRoute);
 app.use("/api/request", requestRoute);
+app.use("/api/data", dataRoute);
 
 // Check item late by cron-job (every 1.00 AM)
 cron.schedule("0 1 * * *", () => {
