@@ -9,12 +9,12 @@ const {
   CHANGE_STATUS_APPROVE,
   REDIRECT_APPROVE_URL,
 } = require('../Utilities/RequestUrl');
+const checkDepartmentId = require('../Utilities/checkDepartmentId')
 
 exports.postCreateRequest = async (req, res, next) => {
   try {
     let borrowRequest = await requests.createRequest(req.body);
-    let url;
-    url = CREATE_REQUEST(borrowRequest[0].requestId);
+    let url = CREATE_REQUEST(borrowRequest[0].requestId);
 
     await sendEmailRequest(
       { data: borrowRequest },
@@ -196,7 +196,7 @@ exports.checkLateItem = async () => {
 exports.getRequestList = async (req, res, next) => {
   try {
     let requestList = await requests.getRequestList(
-      res.locals.authData.user[0].userId
+      res.locals.authData.user[0].userId, department
     );
     res.status(200).json({ result: 'success', data: requestList });
   } catch (err) {
@@ -221,23 +221,12 @@ exports.getRequestItem = async (req, res, next) => {
 
 exports.getRequestItemAdmin = async (req, res, next) => {
   try {
-    let data = [];
-
-    let role = await getUserRole(res.locals.authData.user[0].userId);
-
-    let itemonUser = await requests.getRequestItemAdmin(
-      res.locals.authData.user[0].userId,
-      'user'
-    );
-    data = [...data, ...itemonUser];
+    const department = await checkDepartmentId(res.locals.authData.user[0].userId)
     let itemonDepartment = await requests.getRequestItemAdmin(
-      role[0],
-      'department'
+      res.locals.authData.user[0].userId,
+      department
     );
-
-    data = [...data, ...itemonDepartment];
-
-    res.status(200).json({ result: 'success', data: data });
+    res.status(200).json({ result: 'success', data: itemonDepartment });
   } catch (err) {
     console.log(err);
     res.status(500).json({ result: 'false', msg: err });

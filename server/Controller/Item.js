@@ -56,7 +56,6 @@ exports.getCategoryNameOrDepartmentName = async (req, res, next) => {
 exports.addItem = async (req, res, next) => {
   try {
     let image;
-    console.log(req.body)
     await singleUpload(req, res, async function (err) {
       if (req.file) {
         image = req.file.location;
@@ -86,20 +85,13 @@ exports.addItem = async (req, res, next) => {
 
 exports.getItemByDepartment = async (req, res, next) => {
   try {
-    let data = [];
-    let role = await getUserRole(res.locals.authData.user[0].userId);
-    let itemByRole = await borrowItem.getItemByDepartment(
-      role[0],
-      'department'
-    );
-    data = [...data, ...itemByRole];
+    const department = await checkDepartmentId(res.locals.authData.user[0].userId)
     let itemByUser = await borrowItem.getItemByDepartment(
       res.locals.authData.user[0].userId,
-      'user'
+      department
     );
-    data = [...data, ...itemByUser];
 
-    res.status(200).json({ result: 'success', data: data });
+    res.status(200).json({ result: 'success', data: itemByUser });
   } catch (err) {
     console.log(err);
     res.status(500).json({ result: 'false', msg: err });

@@ -49,13 +49,26 @@ const ADD_ITEM = (value) => {
   values ('${value.itemBrand}','${value.itemModel}','${value.itemName}','${value.createDate}',1,'${value.userId}',1,${value.itemImage === null ? 'NULL' : `'${value.itemImage}'`},'${value.itemDescription}',1,1) 
   `
 }
-const GET_DEPARTMENT_BY_ID = (id, type) => {
-  return `
+const GET_DEPARTMENT_BY_ID = (userId, department) => {
+  const departmentQuery =
+    `
   SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage 
   FROM Items i left join ItemDepartment d on i.departmentId = d.departmentId 
   join ItemCategory c on i.categoryId = c.categoryId 
-  where ${type === "department" ? "i.departmentId" : "i.userId"} = "${id}" ORDER BY i.itemName asc
+  where i.departmentId = "${department}" ORDER BY i.itemName asc
   `
+  const userQuery =
+    `
+  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage 
+  FROM Items i left join ItemDepartment d on i.departmentId = d.departmentId 
+  join ItemCategory c on i.categoryId = c.categoryId 
+  where i.userId = "${userId}" ORDER BY i.itemName asc
+  `
+  if (department === false) {
+    return userQuery
+  } else {
+    return departmentQuery
+  }
 }
 const UPDATE_ITEM = (value, department, userId) => {
   const departmentQuery = `

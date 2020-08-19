@@ -60,16 +60,18 @@ describe('/queries/Item', () => {
     });
   })
   describe('GET_DEPARTMENT_BY_ID', () => {
-    it('should return the string same as expected queries', () => {
-
-      const expectedqueries = `
-  SELECT i.* , d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage 
+    describe('Department query', () => {
+      it('should return the string same as expected queries', () => {
+        const departmentQuery =
+          `
+  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage 
   FROM Items i left join ItemDepartment d on i.departmentId = d.departmentId 
   join ItemCategory c on i.categoryId = c.categoryId 
   where i.departmentId = "1" ORDER BY i.itemName asc
   `
-      expect(GET_DEPARTMENT_BY_ID(1, "department")).to.equal(expectedqueries);
-    });
+        expect(GET_DEPARTMENT_BY_ID(1, 1)).to.equal(departmentQuery);
+      });
+    })
   })
   describe('GET_ITEM_BY_ID', () => {
     it('should return the string same as expected queries', () => {
@@ -93,13 +95,25 @@ describe('/queries/Item', () => {
     });
   })
   describe('UPDATE_ITEM', () => {
-    it('should return the string same as expected queries', () => {
+    describe('UPDATE_ITEM of user ', () => {
+      it('should return the string same as expected queries of user ', () => {
 
-      const expectedqueries = `
+        const userQuery = `
   UPDATE Items 
   SET itemName = "${item.itemName}", itemBrand = "${item.itemBrand}" , itemModel = "${item.itemModel}", categoryId = "${item.categoryId}", itemDescription = "${item.itemDescription}" ${item.itemImage === null ? '' : `, itemImage = "${item.itemImage}"`} 
-  WHERE itemId = ${item.itemId}`
-      expect(UPDATE_ITEM(item)).to.equal(expectedqueries);
-    });
+  WHERE itemId = ${item.itemId} AND userId  = "userId"`
+        expect(UPDATE_ITEM(item, false, "userId")).to.equal(userQuery);
+      });
+    })
+    describe('UPDATE_ITEM of department ', () => {
+      it('should return the string same as expected queries of department ', () => {
+
+        const departmentQuery = `
+  UPDATE Items 
+  SET itemName = "${item.itemName}", itemBrand = "${item.itemBrand}" , itemModel = "${item.itemModel}", categoryId = "${item.categoryId}", itemDescription = "${item.itemDescription}" ${item.itemImage === null ? '' : `, itemImage = "${item.itemImage}"`} 
+  WHERE itemId = ${item.itemId} AND departmentId  = 1`
+        expect(UPDATE_ITEM(item, 1, "userId")).to.equal(departmentQuery);
+      });
+    })
   })
 });
