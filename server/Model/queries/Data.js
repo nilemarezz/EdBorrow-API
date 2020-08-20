@@ -44,4 +44,27 @@ const GET_MOST_BORROW = (department, user) => {
     return departmentQuery
   }
 }
-module.exports = { GET_LASTEST_BORROW, GET_MOST_BORROW }
+
+const GET_REQUEST_STATUS = (department, user, type) => {
+  return `
+  select count(*) as count from RequestItem ri 
+  join Items i on i.itemId = ri.itemId 
+  where ${type === "waiting" ? "ri.itemApprove = 2" : "ri.itemBorrowingStatusId = 3"} and ${department === false ? `i.userId = "${user}"` : `i.departmentId = ${department};`}
+  `
+}
+
+const COUNT_ITEMS = (department, user) => {
+  return `
+  select count(*) as count from Items i 
+  where ${department === false ? `i.userId = "${user}"` : `i.departmentId = ${department};`}
+  `
+}
+
+const COUNT_BY_MINTH = (department, user) => {
+  return `SELECT MONTHNAME(ri.transactionDate ) month , COUNT(*) AS Count from RequestItem ri 
+  join Items i on i.itemId = ri.itemId 
+  where ${department === false ? `i.userId = "${user}"` : `i.departmentId = ${department};`}
+  `
+}
+
+module.exports = { GET_LASTEST_BORROW, GET_MOST_BORROW, GET_REQUEST_STATUS, COUNT_ITEMS, COUNT_BY_MINTH }
