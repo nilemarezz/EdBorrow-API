@@ -6,4 +6,6 @@ const validUser = require('../middleware/validUser')
 const { Dashboard } = require('../Controller/Data')
 router
   .route("/dashboard")
-  .get(Dashboard)
+  .get(verifyToken, validUser, Dashboard)
+
+module.exports = router;
