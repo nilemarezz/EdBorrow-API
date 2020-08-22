@@ -53,15 +53,10 @@ exports.userLogin = async (req, res, next) => {
     );
     var passwordDecrypt = bytes.toString(CryptoJS.enc.Utf8);
 
-    let role = [];
     if (passwordDecrypt === req.body.password) {
-      userRole = await users.getUserRole(req.body.userId);
-      for (let i = 0; i < userRole.length; i++) {
-        role.push(userRole[i].roleId);
-      }
-      let adminlist = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      let userRole = await users.getUserRole(req.body.userId);
+      let role = await checkUserRole(userRole)
 
-      let op = role.every(element => adminlist.indexOf(element) > -1);
       printlog('Green', `Login Success : ${req.body.userId}`);
       jwt.sign(
         { user: userLogin },
@@ -71,7 +66,7 @@ exports.userLogin = async (req, res, next) => {
             result: 'success',
             accessToken,
             user: userLogin[0].firstName,
-            admin: op,
+            ...role
           });
         }
       );
