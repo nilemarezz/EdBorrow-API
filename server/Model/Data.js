@@ -1,6 +1,6 @@
 const pool = require('../config/BorrowSystemDB');
 const { createMonthArray } = require('../Utilities/createMonthArray')
-const { GET_LASTEST_BORROW, GET_MOST_BORROW, GET_REQUEST_STATUS, COUNT_ITEMS, COUNT_BY_MINTH } = require('../Model/queries/Data')
+const { GET_LASTEST_BORROW, GET_MOST_BORROW, GET_REQUEST_STATUS, COUNT_ITEMS, COUNT_BY_MONTH } = require('../Model/queries/Data')
 
 const getLastestBorrow = async (department, userId) => {
   const lastestBorrow = await pool.query(GET_LASTEST_BORROW(department, userId))
@@ -25,7 +25,7 @@ const countItems = async (department, userId) => {
   return items
 }
 const countByMonth = async (department, userId) => {
-  const count = await pool.query(COUNT_BY_MINTH(department, userId))
+  const count = await pool.query(COUNT_BY_MONTH(department, userId))
   const month = createMonthArray(count)
   return month
 }

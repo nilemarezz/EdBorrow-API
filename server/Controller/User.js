@@ -5,6 +5,8 @@ const config = require('../config.json');
 const users = new UserModel();
 const { sendEmailUser } = require('../Utilities/EmailService/RegisterEmail');
 const printlog = require('../config/logColor');
+const { checkUserRole } = require('../Utilities/checkUserRole')
+
 exports.userRegister = async (req, res, next) => {
   try {
     let userCheck = await users.getUserById(req.body.email);
@@ -95,18 +97,14 @@ exports.getUserDetail = async (req, res, next) => {
     userDetails = await users.getUserDetails(
       res.locals.authData.user[0].userId
     );
-    userRole = await users.getUserRole(res.locals.authData.user[0].userId);
-    let role = [];
-    for (let i = 0; i < userRole.length; i++) {
-      role.push(userRole[i].roleId);
-    }
-    let adminlist = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-    let op = role.every(element => adminlist.indexOf(element) > -1);
+    let userRole = await users.getUserRole(res.locals.authData.user[0].userId);
+    console.log(userRole)
+    let role = await checkUserRole(userRole)
+    console.log(role)
 
     res
       .status(200)
-      .json({ result: 'success', data: { ...userDetails[0], admin: op } });
+      .json({ result: 'success', data: { ...userDetails[0], ...role } });
   } catch (err) {
     res.status(500).json({ result: 'false', msg: err });
   }

@@ -1,7 +1,7 @@
 const createMonthArray = (data) => {
   const month = []
   for (let i = 0; i < 12; i++) {
-    month.push(null)
+    month.push(0)
   }
   for (let i = 0; i < data.length; i++) {
     switch (data[i].month) {
@@ -42,12 +42,6 @@ const createMonthArray = (data) => {
         month[11] = data[i].Count
         break
     }
-
-
-    // if (data[i].month === "August") {
-    //   console.log(data[i].month)
-    //   month[i] = data[i].Count
-    // }
   }
   return month
 }
