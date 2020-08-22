@@ -54,7 +54,7 @@ describe('/queries/User', () => {
   })
   describe('USER_ROLE', () => {
     it('should return the string same as expected queries', () => {
-      const expectedqueries = `select * from UserRole ur where userId = "1" `
+      const expectedqueries = `select ur.roleId from UserRole ur where userId = "1" `
       expect(USER_ROLE(1)).to.equal(expectedqueries)
     })
   })
