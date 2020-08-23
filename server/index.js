@@ -9,7 +9,7 @@ const requestRoute = require("./Route/requestRoute");
 const dataRoute = require("./Route/DataRoute")
 const port = 3000;
 const cron = require("node-cron");
-
+const AdminRoute = require('./Route/AdminRoute')
 const { checkLateItem } = require("./Controller/Request");
 
 
@@ -28,6 +28,7 @@ app.use("/api/items", BorrowitemRoute);
 app.use("/api/users", userRoute);
 app.use("/api/request", requestRoute);
 app.use("/api/data", dataRoute);
+app.use("/api/admin", AdminRoute)
 
 // Check item late by cron-job (every 1.00 AM)
 cron.schedule("0 1 * * *", () => {

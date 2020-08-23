@@ -1,8 +1,11 @@
 const checkUserRole = (role) => {
-  const userRole = { department: false, staff: false }
+  const userRole = { department: false, staff: false, admin: false }
   for (let i = 0; i < role.length; i++) {
     if (role[i].roleId === 20 || role[i].roleId === 10) {
       userRole.staff = true
+    }
+    if (role[i].roleId === 0) {
+      userRole.admin = true
     }
   }
 
