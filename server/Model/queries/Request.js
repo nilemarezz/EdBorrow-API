@@ -66,14 +66,13 @@ const CREATE_REQUEST = () => {
       `UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
     SET ri.itemBorrowingStatusId = 4 , i.itemAvailability = FALSE WHERE ri.itemId = ${body.items[i].itemId};`,
     RETURN_REQUEST: (lastInsertId) => `
-    SELECT br.requestId , br.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.curriculum , u.email , u.studentYear , u.userTelNo , 
-    i.itemName ,i.departmentId , i.userId , d.departmentId , br.borrowPurpose , br.usePlace , ri.returnDate , ri.borrowDate , a.userId as studentAdvisor, a.email as advisorEmail 
-    FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
-    join Items i on ri.itemId = i.itemId 
-    join ItemDepartment d on i.departmentId = d.departmentId 
-    left join Users u on br.userId = u.userId 
-    inner join Users a on a.userId = u.studentAdvisor 
-    WHERE br.requestId = ${lastInsertId};`
+    select br.requestId ,u.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.email , u.userTelNo ,
+    br.borrowPurpose , ri.borrowDate , ri.returnDate , i.itemName 
+    from RequestItem ri  
+    join BorrowRequest br ON br.requestId  = ri.requestId 
+    join Users u on u.userId = br.userId 
+    join Items i on i.itemId = ri.itemId 
+    where ri.requestId = ${lastInsertId};`
   }
 }
 const ADVISOR_CHANGE_REQUEST_STATUS = (query) => {

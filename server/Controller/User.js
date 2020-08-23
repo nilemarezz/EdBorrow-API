@@ -5,6 +5,8 @@ const config = require('../config.json');
 const users = new UserModel();
 const { sendEmailUser } = require('../Utilities/EmailService/RegisterEmail');
 const printlog = require('../config/logColor');
+const { checkUserRole } = require('../Utilities/checkUserRole')
+
 exports.userRegister = async (req, res, next) => {
   try {
     let userCheck = await users.getUserById(req.body.email);
@@ -51,15 +53,10 @@ exports.userLogin = async (req, res, next) => {
     );
     var passwordDecrypt = bytes.toString(CryptoJS.enc.Utf8);
 
-    let role = [];
     if (passwordDecrypt === req.body.password) {
-      userRole = await users.getUserRole(req.body.userId);
-      for (let i = 0; i < userRole.length; i++) {
-        role.push(userRole[i].roleId);
-      }
-      let adminlist = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      let userRole = await users.getUserRole(req.body.userId);
+      let role = await checkUserRole(userRole)
 
-      let op = role.every(element => adminlist.indexOf(element) > -1);
       printlog('Green', `Login Success : ${req.body.userId}`);
       jwt.sign(
         { user: userLogin },
@@ -69,7 +66,7 @@ exports.userLogin = async (req, res, next) => {
             result: 'success',
             accessToken,
             user: userLogin[0].firstName,
-            admin: op,
+            ...role
           });
         }
       );
@@ -95,18 +92,9 @@ exports.getUserDetail = async (req, res, next) => {
     userDetails = await users.getUserDetails(
       res.locals.authData.user[0].userId
     );
-    userRole = await users.getUserRole(res.locals.authData.user[0].userId);
-    let role = [];
-    for (let i = 0; i < userRole.length; i++) {
-      role.push(userRole[i].roleId);
-    }
-    let adminlist = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-    let op = role.every(element => adminlist.indexOf(element) > -1);
-
-    res
-      .status(200)
-      .json({ result: 'success', data: { ...userDetails[0], admin: op } });
+    let userRole = await users.getUserRole(res.locals.authData.user[0].userId);
+    let role = await checkUserRole(userRole)
+    res.status(200).json({ result: 'success', data: { ...userDetails[0], ...role } });
   } catch (err) {
     res.status(500).json({ result: 'false', msg: err });
   }

@@ -11,11 +11,11 @@ const {
 } = require('../Utilities/RequestUrl');
 const checkDepartmentId = require('../Utilities/checkDepartmentId')
 
+
 exports.postCreateRequest = async (req, res, next) => {
   try {
     let borrowRequest = await requests.createRequest(req.body);
     let url = CREATE_REQUEST(borrowRequest[0].requestId);
-
     await sendEmailRequest(
       { data: borrowRequest },
       req.body.personalInformation.advisorEmail,
@@ -41,11 +41,12 @@ exports.postCreateRequest = async (req, res, next) => {
 
 exports.departmentApproveEachItem = async (req, res, next) => {
   try {
-    await requests.departmentApproveEachItem(req.body);
+    const change = await requests.departmentApproveEachItem(req.body);
     printlog(
       'Green',
       `Approve Item success - ${res.locals.authData.user[0].userId}`
     );
+
     res.status(200).json({ result: 'success', msg: 'Item Approve Success' });
   } catch (err) {
     printlog(
@@ -79,8 +80,7 @@ exports.departmentChangeStatus = async (req, res, next) => {
 
 exports.approveAllItem = async (req, res, next) => {
   try {
-    let borrowRequest;
-    borrowRequest = await requests.getRequest(req.query.requestId);
+    let borrowRequest = await requests.getRequest(req.query.requestId);
 
     if (req.query.approver === 'advisor') {
       if (borrowRequest[0].requestApprove !== 2) {
@@ -88,7 +88,7 @@ exports.approveAllItem = async (req, res, next) => {
         res.redirect(REDIRECT_APPROVE_URL().APPROVE_ALREADY);
       } else {
         if (req.query.status === 'TRUE') {
-          approvedRequest = await requests.advisorAllApprove(req.query);
+          const approvedRequest = await requests.advisorAllApprove(req.query);
 
           printlog('Green', 'Advisor Approve the request');
 
@@ -196,7 +196,7 @@ exports.checkLateItem = async () => {
 exports.getRequestList = async (req, res, next) => {
   try {
     let requestList = await requests.getRequestList(
-      res.locals.authData.user[0].userId, department
+      res.locals.authData.user[0].userId
     );
     res.status(200).json({ result: 'success', data: requestList });
   } catch (err) {

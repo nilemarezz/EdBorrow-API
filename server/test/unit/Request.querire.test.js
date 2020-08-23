@@ -82,18 +82,6 @@ describe('/queries/Request', () => {
     SET ri.itemBorrowingStatusId = 4 , i.itemAvailability = FALSE WHERE ri.itemId = 1;`
       expect(CREATE_REQUEST().UPDATE_ITEM_AVALIBILITY(summaryForm, 0)).to.equal(expectedqueries)
     })
-    describe('RETURN_REQUEST', () => {
-      const expectedqueries = `
-    SELECT br.requestId , br.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.curriculum , u.email , u.studentYear , u.userTelNo , 
-    i.itemName ,i.departmentId , i.userId , d.departmentId , br.borrowPurpose , br.usePlace , ri.returnDate , ri.borrowDate , a.userId as studentAdvisor, a.email as advisorEmail 
-    FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
-    join Items i on ri.itemId = i.itemId 
-    join ItemDepartment d on i.departmentId = d.departmentId 
-    left join Users u on br.userId = u.userId 
-    inner join Users a on a.userId = u.studentAdvisor 
-    WHERE br.requestId = 1;`
-      expect(CREATE_REQUEST().RETURN_REQUEST(lastInsertId)).to.equal(expectedqueries)
-    })
   })
   describe('DEPARTMENT_APPROVE_EACH_ITEM', () => {
     it('should return the string same as expected queries', () => {

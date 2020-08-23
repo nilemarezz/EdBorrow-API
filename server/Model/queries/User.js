@@ -18,7 +18,7 @@ const CREATE_USER = (email, password, firstname, lastname, phonenumber) => {
 `
 }
 const USER_ROLE = (id) => {
-  return `select * from UserRole ur where userId = "${id}" `
+  return `select ur.roleId from UserRole ur where userId = "${id}" `
 }
 const ASSIGN_ROLE = (id) => {
   return `INSERT INTO UserRole values ('${id}' , 10) `
