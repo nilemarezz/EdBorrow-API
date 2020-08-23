@@ -14,10 +14,15 @@ const addItemDepartment = async (departmentName, departmentTelNo, departmentEmai
 }
 
 const addUserDepartment = async (userId, firstName, lastName, password, departmentId) => {
-  await pool.query(`INSERT INTO Users (userId ,firstName , lastName , password  , email) VALUES ("${userId}" , "${firstName}" , "${lastName}" , "${password}" , ${null})`)
+  const user = await pool.query(`INSERT INTO Users (userId ,firstName , lastName , password  , email) VALUES ("${userId}" , "${firstName}" , "${lastName}" , "${password}" , ${null})`)
+  await addDepartmentRole(departmentId, firstName)
   await addUserRole(userId, departmentId)
+  return user
 }
 
+const addDepartmentRole = async (roleId, firstName) => {
+  await pool.query(`INSERT INTO Roles (roleId ,roleTag) VALUES (${roleId} , "${firstName}");`)
+}
 const addUserRole = async (userId, roleId) => {
   await pool.query(`INSERT INTO UserRole VALUES  ("${userId}", ${roleId}) `)
   return true
