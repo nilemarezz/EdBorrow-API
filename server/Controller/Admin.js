@@ -30,7 +30,6 @@ exports.addDepartment = async (req, res, next) => {
     } = req.body
     const role = await user.getUserRole(res.locals.authData.user[0].userId)
     const userRole = await checkUserRole(role)
-    console.log(userRole)
     if (userRole.admin === true) {
       var cipherPassword = CryptoJS.AES
         .encrypt(password, config.CRYPTO_SECRET_KEY)
@@ -38,6 +37,8 @@ exports.addDepartment = async (req, res, next) => {
 
       const addDepartment = await addItemDepartment(departmentName, departmentTelNo, departmentEmail, placeBuilding, placeFloor, placeRoom)
       await addUserDepartment(userId, firstName, lastName, cipherPassword, addDepartment)
+      res.status(500).json({ result: 'success', msg: 'Add Department success' });
+
     } else {
       res.status(500).json({ result: 'false', msg: 'Permission deny' });
     }
