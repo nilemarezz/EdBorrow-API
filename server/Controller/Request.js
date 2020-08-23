@@ -15,10 +15,7 @@ const checkDepartmentId = require('../Utilities/checkDepartmentId')
 exports.postCreateRequest = async (req, res, next) => {
   try {
     let borrowRequest = await requests.createRequest(req.body);
-    console.log(borrowRequest)
     let url = CREATE_REQUEST(borrowRequest[0].requestId);
-
-
     await sendEmailRequest(
       { data: borrowRequest },
       req.body.personalInformation.advisorEmail,

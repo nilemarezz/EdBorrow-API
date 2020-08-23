@@ -93,13 +93,8 @@ exports.getUserDetail = async (req, res, next) => {
       res.locals.authData.user[0].userId
     );
     let userRole = await users.getUserRole(res.locals.authData.user[0].userId);
-    console.log(userRole)
     let role = await checkUserRole(userRole)
-    console.log(role)
-
-    res
-      .status(200)
-      .json({ result: 'success', data: { ...userDetails[0], ...role } });
+    res.status(200).json({ result: 'success', data: { ...userDetails[0], ...role } });
   } catch (err) {
     res.status(500).json({ result: 'false', msg: err });
   }
