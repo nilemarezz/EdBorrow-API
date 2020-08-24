@@ -49,6 +49,18 @@ const ADD_ITEM = (value) => {
   values ('${value.itemBrand}','${value.itemModel}','${value.itemName}','${value.createDate}',1,'${value.userId}',1,${value.itemImage === null ? 'NULL' : `'${value.itemImage}'`},'${value.itemDescription}',1,1) 
   `
 }
+const GET_VALID_DATE_ITEM = (value) => {
+  return `
+  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.userId AS ownerName , i.itemAvailability , i.itemImage 
+  FROM Items i LEFT JOIN ItemDepartment d ON i.departmentId = d.departmentId 
+  WHERE NOT EXISTS (
+	SELECT i.itemId FROM Items i LEFT JOIN RequestItem ri2 ON i.itemId = ri2.itemId 
+		WHERE i.itemId = ${value.itemId}
+			AND '${value.borrowDate}' <= ri2.returnDate 
+			AND '${value.returnDate}' >= ri2.borrowDate
+	)
+  AND i.itemId = ${value.itemId};`
+}
 const GET_DEPARTMENT_BY_ID = (userId, department) => {
   const departmentQuery =
     `
@@ -88,6 +100,6 @@ const UPDATE_ITEM = (value, department, userId) => {
 }
 
 module.exports = {
-  GET_ALL_ITEM, GET_ITEM_BY_ID, GET_CATEGORY, GET_DEPARTMENT, GET_OWNER,
+  GET_ALL_ITEM, GET_ITEM_BY_ID, GET_CATEGORY, GET_VALID_DATE_ITEM, GET_DEPARTMENT, GET_OWNER,
   DELETE_ALL_ITEMS, ADD_ITEM, GET_DEPARTMENT_BY_ID, UPDATE_ITEM
 }

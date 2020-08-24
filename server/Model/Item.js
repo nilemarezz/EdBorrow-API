@@ -1,6 +1,6 @@
 const pool = require('../config/BorrowSystemDB');
 const { GET_ALL_ITEM, GET_ITEM_BY_ID, GET_CATEGORY, GET_DEPARTMENT, GET_OWNER,
-  DELETE_ALL_ITEMS, ADD_ITEM, GET_DEPARTMENT_BY_ID, UPDATE_ITEM } = require('./queries/Item')
+  DELETE_ALL_ITEMS, ADD_ITEM, GET_DEPARTMENT_BY_ID, UPDATE_ITEM, GET_VALID_DATE_ITEM } = require('./queries/Item')
 const refactorItemDetail = require('../Utilities/refactorItemDetail')
 class BorrowItem {
   constructor() {
@@ -31,6 +31,11 @@ class BorrowItem {
   async getOwner() {
     this.borrowItem = await pool.query(GET_OWNER());
     return this.borrowItem;
+  }
+
+  async getValidateByItemId(value) {
+    this.borrowItem = await pool.query(GET_VALID_DATE_ITEM(value));
+    return this.borrowItem
   }
 
   async removeAllItems() {

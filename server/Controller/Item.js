@@ -3,7 +3,6 @@ const upload = require('../Utilities/Upload/Upload');
 const printlog = require('../config/logColor');
 const borrowItem = new BorrowItemModel();
 const singleUpload = upload.single('image');
-const { getUserRole } = require('./User');
 const isItemDepartment = require('../Utilities/isItemInDepartment')
 const checkDepartmentId = require('../Utilities/checkDepartmentId')
 exports.getAllBorrowItems = async (req, res, next) => {
@@ -23,6 +22,15 @@ exports.getSearchBorrowItems = async (req, res, next) => {
     res.status(500).json({ result: 'false', msg: err });
   }
 };
+
+exports.getValidateItem = async (req, res, next) => {
+  try {
+    let getborrowItems = await borrowItem.getValidateByItemId(req.query);
+    res.status(200).json({ result: 'success', data: getborrowItems });
+  } catch (err) {
+    res.status(500).json({ result: 'false', msg: 'hahah' });
+  }
+}
 
 exports.getBorrowItemById = async (req, res, next) => {
   try {
