@@ -45,8 +45,8 @@ const DELETE_ALL_ITEMS = () => {
 }
 const ADD_ITEM = (value) => {
   return `
-  INSERT INTO Items (itemBrand ,itemModel , itemName, createDate ,categoryId ,userId ,itemStatusId ,itemImage ,itemDescription ,itemBorrowable ,itemAvailability ) 
-  values ('${value.itemBrand}','${value.itemModel}','${value.itemName}','${value.createDate}',1,'${value.userId}',1,${value.itemImage === null ? 'NULL' : `'${value.itemImage}'`},'${value.itemDescription}',1,1) 
+  INSERT INTO Items (itemBrand ,itemModel , itemName, createDate ,categoryId ,${value.departmentId === 'null' ? "userId" : "departmentId"} ,itemStatusId ,itemImage ,itemDescription ,itemBorrowable ,itemAvailability ) 
+  values ('${value.itemBrand}','${value.itemModel}','${value.itemName}','${value.createDate}',1,'${value.departmentId === 'null' ? value.userId : value.departmentId}',1,${value.itemImage === null ? 'NULL' : `'${value.itemImage}'`},'${value.itemDescription}',1,1) 
   `
 }
 const GET_VALID_DATE_ITEM = (value) => {
