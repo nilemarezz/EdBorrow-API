@@ -1,6 +1,6 @@
 const pool = require('../config/BorrowSystemDB');
 const { createMonthArray } = require('../Utilities/createMonthArray')
-const { GET_LASTEST_BORROW, GET_MOST_BORROW, GET_REQUEST_STATUS, COUNT_ITEMS, COUNT_BY_MONTH } = require('../Model/queries/Data')
+const { GET_LASTEST_BORROW, GET_MOST_BORROW, GET_REQUEST_STATUS, COUNT_ITEMS, COUNT_BY_MONTH, USER_ACTION_LOG } = require('../Model/queries/Data')
 
 const getLastestBorrow = async (department, userId) => {
   const lastestBorrow = await pool.query(GET_LASTEST_BORROW(department, userId))
@@ -29,5 +29,20 @@ const countByMonth = async (department, userId) => {
   const month = createMonthArray(count)
   return month
 }
+const actionLogs = async (userId, action) => {
+  const log;
+  if (action === 'Create Request') {
+    log = await pool.query(USER_ACTION_LOG.CREATE_REQUEST_TO_LOG(userId, action));
+  } else if (action === 'Add Item') {
+    log = await pool.query(USER_ACTION_LOG.ADD_ITEM_TO_LOG(userId, action));
+  } else if (action === 'Update Item') {
+    log = await pool.query(USER_ACTION_LOG.UPDATE_ITEM_TO_LOG(userId, action));
+  } else if (action === 'Delete Item') {
+    log = await pool.query(USER_ACTION_LOG.DELETE_ITEM_TO_LOG(userId, action));
+  } else if (action === `Chagne Password`) {
+    log = await pool.query(USER_ACTION_LOG.CHANGE_PASSWORD_TO_LOG(userId, action));
+  }
+  return log;
+}
 
-module.exports = { getLastestBorrow, getMostBorrow, getWaitingRequest, countItems, countByMonth }
+module.exports = { getLastestBorrow, getMostBorrow, getWaitingRequest, countItems, countByMonth, actionLogs }
