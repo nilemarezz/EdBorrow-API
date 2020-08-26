@@ -30,19 +30,19 @@ const countByMonth = async (department, userId) => {
   return month
 }
 const actionLogs = async (userId, action) => {
-  const log;
+  let actionLog;
   if (action === 'Create Request') {
-    log = await pool.query(USER_ACTION_LOG.CREATE_REQUEST_TO_LOG(userId, action));
+    actionLog = await pool.query(USER_ACTION_LOG.CREATE_REQUEST_TO_LOG(userId, action));
   } else if (action === 'Add Item') {
-    log = await pool.query(USER_ACTION_LOG.ADD_ITEM_TO_LOG(userId, action));
+    actionLog = await pool.query(USER_ACTION_LOG.ADD_ITEM_TO_LOG(userId, action));
   } else if (action === 'Update Item') {
-    log = await pool.query(USER_ACTION_LOG.UPDATE_ITEM_TO_LOG(userId, action));
+    actionLog = await pool.query(USER_ACTION_LOG.UPDATE_ITEM_TO_LOG(userId, action));
   } else if (action === 'Delete Item') {
-    log = await pool.query(USER_ACTION_LOG.DELETE_ITEM_TO_LOG(userId, action));
+    actionLog = await pool.query(USER_ACTION_LOG.DELETE_ITEM_TO_LOG(userId, action));
   } else if (action === `Chagne Password`) {
-    log = await pool.query(USER_ACTION_LOG.CHANGE_PASSWORD_TO_LOG(userId, action));
+    actionLog = await pool.query(USER_ACTION_LOG.CHANGE_PASSWORD_TO_LOG(userId, action));
   }
-  return log;
+  return actionLog;
 }
 
 module.exports = { getLastestBorrow, getMostBorrow, getWaitingRequest, countItems, countByMonth, actionLogs }

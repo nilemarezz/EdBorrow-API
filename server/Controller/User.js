@@ -1,10 +1,9 @@
 const UserModel = require('../Model/User');
-const DataModel = require(`../Model/Data`);
+const { actionLogs } = require(`../Model/Data`);
 const jwt = require('jsonwebtoken');
 const CryptoJS = require('crypto-js');
 const config = require('../config.json');
 const users = new UserModel();
-const logs = new DataModel();
 const { sendEmailUser } = require('../Utilities/EmailService/RegisterEmail');
 const printlog = require('../config/logColor');
 const { checkUserRole } = require('../Utilities/checkUserRole')
@@ -143,7 +142,7 @@ exports.ChangePassword = async (req, res, next) => {
         `Change Password Success : ${res.locals.authData.user[0].userId}`
       );
       let action = 'Change Password';
-      await logs.actionLogs(res.locals.authData.user[0].userId, action);
+      await actionLogs(res.locals.authData.user[0].userId, action);
       res
         .status(200)
         .json({ result: 'success', msg: 'Change password success.' });

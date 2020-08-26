@@ -1,9 +1,8 @@
 const BorrowItemModel = require('../Model/Item');
-const DataModel = require(`../Model/Data`);
+const { actionLogs } = require('../Model/Data');
 const upload = require('../Utilities/Upload/Upload');
 const printlog = require('../config/logColor');
 const borrowItem = new BorrowItemModel();
-const logs = new DataModel();
 const singleUpload = upload.single('image');
 const isItemDepartment = require('../Utilities/isItemInDepartment')
 const checkDepartmentId = require('../Utilities/checkDepartmentId')
@@ -84,7 +83,7 @@ exports.addItem = async (req, res, next) => {
         `Add item success : ${addItem.insertId} - ${res.locals.authData.user[0].userId}`
       );
       let action = 'Add Item';
-      await logs.actionLogs(res.locals.authData.user[0].userId, action);
+      await actionLogs(res.locals.authData.user[0].userId, action);
       res.status(500).json({ result: 'success', msg: 'Add Item Success' });
     });
   } catch (err) {
@@ -137,7 +136,7 @@ exports.updateItem = async (req, res, next) => {
           `Update item success : ${data.itemId} - ${res.locals.authData.user[0].userId}`
         );
         let action = 'Update Item';
-        await logs.actionLogs(res.locals.authData.user[0].userId, action);
+        await actionLogs(res.locals.authData.user[0].userId, action);
         res.status(200).json({ result: 'success', msg: 'Edit Item Success' });
       }
 

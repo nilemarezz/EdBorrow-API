@@ -1,8 +1,7 @@
 const RequestModel = require('../Model/Request');
-const DataModel = require(`../Model/Data`);
+const { actionLogs } = require(`../Model/Data`);
 const { sendEmailRequest } = require('../Utilities/EmailService/SendEmail');
 const requests = new RequestModel();
-const logs = new DataModel();
 const printlog = require('../config/logColor');
 const {
   CREATE_REQUEST,
@@ -26,7 +25,7 @@ exports.postCreateRequest = async (req, res, next) => {
       `Send request success - ${res.locals.authData.user[0].userId}`
     );
     let action = 'Create Request';
-    await logs.actionLogs(req.body.personalInformation.userId, action);
+    await actionLogs(req.body.personalInformation.userId, action);
     res
       .status(200)
       .json({ result: 'success', msg: '[Email] sent request success' });
