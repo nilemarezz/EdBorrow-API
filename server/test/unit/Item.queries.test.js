@@ -7,7 +7,8 @@ const item = {
   createDate: "d",
   userId: "e",
   itemImage: "f",
-  itemDescription: "g"
+  itemDescription: "g",
+  departmentId: 'null'
 
 }
 describe('/queries/Item', () => {
