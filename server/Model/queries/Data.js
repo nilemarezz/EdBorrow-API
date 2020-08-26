@@ -85,6 +85,8 @@ const USER_ACTION_LOG = () => {
     DELETE_ITEM_TO_LOG: (userId, action) =>
       `INSERT INTO UserActionLog (userId, userAction ) values('${userId}' ,'${action}');`,
     CHANGE_PASSWORD_TO_LOG: (userId, action) =>
+      `INSERT INTO UserActionLog (userId, userAction ) values('${userId}' ,'${action}');`,
+    ADD_DEPARTMENT_TO_LOG: (userId, action) =>
       `INSERT INTO UserActionLog (userId, userAction ) values('${userId}' ,'${action}');`
   }
 }

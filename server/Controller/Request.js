@@ -24,8 +24,7 @@ exports.postCreateRequest = async (req, res, next) => {
       'Green',
       `Send request success - ${res.locals.authData.user[0].userId}`
     );
-    let action = 'Create Request';
-    await actionLogs(req.body.personalInformation.userId, action);
+    await actionLogs(req.body.personalInformation.userId, 'Create Request', true);
     res
       .status(200)
       .json({ result: 'success', msg: '[Email] sent request success' });
@@ -35,6 +34,7 @@ exports.postCreateRequest = async (req, res, next) => {
       `Send request Fail - ${res.locals.authData.user[0].userId}`
     );
     console.log(err);
+    await actionLogs(req.body.personalInformation.userId, 'Create Request', false);
     res.status(500).json({ result: 'false', msg: err });
     next(err);
   }

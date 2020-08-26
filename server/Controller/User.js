@@ -141,8 +141,7 @@ exports.ChangePassword = async (req, res, next) => {
         'Green',
         `Change Password Success : ${res.locals.authData.user[0].userId}`
       );
-      let action = 'Change Password';
-      await actionLogs(res.locals.authData.user[0].userId, action);
+      await actionLogs(res.locals.authData.user[0].userId, 'Change Password', true);
       res
         .status(200)
         .json({ result: 'success', msg: 'Change password success.' });
@@ -151,6 +150,7 @@ exports.ChangePassword = async (req, res, next) => {
         'Red',
         `Change Password Fail : ${res.locals.authData.user[0].userId}`
       );
+      await actionLogs(res.locals.authData.user[0].userId, 'Change Password', false);
       res.status(403).json({ result: 'false', msg: 'password not correct' });
     }
   } catch (err) {
@@ -159,6 +159,7 @@ exports.ChangePassword = async (req, res, next) => {
       `Change Password Fail : ${res.locals.authData.user[0].userId}`
     );
     console.log(err);
+    await actionLogs(res.locals.authData.user[0].userId, 'Change Password', false);
     res.status(500).json({ result: 'false', msg: err });
   }
 };

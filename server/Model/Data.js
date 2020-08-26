@@ -29,18 +29,20 @@ const countByMonth = async (department, userId) => {
   const month = createMonthArray(count)
   return month
 }
-const actionLogs = async (userId, action) => {
+const actionLogs = async (userId, action, toComplete) => {
   let actionLog;
   if (action === 'Create Request') {
-    actionLog = await pool.query(USER_ACTION_LOG.CREATE_REQUEST_TO_LOG(userId, action));
+    actionLog = await pool.query(USER_ACTION_LOG.CREATE_REQUEST_TO_LOG(userId, action, toComplete));
   } else if (action === 'Add Item') {
-    actionLog = await pool.query(USER_ACTION_LOG.ADD_ITEM_TO_LOG(userId, action));
+    actionLog = await pool.query(USER_ACTION_LOG.ADD_ITEM_TO_LOG(userId, action, toComplete));
   } else if (action === 'Update Item') {
-    actionLog = await pool.query(USER_ACTION_LOG.UPDATE_ITEM_TO_LOG(userId, action));
+    actionLog = await pool.query(USER_ACTION_LOG.UPDATE_ITEM_TO_LOG(userId, action, toComplete));
   } else if (action === 'Delete Item') {
-    actionLog = await pool.query(USER_ACTION_LOG.DELETE_ITEM_TO_LOG(userId, action));
+    actionLog = await pool.query(USER_ACTION_LOG.DELETE_ITEM_TO_LOG(userId, action, toComplete));
   } else if (action === `Chagne Password`) {
-    actionLog = await pool.query(USER_ACTION_LOG.CHANGE_PASSWORD_TO_LOG(userId, action));
+    actionLog = await pool.query(USER_ACTION_LOG.CHANGE_PASSWORD_TO_LOG(userId, action, toComplete));
+  } else if (action === `Add Department`) {
+    actionLog = await pool.query(USER_ACTION_LOG.ADD_DEPARTMENT_TO_LOG(userId, action, toComplete));
   }
   return actionLog;
 }
