@@ -30,16 +30,6 @@ describe('/queries/Item', () => {
       expect(ADD_ITEM(item)).to.equal(expectedqueries);
     });
   })
-  describe('DELETE_ITEM', () => {
-    it('should return the string same as expected queries', () => {
-
-      const expectedqueries = `
-      DELETE FROM Items 
-      WHERE itemId = 1;
-      `
-      expect(DELETE_ITEM_BY_ID(1)).to.equal(expectedqueries);
-    });
-  })
   describe('GET_ALL_ITEM', () => {
     it('should return the string same as expected queries', () => {
 
