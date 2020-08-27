@@ -1,7 +1,7 @@
 const CryptoJS = require('crypto-js');
 const config = require('../config.json');
-const { actionLogs } = require('../Model/Data');
 const { addAdmin, addItemDepartment, addUserDepartment } = require('../Model/Admin')
+const { actionLogs } = require('../Model/Data');
 const printlog = require('../config/logColor');
 const UserModel = require('../Model/User');
 const { checkUserRole } = require('../Utilities/checkUserRole')
@@ -37,14 +37,11 @@ exports.addDepartment = async (req, res, next) => {
 
       const addDepartment = await addItemDepartment(departmentName, departmentTelNo, departmentEmail, placeBuilding, placeFloor, placeRoom)
       await addUserDepartment(userId, firstName, lastName, cipherPassword, addDepartment)
-
-      await actionLogs(res.locals.authData.user[0].userId, 'Add Department', true);
-
+      await actionLogs.ADD_DEPARTMENT_LOG(res.locals.authData.user[0].userId, true);
       res.status(200).json({ result: 'success', msg: 'Add Department success' });
-
     } else {
-      await actionLogs(res.locals.authData.user[0].userId, 'Add Department', false);
       res.status(500).json({ result: 'false', msg: 'Permission deny' });
+      await actionLogs.ADD_DEPARTMENT_LOG(res.locals.authData.user[0].userId, false);
     }
 
   } catch (err) {
@@ -53,7 +50,7 @@ exports.addDepartment = async (req, res, next) => {
       `Add Admin Fail`
     );
     console.log(err);
-    await actionLogs(res.locals.authData.user[0].userId, 'Add Department', false);
+    await actionLogs.ADD_DEPARTMENT_LOG(res.locals.authData.user[0].userId, false);
     res.status(500).json({ result: 'false', msg: err });
   }
 };

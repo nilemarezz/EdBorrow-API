@@ -84,12 +84,12 @@ exports.addItem = async (req, res, next) => {
         'Green',
         `Add item success : ${addItem.insertId} - ${res.locals.authData.user[0].userId}`
       );
-      await actionLogs(res.locals.authData.user[0].userId, 'Add Item', true);
-      res.status(500).json({ result: 'success', msg: 'Add Item Success' });
+      await actionLogs.ADD_ITEM_LOG(res.locals.authData.user[0].userId, true);
+      res.status(200).json({ result: 'success', msg: 'Add Item Success' });
     });
   } catch (err) {
     console.log(err);
-    await actionLogs(res.locals.authData.user[0].userId, 'Add Item', false);
+    await actionLogs.ADD_ITEM_LOG(res.locals.authData.user[0].userId, false);
     res.status(500).json({ result: 'false', msg: err });
   }
 };
@@ -108,12 +108,12 @@ exports.removeItemById = async (req, res, next) => {
         'Green',
         `Remove item success`
       );
-      await actionLogs(res.locals.authData.user[0].userId, 'Delete Item', true);
+      await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, true);
       res.status(200).json({ result: 'success', msg: 'Remove item success' });
     }
   } catch (err) {
     console.log(err);
-    await actionLogs(res.locals.authData.user[0].userId, 'Delete Item', false);
+    await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, false);
     res.status(500).json({ result: 'false', msg: err });
   }
 }
@@ -155,14 +155,14 @@ exports.updateItem = async (req, res, next) => {
           'Red',
           `Update item fale : ${data.itemId} - ${res.locals.authData.user[0].userId} - Not own item`
         );
-        await actionLogs(res.locals.authData.user[0].userId, 'Update Item', false);
+        await actionLogs.UPDATE_ITEM_LOG(res.locals.authData.user[0].userId, false);
         res.status(500).json({ result: 'false', msg: "It's not your Item" });
       } else {
         printlog(
           'Green',
           `Update item success : ${data.itemId} - ${res.locals.authData.user[0].userId}`
         );
-        await actionLogs(res.locals.authData.user[0].userId, 'Update Item', true);
+        await actionLogs.UPDATE_ITEM_LOG(res.locals.authData.user[0].userId, true);
         res.status(200).json({ result: 'success', msg: 'Edit Item Success' });
       }
 
@@ -171,6 +171,7 @@ exports.updateItem = async (req, res, next) => {
 
   } catch (err) {
     console.log(err);
+    await actionLogs.UPDATE_ITEM_LOG(res.locals.authData.user[0].userId, false);
     res.status(500).json({ result: 'false', msg: err });
   }
 };
