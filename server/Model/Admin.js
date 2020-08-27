@@ -35,4 +35,15 @@ const addDepartmentPlace = async (placeBuilding, placeFloor, placeRoom) => {
   return place.insertId
 }
 
-module.exports = { addAdmin, addItemDepartment, addUserDepartment }
+const getItems = async () => {
+  const items = await pool.query(`
+  SELECT i.itemId , i.itemBrand , i.itemName , i.itemModel, i.createDate,i.itemImage , i.itemDescription , ic.categoryName ,
+  id.departmentName , id.departmentTelNo , id.departmentEmail , dp.placeBuilding , dp.placeFloor , dp.placeRoom 
+  FROM Items i join ItemCategory ic on ic.categoryId = i.categoryId 
+  join ItemDepartment id on id.departmentId = i.departmentId 
+  join DepartmentPlace dp on dp.placeId = id.placeId 
+  where i.departmentId is not null;
+  `)
+  return items
+}
+module.exports = { addAdmin, addItemDepartment, addUserDepartment, getItems }

@@ -1,11 +1,12 @@
 const CryptoJS = require('crypto-js');
 const config = require('../config.json')
 const pool = require('../config/BorrowSystemDB');
-const { addAdmin, addItemDepartment, addUserDepartment } = require('../Model/Admin')
+const { addAdmin, addItemDepartment, addUserDepartment, getItems } = require('../Model/Admin')
 const printlog = require('../config/logColor');
 const UserModel = require('../Model/User');
 const { checkUserRole } = require('../Utilities/checkUserRole')
 const user = new UserModel()
+
 exports.addAdmin = async (req, res, next) => {
   try {
     var cipherPassword = CryptoJS.AES
@@ -52,3 +53,16 @@ exports.addDepartment = async (req, res, next) => {
     res.status(500).json({ result: 'false', msg: err });
   }
 };
+
+exports.getItemsSysytemAdmin = async (req, res, next) => {
+  try {
+    const role = await user.getUserRole(res.locals.authData.user[0].userId)
+    const userRole = await checkUserRole(role)
+    if (userRole.admin === true) {
+      const items = await getItems()
+      res.status(200).json({ result: 'success', data: items });
+    }
+  } catch (err) {
+    res.status(500).json({ result: 'false', msg: err });
+  }
+}
