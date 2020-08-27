@@ -43,6 +43,11 @@ const DELETE_ALL_ITEMS = () => {
   DELETE FROM Items;
   `
 }
+const DELETE_ITEM_BY_ID = (itemId) => {
+  return `
+  DELETE FROM Items 
+  WHERE itemId = ${itemId};`
+}
 const ADD_ITEM = (value) => {
   return `
   INSERT INTO Items (itemBrand ,itemModel , itemName, createDate ,categoryId ,${value.departmentId === 'null' ? "userId" : "departmentId"} ,itemStatusId ,itemImage ,itemDescription ,itemBorrowable ,itemAvailability ) 
@@ -101,5 +106,5 @@ const UPDATE_ITEM = (value, department, userId) => {
 
 module.exports = {
   GET_ALL_ITEM, GET_ITEM_BY_ID, GET_CATEGORY, GET_VALID_DATE_ITEM, GET_DEPARTMENT, GET_OWNER,
-  DELETE_ALL_ITEMS, ADD_ITEM, GET_DEPARTMENT_BY_ID, UPDATE_ITEM
+  DELETE_ALL_ITEMS, ADD_ITEM, DELETE_ITEM_BY_ID, GET_DEPARTMENT_BY_ID, UPDATE_ITEM
 }

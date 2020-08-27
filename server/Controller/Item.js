@@ -1,8 +1,10 @@
 const BorrowItemModel = require('../Model/Item');
+const UserModel = require('../Model/User');
 const { actionLogs } = require('../Model/Data');
 const upload = require('../Utilities/Upload/Upload');
 const printlog = require('../config/logColor');
 const borrowItem = new BorrowItemModel();
+const user = new UserModel();
 const singleUpload = upload.single('image');
 const isItemDepartment = require('../Utilities/isItemInDepartment')
 const checkDepartmentId = require('../Utilities/checkDepartmentId')
@@ -91,6 +93,30 @@ exports.addItem = async (req, res, next) => {
     res.status(500).json({ result: 'false', msg: err });
   }
 };
+
+exports.removeItemById = async (req, res, next) => {
+  try {
+    const role = await user.getUserRole(res.locals.authData.user[0].userId)
+    const userRole = await checkUserRole(role)
+    if (userRole.admin === true) {
+      var cipherPassword = CryptoJS.AES
+        .encrypt(password, config.CRYPTO_SECRET_KEY)
+        .toString();
+
+      await borrowItem.removeItemById(req.body.itemId)
+      printlog(
+        'Green',
+        `Remove item success`
+      );
+      await actionLogs(res.locals.authData.user[0].userId, 'Delete Item', true);
+      res.status(200).json({ result: 'success', msg: 'Remove item success' });
+    }
+  } catch (err) {
+    console.log(err);
+    await actionLogs(res.locals.authData.user[0].userId, 'Delete Item', false);
+    res.status(500).json({ result: 'false', msg: err });
+  }
+}
 
 exports.getItemByDepartment = async (req, res, next) => {
   try {

@@ -1,4 +1,4 @@
-const { ADD_ITEM, DELETE_ALL_ITEMS, GET_ALL_ITEM, GET_CATEGORY, GET_DEPARTMENT, GET_DEPARTMENT_BY_ID, GET_ITEM_BY_ID, GET_OWNER, UPDATE_ITEM } = require('../../Model/queries/Item');
+const { ADD_ITEM, DELETE_ALL_ITEMS, DELETE_ITEM_BY_ID, GET_ALL_ITEM, GET_CATEGORY, GET_DEPARTMENT, GET_DEPARTMENT_BY_ID, GET_ITEM_BY_ID, GET_OWNER, UPDATE_ITEM } = require('../../Model/queries/Item');
 const { expect } = require('chai')
 const item = {
   itemBrand: "a",
@@ -28,6 +28,16 @@ describe('/queries/Item', () => {
   values ('${item.itemBrand}','${item.itemModel}','${item.itemName}','${item.createDate}',1,'${item.userId}',1,${item.itemImage === null ? 'NULL' : `'${item.itemImage}'`},'${item.itemDescription}',1,1) 
   `
       expect(ADD_ITEM(item)).to.equal(expectedqueries);
+    });
+  })
+  describe('DELETE_ITEM', () => {
+    it('should return the string same as expected queries', () => {
+
+      const expectedqueries = `
+      DELETE FROM Items 
+      WHERE itemId = 1;
+      `
+      expect(DELETE_ITEM_BY_ID(1)).to.equal(expectedqueries);
     });
   })
   describe('GET_ALL_ITEM', () => {
