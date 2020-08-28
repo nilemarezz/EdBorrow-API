@@ -96,21 +96,8 @@ exports.addItem = async (req, res, next) => {
 
 exports.removeItemById = async (req, res, next) => {
   try {
-    const role = await user.getUserRole(res.locals.authData.user[0].userId)
-    const userRole = await checkUserRole(role)
-    if (userRole.admin === true) {
-      var cipherPassword = CryptoJS.AES
-        .encrypt(password, config.CRYPTO_SECRET_KEY)
-        .toString();
-
-      await borrowItem.removeItemById(req.body.itemId)
-      printlog(
-        'Green',
-        `Remove item success`
-      );
-      await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, true);
-      res.status(200).json({ result: 'success', msg: 'Remove item success' });
-    }
+    await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, true);
+    res.status(200).json({ result: 'success', msg: 'Remove item success' });
   } catch (err) {
     console.log(err);
     await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, false);

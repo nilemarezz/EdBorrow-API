@@ -30,12 +30,12 @@ const countByMonth = async (department, userId) => {
   return month
 }
 const actionLogs = async (userId, toComplete) => {
-  CREATE_REQUEST_LOG = await pool.query(USER_ACTION_LOG.CREATE_REQUEST_TO_LOG(userId, "Create request", toComplete));
-  ADD_ITEM_LOG = await pool.query(USER_ACTION_LOG.ADD_ITEM_TO_LOG(userId, "Add item", toComplete));
-  UPDATE_ITEM_LOG = await pool.query(USER_ACTION_LOG.UPDATE_ITEM_TO_LOG(userId, "Update item", toComplete));
-  DELETE_ITEM_LOG = await pool.query(USER_ACTION_LOG.DELETE_ITEM_TO_LOG(userId, "Delete item", toComplete));
-  CHANGE_PASSWORD_LOG = await pool.query(USER_ACTION_LOG.CHANGE_PASSWORD_TO_LOG(userId, "Change password", toComplete));
-  ADD_DEPARTMENT_LOG = await pool.query(USER_ACTION_LOG.ADD_DEPARTMENT_TO_LOG(userId, "Add department", toComplete));
+  CREATE_REQUEST_LOG = await pool.query(USER_ACTION_LOG(userId, "Create request", toComplete));
+  ADD_ITEM_LOG = await pool.query(USER_ACTION_LOG(userId, "Add item", toComplete));
+  UPDATE_ITEM_LOG = await pool.query(USER_ACTION_LOG(userId, "Update item", toComplete));
+  DELETE_ITEM_LOG = await pool.query(USER_ACTION_LOG(userId, "Delete item", toComplete));
+  CHANGE_PASSWORD_LOG = await pool.query(USER_ACTION_LOG(userId, "Change password", toComplete));
+  ADD_DEPARTMENT_LOG = await pool.query(USER_ACTION_LOG(userId, "Add department", toComplete));
 }
 
 module.exports = { getLastestBorrow, getMostBorrow, getWaitingRequest, countItems, countByMonth, actionLogs }

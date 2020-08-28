@@ -74,21 +74,8 @@ const COUNT_BY_MONTH = (department, user) => {
   `
 }
 
-const USER_ACTION_LOG = () => {
-  return {
-    CREATE_REQUEST_TO_LOG: (userId, action) =>
-      `INSERT INTO UserActionLog (userId, userAction ) values('${userId}' ,'${action}');`,
-    ADD_ITEM_TO_LOG: (userId, action) =>
-      `INSERT INTO UserActionLog (userId, userAction ) values('${userId}' ,'${action}');`,
-    UPDATE_ITEM_TO_LOG: (userId, action) =>
-      `INSERT INTO UserActionLog (userId, userAction ) values('${userId}' ,'${action}');`,
-    DELETE_ITEM_TO_LOG: (userId, action) =>
-      `INSERT INTO UserActionLog (userId, userAction ) values('${userId}' ,'${action}');`,
-    CHANGE_PASSWORD_TO_LOG: (userId, action) =>
-      `INSERT INTO UserActionLog (userId, userAction ) values('${userId}' ,'${action}');`,
-    ADD_DEPARTMENT_TO_LOG: (userId, action) =>
-      `INSERT INTO UserActionLog (userId, userAction ) values('${userId}' ,'${action}');`
-  }
+const USER_ACTION_LOG = (userId, action, toComplete) => {
+  return `INSERT INTO UserActionLog (userId, userAction , toComplete) values('${userId}' ,'${action}', ${toComplete});`
 }
 
 module.exports = { GET_LASTEST_BORROW, GET_MOST_BORROW, GET_REQUEST_STATUS, COUNT_ITEMS, COUNT_BY_MONTH, USER_ACTION_LOG }
