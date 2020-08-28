@@ -65,7 +65,7 @@ describe('/queries/Item', () => {
       it('should return the string same as expected queries', () => {
         const departmentQuery =
           `
-  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage 
+  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.createDate , i.userId as ownerName , i.itemAvailability , i.itemImage 
   FROM Items i left join ItemDepartment d on i.departmentId = d.departmentId 
   join ItemCategory c on i.categoryId = c.categoryId 
   where i.departmentId = "1" ORDER BY i.itemName asc
