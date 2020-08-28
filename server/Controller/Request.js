@@ -1,9 +1,8 @@
 const RequestModel = require('../Model/Request');
+const { actionLogs } = require(`../Model/Data`);
 const { sendEmailRequest } = require('../Utilities/EmailService/SendEmail');
 const requests = new RequestModel();
-const config = require('../config.json');
 const printlog = require('../config/logColor');
-const { getUserRole } = require('./User');
 const {
   CREATE_REQUEST,
   CHANGE_STATUS_APPROVE,
@@ -25,6 +24,7 @@ exports.postCreateRequest = async (req, res, next) => {
       'Green',
       `Send request success - ${res.locals.authData.user[0].userId}`
     );
+    await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, true, 'Success');
     res
       .status(200)
       .json({ result: 'success', msg: '[Email] sent request success' });
@@ -34,6 +34,7 @@ exports.postCreateRequest = async (req, res, next) => {
       `Send request Fail - ${res.locals.authData.user[0].userId}`
     );
     console.log(err);
+    await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, false, err);
     res.status(500).json({ result: 'false', msg: err });
     next(err);
   }

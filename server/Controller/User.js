@@ -1,4 +1,5 @@
 const UserModel = require('../Model/User');
+const { actionLogs } = require(`../Model/Data`);
 const jwt = require('jsonwebtoken');
 const CryptoJS = require('crypto-js');
 const config = require('../config.json');
@@ -140,6 +141,7 @@ exports.ChangePassword = async (req, res, next) => {
         'Green',
         `Change Password Success : ${res.locals.authData.user[0].userId}`
       );
+      await actionLogs.CHANGE_PASSWORD_LOG(res.locals.authData.user[0].userId, true, 'Success');
       res
         .status(200)
         .json({ result: 'success', msg: 'Change password success.' });
@@ -148,6 +150,7 @@ exports.ChangePassword = async (req, res, next) => {
         'Red',
         `Change Password Fail : ${res.locals.authData.user[0].userId}`
       );
+      await actionLogs.CHANGE_PASSWORD_LOG(res.locals.authData.user[0].userId, false, 'password not correct');
       res.status(403).json({ result: 'false', msg: 'password not correct' });
     }
   } catch (err) {
@@ -156,6 +159,7 @@ exports.ChangePassword = async (req, res, next) => {
       `Change Password Fail : ${res.locals.authData.user[0].userId}`
     );
     console.log(err);
+    await actionLogs.CHANGE_PASSWORD_LOG(res.locals.authData.user[0].userId, false, err);
     res.status(500).json({ result: 'false', msg: err });
   }
 };

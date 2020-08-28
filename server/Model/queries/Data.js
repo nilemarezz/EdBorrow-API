@@ -74,4 +74,8 @@ const COUNT_BY_MONTH = (department, user) => {
   `
 }
 
-module.exports = { GET_LASTEST_BORROW, GET_MOST_BORROW, GET_REQUEST_STATUS, COUNT_ITEMS, COUNT_BY_MONTH }
+const USER_ACTION_LOG = (userId, action, toComplete, descriptions) => {
+  return `INSERT INTO UserActionLog (userId, userAction , toComplete, description) values('${userId}' ,'${action}', ${toComplete}, '${descriptions}');`
+}
+
+module.exports = { GET_LASTEST_BORROW, GET_MOST_BORROW, GET_REQUEST_STATUS, COUNT_ITEMS, COUNT_BY_MONTH, USER_ACTION_LOG }
