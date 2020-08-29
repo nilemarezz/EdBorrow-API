@@ -46,4 +46,15 @@ const getItems = async () => {
   `)
   return items
 }
-module.exports = { addAdmin, addItemDepartment, addUserDepartment, getItems }
+
+const getDepartment = async () => {
+  const department = await pool.query(`
+  select id.departmentId , id.departmentName , id.departmentEmail , id.departmentTelNo , dp.placeBuilding , dp.placeFloor , dp.placeRoom ,
+  u.userId , CONCAT(u.firstName , " ", u.lastName) AS Name 
+  from ItemDepartment id join DepartmentPlace dp on id.placeId = dp.placeId 
+  join UserRole ur on ur.roleId = id.departmentId 
+  join Users u on u.userId = ur.userId  
+  `)
+  return department
+}
+module.exports = { addAdmin, addItemDepartment, addUserDepartment, getItems, getDepartment }

@@ -1,6 +1,6 @@
 const CryptoJS = require('crypto-js');
 const config = require('../config.json');
-const { addAdmin, addItemDepartment, addUserDepartment, getItems } = require('../Model/Admin')
+const { addAdmin, addItemDepartment, addUserDepartment, getItems, getDepartment } = require('../Model/Admin')
 const { actionLogs } = require('../Model/Data');
 const pool = require('../config/BorrowSystemDB');
 const printlog = require('../config/logColor');
@@ -66,6 +66,23 @@ exports.getItemsSysytemAdmin = async (req, res, next) => {
       res.status(200).json({ result: 'success', data: items });
     }
   } catch (err) {
+    res.status(500).json({ result: 'false', msg: err });
+  }
+}
+
+
+exports.getdepartmentList = async (req, res, next) => {
+  try {
+    const role = await user.getUserRole(res.locals.authData.user[0].userId)
+    const userRole = await checkUserRole(role)
+    if (userRole.admin === true) {
+      const department = await getDepartment()
+      res.status(200).json({ result: 'success', data: department });
+    } else {
+      res.status(500).json({ result: 'false', msg: 'Permission Deny' });
+    }
+  } catch (err) {
+    console.log(err)
     res.status(500).json({ result: 'false', msg: err });
   }
 }
