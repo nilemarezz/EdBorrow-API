@@ -33,3 +33,12 @@ exports.DepartmentList = async (req, res, next) => {
     res.status(500).json({ result: 'false', msg: err });
   }
 }
+
+exports.SystemLogs = async (req, res, next) => {
+  try {
+    const logs = await pool.query('select * from UserActionLog ual')
+    res.status(200).json({ result: 'success', data: logs });
+  } catch (err) {
+    res.status(500).json({ result: 'false', msg: err });
+  }
+}
