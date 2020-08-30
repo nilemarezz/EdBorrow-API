@@ -89,19 +89,19 @@ exports.addItem = async (req, res, next) => {
     });
   } catch (err) {
     console.log(err);
-    await actionLogs.ADD_ITEM_LOG(res.locals.authData.user[0].userId, false, err);
+    await actionLogs.ADD_ITEM_LOG(res.locals.authData.user[0].userId, false, err.code);
     res.status(500).json({ result: 'false', msg: err });
   }
 };
 
 exports.removeItemById = async (req, res, next) => {
   try {
-    await borrowItem.removeItemById(req.body.itemId);
-    await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, true, 'Success');
-    res.status(200).json({ result: 'success', msg: 'Remove item success' });
+    await borrowItem.removeItemById(req.query.itemId);
+    await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, true, `Id : ${req.query.itemId}`);
+    res.status(200).json({ result: 'success', msg: 'Remove item success', });
   } catch (err) {
     console.log(err);
-    await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, false, err);
+    await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, false, err.code);
     res.status(500).json({ result: 'false', msg: err });
   }
 }
@@ -159,7 +159,7 @@ exports.updateItem = async (req, res, next) => {
 
   } catch (err) {
     console.log(err);
-    await actionLogs.UPDATE_ITEM_LOG(res.locals.authData.user[0].userId, false, err);
+    await actionLogs.UPDATE_ITEM_LOG(res.locals.authData.user[0].userId, false, err.code);
     res.status(500).json({ result: 'false', msg: err });
   }
 };

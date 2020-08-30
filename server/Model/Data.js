@@ -35,7 +35,8 @@ const actionLogs = {
   UPDATE_ITEM_LOG: async (userId, toComplete, description) => { await pool.query(USER_ACTION_LOG(userId, "Update item", toComplete, description)) },
   DELETE_ITEM_LOG: async (userId, toComplete, description) => { await pool.query(USER_ACTION_LOG(userId, "Delete item", toComplete, description)) },
   CHANGE_PASSWORD_LOG: async (userId, toComplete, description) => { await pool.query(USER_ACTION_LOG(userId, "Change password", toComplete, description)) },
-  ADD_DEPARTMENT_LOG: async (userId, toComplete, description) => { await pool.query(USER_ACTION_LOG(userId, "Add department", toComplete, description)) }
+  ADD_DEPARTMENT_LOG: async (userId, toComplete, description) => { await pool.query(USER_ACTION_LOG(userId, "Add department", toComplete, description)) },
+  DELETE_DEPARTMENT_LOG: async (userId, toComplete, description) => { await pool.query(USER_ACTION_LOG(userId, "Delete department", toComplete, description)) }
 }
 
 module.exports = { getLastestBorrow, getMostBorrow, getWaitingRequest, countItems, countByMonth, actionLogs }

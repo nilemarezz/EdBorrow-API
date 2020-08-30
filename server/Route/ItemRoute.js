@@ -10,15 +10,13 @@ router
   .get(getAllBorrowItems)
   .post(verifyToken, validUser, addItem)
   .put(verifyToken, validUser, updateItem)
+  .delete(verifyToken, validUser, removeItemById)
 router
   .route("/admin")
   .get(verifyToken, validUser, getItemByDepartment)
 router
   .route("/search")
   .get(getSearchBorrowItems)
-router
-  .route("/deleteItem")
-  .delete(removeItemById)
 router
   .route("/getColumn")
   .get(getValidateItem)

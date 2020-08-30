@@ -34,7 +34,7 @@ exports.postCreateRequest = async (req, res, next) => {
       `Send request Fail - ${res.locals.authData.user[0].userId}`
     );
     console.log(err);
-    await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, false, err);
+    await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, false, err.code);
     res.status(500).json({ result: 'false', msg: err });
     next(err);
   }

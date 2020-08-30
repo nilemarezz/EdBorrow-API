@@ -57,4 +57,20 @@ const getDepartment = async () => {
   `)
   return department
 }
-module.exports = { addAdmin, addItemDepartment, addUserDepartment, getItems, getDepartment }
+
+const deleteDepartment = async (departmentId) => {
+  await pool.query(`DELETE FROM Items WHERE departmentId  = ${departmentId};`)
+  await pool.query(`DELETE FROM ItemDepartment WHERE departmentId  = ${departmentId};`)
+  await pool.query(`DELETE FROM DepartmentPlace WHERE placeId  = ${departmentId};`)
+  await pool.query(`ALTER Table  Borrow.ItemDepartment AUTO_INCREMENT= 1;`)
+  await pool.query(`ALTER TABLE Borrow.DepartmentPlace AUTO_INCREMENT=1;`)
+  return true
+}
+
+const deleteUser = async (userId, departmentId) => {
+  await pool.query(`DELETE FROM UserRole WHERE userId  = "${userId}";`)
+  await pool.query(`DELETE FROM Roles WHERE roleId  = ${departmentId};`)
+  await pool.query(`DELETE FROM Users WHERE  userId = "${userId}";`)
+  return true
+}
+module.exports = { addAdmin, addItemDepartment, addUserDepartment, getItems, getDepartment, deleteDepartment, deleteUser }

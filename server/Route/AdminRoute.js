@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require('../middleware/verify')
 const validUser = require('../middleware/validUser')
-const { addAdmin, addDepartment, getItemsSysytemAdmin, getdepartmentList } = require('../Controller/Admin')
+const { addAdmin, addDepartment, getItemsSysytemAdmin, getdepartmentList, deleteDepartment } = require('../Controller/Admin')
 router
   .route("/addAdmin")
   .post(addAdmin)
@@ -15,5 +15,8 @@ router
 router
   .route("/department")
   .get(verifyToken, validUser, getdepartmentList)
+router
+  .route("/department")
+  .delete(verifyToken, validUser, deleteDepartment)
 
 module.exports = router

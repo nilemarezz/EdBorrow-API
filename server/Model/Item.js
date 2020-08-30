@@ -43,7 +43,7 @@ class BorrowItem {
     return this.borrowItem;
   }
 
-  async removeItemById() {
+  async removeItemById(itemId) {
     this.borrowItem = await pool.query(DELETE_ITEM_BY_ID(itemId));
     return this.borrowItem
   }

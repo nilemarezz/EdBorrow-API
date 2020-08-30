@@ -1,6 +1,6 @@
 const CryptoJS = require('crypto-js');
 const config = require('../config.json');
-const { addAdmin, addItemDepartment, addUserDepartment, getItems, getDepartment } = require('../Model/Admin')
+const { addAdmin, addItemDepartment, addUserDepartment, getItems, getDepartment, deleteDepartment, deleteUser } = require('../Model/Admin')
 const { actionLogs } = require('../Model/Data');
 const pool = require('../config/BorrowSystemDB');
 const printlog = require('../config/logColor');
@@ -39,11 +39,12 @@ exports.addDepartment = async (req, res, next) => {
 
       const addDepartment = await addItemDepartment(departmentName, departmentTelNo, departmentEmail, placeBuilding, placeFloor, placeRoom)
       await addUserDepartment(userId, firstName, lastName, cipherPassword, addDepartment)
-      await actionLogs(res.locals.authData.user[0].userId, true).ADD_DEPARTMENT_LOG;
       await actionLogs.ADD_DEPARTMENT_LOG(res.locals.authData.user[0].userId, true, null);
+      res.status(200).json({ result: 'success', });
     } else {
-      res.status(500).json({ result: 'false', msg: 'Permission deny' });
       await actionLogs.ADD_DEPARTMENT_LOG(res.locals.authData.user[0].userId, false, 'Permission deny');
+      res.status(500).json({ result: 'false', msg: 'Permission deny' });
+
     }
 
   } catch (err) {
@@ -52,7 +53,7 @@ exports.addDepartment = async (req, res, next) => {
       `Add Department Fail`
     );
     console.log(err);
-    await actionLogs.ADD_DEPARTMENT_LOG(res.locals.authData.user[0].userId, false, 'hhhhhh');
+    await actionLogs.ADD_DEPARTMENT_LOG(res.locals.authData.user[0].userId, false, err.code);
     res.status(500).json({ result: 'false', msg: err });
   }
 };
@@ -83,6 +84,25 @@ exports.getdepartmentList = async (req, res, next) => {
     }
   } catch (err) {
     console.log(err)
+    res.status(500).json({ result: 'false', msg: err });
+  }
+}
+
+exports.deleteDepartment = async (req, res, next) => {
+  try {
+    const role = await user.getUserRole(res.locals.authData.user[0].userId)
+    const userRole = await checkUserRole(role)
+    if (userRole.admin === true) {
+      await deleteDepartment(req.body.departmentId)
+      await deleteUser(req.body.userId, req.body.departmentId)
+      await actionLogs.DELETE_DEPARTMENT_LOG(res.locals.authData.user[0].userId, true, req.body.departmentId);
+      res.status(200).json({ result: 'success' });
+    } else {
+      res.status(500).json({ result: 'false', msg: 'Permission Deny' });
+    }
+  } catch (err) {
+    console.log(err)
+    await actionLogs.DELETE_DEPARTMENT_LOG(res.locals.authData.user[0].userId, false, err.code);
     res.status(500).json({ result: 'false', msg: err });
   }
 }
