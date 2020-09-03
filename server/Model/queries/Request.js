@@ -67,7 +67,7 @@ const CREATE_REQUEST = () => {
     SET ri.itemBorrowingStatusId = 4 , i.itemAvailability = FALSE WHERE ri.itemId = ${body.items[i].itemId};`,
     RETURN_REQUEST: (lastInsertId) => `
     select br.requestId ,u.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.email , u.userTelNo ,
-    br.borrowPurpose , ri.borrowDate , ri.returnDate , i.itemName 
+    br.borrowPurpose , ri.borrowDate , ri.returnDate , i.itemName , br.requestApprove
     from RequestItem ri  
     join BorrowRequest br ON br.requestId  = ri.requestId 
     join Users u on u.userId = br.userId 
@@ -84,15 +84,16 @@ const ADVISOR_CHANGE_REQUEST_STATUS = (query) => {
     WHERE br.requestId = ${query.requestId};`,
     RETURN_REQUEST: `
     SELECT br.requestId , br.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.curriculum , u.email , u.studentYear , u.userTelNo , 
-		      i.itemId , i.itemName , d.departmentId , d.departmentName , d.departmentEmail , br.borrowPurpose , br.usePlace , ri.returnDate , ri.borrowDate , 
-		      a.userId as studentAdvisor, CONCAT(a.firstName, " ", a.lastName) as advisorName, a.email as advisorEmail , br.requestApprove 
+          i.itemId , i.itemName , COALESCE(o.email , departmentEmail) as itemOwnerEmail , d.departmentId , d.departmentName , br.borrowPurpose , br.usePlace , ri.returnDate , ri.borrowDate , 
+          a.userId as studentAdvisor, CONCAT(a.firstName, " ", a.lastName) as advisorName, a.email as advisorEmail , br.requestApprove 
     FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
-					join Items i on ri.itemId = i.itemId 
-					left join Users u on br.userId = u.userId 
-					inner join Users a on a.userId = u.studentAdvisor 
-					join ItemDepartment d on i.departmentId = d.departmentId 
+          join Items i on ri.itemId = i.itemId 
+          left join Users u on br.userId = u.userId 
+          LEFT join Users o on o.userId = i.userId 
+          inner join Users a on a.userId = u.studentAdvisor 
+          left join ItemDepartment d on i.departmentId = d.departmentId 
     WHERE br.requestId = ${query.requestId};
-    `
+          `
   }
 }
 const DEPARTMENT_CHANGE_REQUEST_STATUS = (query) => {

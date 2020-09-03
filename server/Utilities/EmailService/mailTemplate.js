@@ -1,6 +1,7 @@
 const config = require("../../config.json");
 
 const temp = (value, url) => {
+  console.log(value)
   return ` 
     <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
@@ -145,7 +146,7 @@ const temp = (value, url) => {
                             <p
                               style="text-align: center; font-family:Helvetica Neue, Helvetica, Arial, sans-serif; font-weight: bold; font-size: large; color: #004afd;"
                             >
-                              Confirmation Borrowing Form: Request ${value.data[0].requestId}
+                              Confirmation Borrowing Form: Request ${value[0].requestId}
                             </p>
                             <br />
                             <table
@@ -156,33 +157,33 @@ const temp = (value, url) => {
                                 <th width="20%" style="text-align:right;">
                                   User Id:
                                 </th>
-                                <td width="80%">${value.data[0].userId}</td>
+                                <td width="80%">${value[0].userId}</td>
                               </tr>
                               <tr>
                                 <th width="20%" style="text-align:right;">
                                   Name:
                                 </th>
-                                <td width="80%">${value.data[0].Name}</td>
+                                <td width="80%">${value[0].Name}</td>
                               </tr>
   
                               <tr>
                                 <th width="20%" style="text-align:right;">
                                   Email:
                                 </th>
-                                <td width="80%">${value.data[0].email}</td>
+                                <td width="80%">${value[0].email}</td>
                               </tr>
                               <tr>
                                 <th width="20%" style="text-align:right;">
                                   Tel:
                                 </th>
-                                <td width="80%">${value.data[0].userTelNo}</td>
+                                <td width="80%">${value[0].userTelNo}</td>
                               </tr>
                               <tr>
                                 <th width="20%" style="text-align:right;">
                                   Purpose:
                                 </th>
                                 <td width="80%">
-                                  ${value.data[0].borrowPurpose}
+                                  ${value[0].borrowPurpose}
                                 </td>
                               </tr>
                               <tr>
@@ -190,12 +191,12 @@ const temp = (value, url) => {
                                   Duration: 
                                 </th>
                                 <td width="80%">
-                                ${value.data[0].borrowDate
+                                ${value[0].borrowDate
       .toString()
       .substring(
         4,
         16
-      )} to ${value.data[0].returnDate
+      )} to ${value[0].returnDate
         .toString()
         .substring(4, 16)}
                                 </td>
@@ -205,7 +206,7 @@ const temp = (value, url) => {
                                   Item:
                                 </th>
                                 <td width="80%">
-                                  ${value.data.map(item => {
+                                  ${value.map(item => {
           return `${item.itemName}`;
         })}
                                 </td>
