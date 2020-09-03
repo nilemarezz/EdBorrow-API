@@ -25,7 +25,7 @@ exports.sendEmailRequest = async (value, email, url) => {
       from: '"[Request Borrow]" <equipmentproject63@gmail.com>',
       to: email,
       subject: "Borrow Item request on student",
-      html: temp(value, url)
+      html: temp(value.data.item, url)
     });
     return true;
   } catch (err) {

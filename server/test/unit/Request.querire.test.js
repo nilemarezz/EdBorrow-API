@@ -48,23 +48,6 @@ describe('/queries/Request', () => {
         expect(ADVISOR_CHANGE_REQUEST_STATUS(query).REJECT_ALL_APPROVE).to.equal(expectedqueries)
       })
     })
-    describe('RETURN_REQUEST', () => {
-      it('should return the string same as expected queries', () => {
-
-        const expectedqueries = `
-    SELECT br.requestId , br.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.curriculum , u.email , u.studentYear , u.userTelNo , 
-		      i.itemId , i.itemName , d.departmentId , d.departmentName , d.departmentEmail , br.borrowPurpose , br.usePlace , ri.returnDate , ri.borrowDate , 
-		      a.userId as studentAdvisor, CONCAT(a.firstName, " ", a.lastName) as advisorName, a.email as advisorEmail , br.requestApprove 
-    FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
-					join Items i on ri.itemId = i.itemId 
-					left join Users u on br.userId = u.userId 
-					inner join Users a on a.userId = u.studentAdvisor 
-					join ItemDepartment d on i.departmentId = d.departmentId 
-    WHERE br.requestId = 1;
-    `
-        expect(ADVISOR_CHANGE_REQUEST_STATUS(query).RETURN_REQUEST).to.equal(expectedqueries)
-      })
-    })
   })
   describe('CREATE_REQUEST', () => {
     describe('INSERT_BORROWREQUEST_TO_DB', () => {

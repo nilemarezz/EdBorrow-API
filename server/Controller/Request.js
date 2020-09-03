@@ -82,7 +82,6 @@ exports.departmentChangeStatus = async (req, res, next) => {
 exports.approveAllItem = async (req, res, next) => {
   try {
     let borrowRequest = await requests.getRequest(req.query.requestId);
-
     if (req.query.approver === 'advisor') {
       if (borrowRequest[0].requestApprove !== 2) {
         printlog('Yellow', 'Advisor Already Action this report');
@@ -93,54 +92,47 @@ exports.approveAllItem = async (req, res, next) => {
 
           printlog('Green', 'Advisor Approve the request');
 
-          let itemInfra = [];
-          let itemSRM = [];
-          let itemLAB = [];
+          let newItems = [];
+          let data;
+          for (let i = 0; i < approvedRequest.length; i++) {
+            let idxOwner = newItems.findIndex(item => item.email === approvedRequest[i].itemOwnerEmail);
+            data = {
+              requestId: approvedRequest[i].requestId,
+              itemId: approvedRequest[i].itemId,
+              departmentId: approvedRequest[i].departmentId,
+              departmentName: approvedRequest[i].departmentName,
+              itemName: approvedRequest[i].itemName,
+              userId: approvedRequest[i].userId,
+              Name: approvedRequest[i].Name,
+              email: approvedRequest[i].email,
+              userTelNo: approvedRequest[i].userTelNo,
+              borrowDate: approvedRequest[i].borrowDate,
+              returnDate: approvedRequest[i].returnDate,
+              borrowPurpose: approvedRequest[i].borrowPurpose
+            };
 
-          if (approvedRequest[0].requestApprove === 1) {
-            for (let i = 0; i < approvedRequest.length; i++) {
-              if (approvedRequest[i].departmentName === 'SRM') {
-                itemSRM.push(approvedRequest[i]);
-              } else if (
-                approvedRequest[i].departmentName === 'IT Infrastructure'
-              ) {
-                itemInfra.push(approvedRequest[i]);
-              } else if (approvedRequest[i].departmentName === 'LAB') {
-                itemLAB.push(approvedRequest[i]);
-              }
+            if (idxOwner !== -1) {
+              newItems[idxOwner].item.push(data);
+            } else {
+              newItems.push({
+                email: approvedRequest[i].itemOwnerEmail,
+                item: [data]
+              });
             }
-
-            if (itemInfra.length > 0) {
-              let url;
-              url = CHANGE_STATUS_APPROVE(itemInfra[0]);
-              await sendEmailRequest(
-                { data: itemInfra },
-                itemInfra[0].departmentEmail,
-                url
-              );
-            }
-            if (itemSRM.length > 0) {
-              let url;
-              url = CHANGE_STATUS_APPROVE(itemSRM[0]);
-              await sendEmailRequest(
-                { data: itemSRM },
-                itemSRM[0].departmentEmail,
-                url
-              );
-            }
-            if (itemLAB.length > 0) {
-              let url;
-              url = url = CHANGE_STATUS_APPROVE(itemLAB[0]);
-              await sendEmailRequest(
-                { data: itemLAB },
-                itemLAB[0].departmentEmail,
-                url
-              );
-            }
-
-            printlog('Green', 'Success sending email to the department');
-            res.redirect(REDIRECT_APPROVE_URL().APPROVE_SUCCESS);
           }
+
+          let url;
+          for (let j = 0; j < newItems.length; j++) {
+            url = CHANGE_STATUS_APPROVE(newItems[j].item);
+            await sendEmailRequest(
+              { data: newItems[j] },
+              newItems[j].email,
+              url
+            );
+          }
+          printlog('Green', 'Success sending email to the item owner.');
+          res.redirect(REDIRECT_APPROVE_URL().APPROVE_SUCCESS);
+
         } else {
           approvedRequest = await requests.advisorAllApprove(req.query);
           rejectAdvisorApproveItem = await requests.rejectAllRequest(
