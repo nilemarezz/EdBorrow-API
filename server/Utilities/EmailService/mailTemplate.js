@@ -1,7 +1,6 @@
 const config = require("../../config.json");
 
 const temp = (value, url) => {
-  console.log(value)
   return ` 
     <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />

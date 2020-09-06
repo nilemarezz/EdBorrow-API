@@ -59,12 +59,12 @@ const CREATE_REQUEST = () => {
     INSERT_BORROWREQUEST_TO_DB: (body) =>
       `INSERT INTO BorrowRequest (userId , borrowPurpose , usePlace) 
     VALUES('${body.personalInformation.userId}' , '${body.personalInformation.borrowPurpose}' , '${body.personalInformation.usePlace}');`,
-    INSERT_ITEMREQUEST_TO_DB: (body, lastInsertId, i) =>
+    INSERT_ITEMREQUEST_TO_DB: (items, lastInsertId, i) =>
       `INSERT INTO RequestItem (requestId , itemId, borrowDate , returnDate ) 
-    VALUES(${lastInsertId}, ${body.items[i].itemId} , '${body.personalInformation.borrowDate}', '${body.personalInformation.returnDate}');`,
-    UPDATE_ITEM_AVALIBILITY: (body, i) =>
+    VALUES(${lastInsertId}, ${items[i].itemId} , '${items[i].borrowDate}', '${items[i].returnDate}');`,
+    UPDATE_ITEM_AVALIBILITY: (items, i) =>
       `UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-    SET ri.itemBorrowingStatusId = 4 , i.itemAvailability = FALSE WHERE ri.itemId = ${body.items[i].itemId};`,
+    SET ri.itemBorrowingStatusId = 4 , i.itemAvailability = FALSE WHERE ri.itemId = ${items[i].itemId};`,
     RETURN_REQUEST: (lastInsertId) => `
     select br.requestId ,u.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.email , u.userTelNo ,
     br.borrowPurpose , ri.borrowDate , ri.returnDate , i.itemName , br.requestApprove
