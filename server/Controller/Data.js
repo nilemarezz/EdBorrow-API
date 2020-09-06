@@ -61,18 +61,29 @@ exports.SystemData = async (req, res, next) => {
 exports.OSData = async (req, res, next) => {
   try {
     const data = {
-      cpu: os.cpus(),
       arch: os.arch(),
-      memory: {
-        total: os.totalmem(),
-        free: os.freemem()
-      },
       type: os.type(),
       uptime: os.uptime(),
       hostname: os.hostname(),
       tmpdir: os.tmpdir(),
       homedir: os.homedir(),
       loadavg: os.loadavg()
+    }
+    res.status(200).json({ result: 'success', data: data });
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ result: 'false', msg: err });
+  }
+}
+
+
+exports.CpuData = async (req, res, next) => {
+  try {
+    const data = {
+      cpu: os.cpus(), memory: {
+        total: os.totalmem(),
+        free: os.freemem()
+      },
     }
     res.status(200).json({ result: 'success', data: data });
   } catch (err) {

@@ -22,7 +22,8 @@ exports.userRegister = async (req, res, next) => {
         cipherPassword,
         req.body.firstname,
         req.body.lastname,
-        req.body.phonenumber
+        req.body.phonenumber,
+        req.body.advisor
       );
 
       const role = await users.assignRole(req.body.email);

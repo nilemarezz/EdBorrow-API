@@ -21,7 +21,7 @@ router
   .post(userRegister)
 router
   .route("/list/advisor")
-  .get(verifyToken, validUser, GetAdvisorList)
+  .get(GetAdvisorList)
 
 router.post("/createAdvisor", async (req, res) => {
   var cipherPassword = CryptoJS.AES.encrypt(
