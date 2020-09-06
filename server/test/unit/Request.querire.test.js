@@ -49,23 +49,7 @@ describe('/queries/Request', () => {
       })
     })
   })
-  describe('CREATE_REQUEST', () => {
-    describe('INSERT_BORROWREQUEST_TO_DB', () => {
-      const expectedqueries = `INSERT INTO BorrowRequest (userId , borrowPurpose , usePlace) 
-    VALUES('7' , '2' , '6');`
-      expect(CREATE_REQUEST().INSERT_BORROWREQUEST_TO_DB(summaryForm, lastInsertId, 1)).to.equal(expectedqueries)
-    })
-    describe('INSERT_ITEMREQUEST_TO_DB', () => {
-      const expectedqueries = `INSERT INTO RequestItem (requestId , itemId, borrowDate , returnDate ) 
-    VALUES(1, 1 , '1', '4');`
-      expect(CREATE_REQUEST().INSERT_ITEMREQUEST_TO_DB(summaryForm, lastInsertId, 0)).to.equal(expectedqueries)
-    })
-    describe('UPDATE_ITEM_AVALIBILITY', () => {
-      const expectedqueries = `UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-    SET ri.itemBorrowingStatusId = 4 , i.itemAvailability = FALSE WHERE ri.itemId = 1;`
-      expect(CREATE_REQUEST().UPDATE_ITEM_AVALIBILITY(summaryForm, 0)).to.equal(expectedqueries)
-    })
-  })
+
   describe('DEPARTMENT_APPROVE_EACH_ITEM', () => {
     it('should return the string same as expected queries', () => {
       const expectedqueries = `
