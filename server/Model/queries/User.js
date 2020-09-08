@@ -11,10 +11,10 @@ const GET_USER_BY_ID = (userId) => {
   FROM Users
   WHERE userId = '${userId}';`
 }
-const CREATE_USER = (email, password, firstname, lastname, phonenumber) => {
+const CREATE_USER = (email, password, firstname, lastname, phonenumber, advisor) => {
   return `
   INSERT INTO Users (userId, password, email, firstName, lastName, userTelNo , studentAdvisor) 
-  VALUES ("${email}", "${password}", "${email}", "${firstname}", "${lastname}" , "${phonenumber}" , "testAdvisor");
+  VALUES ("${email}", "${password}", "${email}", "${firstname}", "${lastname}" , "${phonenumber}" , "${advisor}");
 `
 }
 const USER_ROLE = (id) => {

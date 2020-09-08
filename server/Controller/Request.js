@@ -13,7 +13,7 @@ const checkDepartmentId = require('../Utilities/checkDepartmentId')
 
 exports.postCreateRequest = async (req, res, next) => {
   try {
-    let borrowRequest = await requests.createRequest(req.body);
+    let borrowRequest = await requests.createRequest(req.body, req.body.items);
     let url = CREATE_REQUEST(borrowRequest[0].requestId);
     await sendEmailRequest(
       { data: borrowRequest },
@@ -203,7 +203,7 @@ exports.getRequestItem = async (req, res, next) => {
     let requestDetail = await requests.getRequestDetail(req.params.requestId, res.locals.authData.user[0].userId);
     let requestItem = await requests.getRequestItem(req.params.requestId)
     let ResData = {
-      requestDetail: { ...requestDetail[0], borrowDate: requestItem[0].borrowDate, returnDate: requestItem[0].returnDate },
+      requestDetail: requestDetail,
       requestItem: requestItem
     }
     res.status(200).json({ result: "success", data: ResData });

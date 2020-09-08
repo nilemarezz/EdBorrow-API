@@ -24,8 +24,8 @@ class Users {
     this.users = await pool.query(GET_USER_BY_ID(userId))
     return this.users;
   }
-  async createUser(email, password, firstname, lastname, phonenumber) {
-    this.users = await pool.query(CREATE_USER(email, password, firstname, lastname, phonenumber))
+  async createUser(email, password, firstname, lastname, phonenumber, advisor) {
+    this.users = await pool.query(CREATE_USER(email, password, firstname, lastname, phonenumber, advisor))
   }
   async getUserRole(id) {
     this.users = await pool.query(USER_ROLE(id));
