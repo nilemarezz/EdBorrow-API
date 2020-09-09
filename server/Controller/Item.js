@@ -28,7 +28,7 @@ exports.getSearchBorrowItems = async (req, res, next) => {
 
 exports.getUnAvailableItem = async (req, res, next) => {
   try {
-    let getborrowItems = await borrowItem.getUnAvailableByItemId(req.query);
+    let getborrowItems = await borrowItem.getUnAvailableByItemId(req.params);
     let unAvailableDate = [];
 
     for (let i = 0; i < getborrowItems.length; i++) {
@@ -40,7 +40,7 @@ exports.getUnAvailableItem = async (req, res, next) => {
 
     res.status(200).json({ result: 'success', data: { itemId: getborrowItems[0].itemId, unAvailable: unAvailableDate } });
   } catch (err) {
-    res.status(500).json({ result: 'false', msg: 'hahah' });
+    res.status(500).json({ result: 'false', msg: err });
   }
 }
 

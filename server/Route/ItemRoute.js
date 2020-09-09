@@ -18,7 +18,7 @@ router
   .route("/search")
   .get(getSearchBorrowItems)
 router
-  .route("/getColumn")
+  .route("/getColumn/:itemId")
   .get(getUnAvailableItem)
   .post(getCategoryNameOrDepartmentName)
 router
