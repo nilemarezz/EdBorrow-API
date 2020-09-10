@@ -13,6 +13,7 @@ exports.getAllBorrowItems = async (req, res, next) => {
     let getborrowItems = await borrowItem.getAllItem();
     res.status(200).json({ result: 'success', data: getborrowItems });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: 'false', msg: err });
   }
 };
@@ -136,6 +137,7 @@ exports.updateItem = async (req, res, next) => {
         itemImage: image,
         userId: res.locals.authData.user[0].userId,
       };
+      console.log(data)
       const userDepartment = await checkDepartmentId(res.locals.authData.user[0].userId)
       const editItem = await borrowItem.updateItem(data, userDepartment, res.locals.authData.user[0].userId);
       if (editItem.affectedRows === 0) {
