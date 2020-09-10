@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getUserDetail, userLogin, getUserRole, userRegister, ChangePassword, GetAdvisorList } = require("../Controller/User")
+const { getUserDetail, userLogin, getUserRole, userRegister, ChangePassword, GetAdvisorList, GetUserList, DeleteUser, CreateUser } = require("../Controller/User")
 const verifyToken = require('../middleware/verify')
 const validUser = require('../middleware/validUser')
 const config = require('../config.json')
@@ -9,7 +9,10 @@ const CryptoJS = require("crypto-js");
 const pool = require("../config/BorrowSystemDB");
 router
   .route("/")
+  .get(verifyToken, validUser, GetUserList)
   .put(verifyToken, validUser, ChangePassword)
+  .delete(verifyToken, validUser, DeleteUser)
+  .post(verifyToken, validUser, CreateUser)
 router
   .route("/detail")
   .get(verifyToken, validUser, getUserDetail)

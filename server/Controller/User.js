@@ -26,7 +26,7 @@ exports.userRegister = async (req, res, next) => {
         req.body.advisor
       );
 
-      const role = await users.assignRole(req.body.email);
+      const role = await users.assignRole(req.body.email, 10);
       printlog('Green', `Register Success : ${req.body.email}`);
       res.status(200).json({
         result: 'success',
@@ -170,6 +170,73 @@ exports.GetAdvisorList = async (req, res, next) => {
     const advisorList = await users.getAdvisorList()
     res.status(200).json({ result: "success", data: advisorList });
   } catch (err) {
+    res.status(500).json({ result: "false", msg: err });
+  }
+}
+
+
+exports.GetUserList = async (req, res, next) => {
+  try {
+    const role = await users.getUserRole(res.locals.authData.user[0].userId)
+    const userRole = await checkUserRole(role)
+    if (userRole.admin === true) {
+      const userList = await users.getUserList()
+      res.status(200).json({ result: "success", data: userList });
+    } else {
+      res.status(500).json({ result: "false", msg: err });
+    }
+  } catch (err) {
+    res.status(500).json({ result: "false", msg: err });
+  }
+}
+
+exports.DeleteUser = async (req, res, next) => {
+  try {
+    const role = await users.getUserRole(res.locals.authData.user[0].userId)
+    const userRole = await checkUserRole(role)
+    if (userRole.admin === true) {
+      await users.deleteUserRole(req.query.userId)
+      await users.deleteUser(req.query.userId)
+      printlog(
+        'Green',
+        `Delete User Success : ${req.query.userId}`
+      );
+      await actionLogs.DELETE_USER_LOG(res.locals.authData.user[0].userId, true, `id : ${req.query.userId}`);
+      res.status(200).json({ result: "success", data: req.query.userId });
+    } else {
+      await actionLogs.DELETE_USER_LOG(res.locals.authData.user[0].userId, false, "Access Deny");
+      res.status(500).json({ result: "false", msg: err });
+    }
+  } catch (err) {
+    await actionLogs.DELETE_USER_LOG(res.locals.authData.user[0].userId, false, err);
+    res.status(500).json({ result: "false", msg: err });
+  }
+}
+
+exports.CreateUser = async (req, res, next) => {
+  try {
+    const role = await users.getUserRole(res.locals.authData.user[0].userId)
+    const userRole = await checkUserRole(role)
+    if (userRole.admin === true) {
+      var cipherPassword = CryptoJS.AES.encrypt(req.body.password, config.CRYPTO_SECRET_KEY).toString();
+      req.body.password = cipherPassword
+      await users.AddUser(req.body)
+      await users.assignRole(req.body.userId, req.body.role)
+
+      printlog(
+        'Green',
+        `Add User Success : ${req.body.userId}`
+      );
+      res.status(200).json({ result: "success" });
+    }
+
+  } catch (err) {
+    console.log(err)
+    await actionLogs.CREATE_USER_LOG(res.locals.authData.user[0].userId, false, 'null value');
+    printlog(
+      'Red',
+      `Create User Fail : ${req.body.userId}`
+    );
     res.status(500).json({ result: "false", msg: err });
   }
 }

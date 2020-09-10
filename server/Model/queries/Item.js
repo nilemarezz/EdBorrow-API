@@ -1,19 +1,23 @@
 const GET_ALL_ITEM = () => {
   return `
-  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage 
+  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage , its.itemStatusTag  
   FROM Items i left join ItemDepartment d on i.departmentId = d.departmentId 
-        join ItemCategory c on i.categoryId = c.categoryId
+        join ItemCategory c on i.categoryId = c.categoryId 
+        join itemStatus its on i.itemStatusId = its.itemStatusId 
   ORDER BY i.itemName asc;
   `
 }
 const GET_ITEM_BY_ID = (id, department) => {
   const departmentQuery = `
-  SELECT i.*, id.departmentName, id.departmentTelNo, id.departmentEmail, dp.* from Items i join ItemDepartment id  on id.departmentId  = i.departmentId 
+  SELECT i.*, id.departmentName, id.departmentTelNo, id.departmentEmail, its.itemStatusTag , dp.* from Items i join ItemDepartment id  on id.departmentId  = i.departmentId 
   join  DepartmentPlace dp on id.placeId  = dp.placeId 
+  join itemStatus its on i.itemStatusId = its.itemStatusId 
   WHERE i.itemId = ${id};`
   const userQuery = `
-  select i.* ,u.email , u.userTelNo , CONCAT(u.firstName , " ", u.lastName) AS Name 
-  from Items i join Users u on i.userId  = u.userId where i.itemId = ${id} ;
+  select i.* ,u.email , u.userTelNo , CONCAT(u.firstName , " ", u.lastName) AS Name , its.itemStatusTag 
+  from Items i join Users u on i.userId  = u.userId 
+  join itemStatus its on i.itemStatusId = its.itemStatusId 
+  where i.itemId = ${id} ;
   `
   if (department === false) {
     return userQuery
@@ -64,16 +68,18 @@ const GET_UN_AVAILABLE_ITEM = (value) => {
 const GET_DEPARTMENT_BY_ID = (userId, department) => {
   const departmentQuery =
     `
-  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.createDate , i.userId as ownerName , i.itemAvailability , i.itemImage 
+  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.createDate , ist.itemStatusTag , i.userId as ownerName , i.itemAvailability , i.itemImage 
   FROM Items i left join ItemDepartment d on i.departmentId = d.departmentId 
   join ItemCategory c on i.categoryId = c.categoryId 
+  join itemStatus ist on ist.itemStatusId  = i.itemStatusId 
   where i.departmentId = "${department}" ORDER BY i.itemName asc
   `
   const userQuery =
     `
-  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.createDate  , i.userId as ownerName , i.itemAvailability , i.itemImage 
+  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.createDate , ist.itemStatusTag  , i.userId as ownerName , i.itemAvailability , i.itemImage 
   FROM Items i left join ItemDepartment d on i.departmentId = d.departmentId 
   join ItemCategory c on i.categoryId = c.categoryId 
+  join itemStatus ist on ist.itemStatusId  = i.itemStatusId 
   where i.userId = "${userId}" ORDER BY i.itemName asc
   `
   if (department === false) {
@@ -85,11 +91,11 @@ const GET_DEPARTMENT_BY_ID = (userId, department) => {
 const UPDATE_ITEM = (value, department, userId) => {
   const departmentQuery = `
   UPDATE Items 
-  SET itemName = "${value.itemName}", itemBrand = "${value.itemBrand}" , itemModel = "${value.itemModel}", categoryId = "${value.categoryId}", itemDescription = "${value.itemDescription}" ${value.itemImage === null ? '' : `, itemImage = "${value.itemImage}"`} 
+  SET itemName = "${value.itemName}", itemBrand = "${value.itemBrand}" , itemModel = "${value.itemModel}", itemStatusId = "${value.itemStatusId}" ,categoryId = "${value.categoryId}", itemDescription = "${value.itemDescription}" ${value.itemImage === null ? '' : `, itemImage = "${value.itemImage}"`} 
   WHERE itemId = ${value.itemId} AND departmentId  = ${department}`
   const userQuery = `
   UPDATE Items 
-  SET itemName = "${value.itemName}", itemBrand = "${value.itemBrand}" , itemModel = "${value.itemModel}", categoryId = "${value.categoryId}", itemDescription = "${value.itemDescription}" ${value.itemImage === null ? '' : `, itemImage = "${value.itemImage}"`} 
+  SET itemName = "${value.itemName}", itemBrand = "${value.itemBrand}" , itemModel = "${value.itemModel}", itemStatusId = "${value.itemStatusId}"  ,categoryId = "${value.categoryId}", itemDescription = "${value.itemDescription}" ${value.itemImage === null ? '' : `, itemImage = "${value.itemImage}"`} 
   WHERE itemId = ${value.itemId} AND userId  = "${userId}"`
   if (department === false) {
     return userQuery
