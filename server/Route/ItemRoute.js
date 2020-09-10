@@ -4,7 +4,7 @@ const verifyToken = require('../middleware/verify')
 const validUser = require('../middleware/validUser')
 
 
-const { getAllBorrowItems, getCategoryNameOrDepartmentName, getBorrowItemById, getSearchBorrowItems, addItem, getItemByDepartment, updateItem, getValidateItem, removeItemById } = require("../Controller/Item")
+const { getAllBorrowItems, getCategoryNameOrDepartmentName, getBorrowItemById, getSearchBorrowItems, addItem, getItemByDepartment, updateItem, getUnAvailableItem, removeItemById } = require("../Controller/Item")
 router
   .route("/")
   .get(getAllBorrowItems)
@@ -18,8 +18,8 @@ router
   .route("/search")
   .get(getSearchBorrowItems)
 router
-  .route("/getColumn")
-  .get(getValidateItem)
+  .route("/getColumn/:itemId")
+  .get(getUnAvailableItem)
   .post(getCategoryNameOrDepartmentName)
 router
   .route("/:id")
