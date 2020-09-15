@@ -105,7 +105,32 @@ const UPDATE_ITEM = (value, department, userId) => {
 
 }
 
+const GET_MY_BORROW_ITEM = (isDepartment, user) => {
+  const departmentQuery = `
+  select i.itemName  , i.itemImage , ri.itemBorrowingStatusId , ri.returnDate , i.itemId , id.departmentName as Owner
+  from BorrowRequest br join RequestItem ri on br.requestId = ri.requestId
+  join Items i on i.itemId = ri.itemId 
+  join ItemDepartment id on id.departmentId = i.departmentId 
+  where (br.userId = "${user}")
+  and (ri.itemBorrowingStatusId = 1 or ri.itemBorrowingStatusId = 3 or ri.itemBorrowingStatusId = 6)
+  and i.userId is null;`
+  const userQuery = `
+  select i.itemName  , i.itemImage , ri.itemBorrowingStatusId , ri.returnDate , i.itemId , 
+  CONCAT(u2.firstName , " ", u2.lastName) AS Owner 
+  from BorrowRequest br join RequestItem ri on br.requestId = ri.requestId
+  join Items i on i.itemId = ri.itemId 
+  join Users u2 on u2.userId = i.userId 
+  where (br.userId = "${user}") 
+  and i.userId is not null;`
+  if (isDepartment) {
+    return departmentQuery
+  } else {
+    return userQuery
+  }
+
+}
+
 module.exports = {
   GET_ALL_ITEM, GET_ITEM_BY_ID, GET_CATEGORY, GET_UN_AVAILABLE_ITEM, GET_DEPARTMENT, GET_OWNER,
-  DELETE_ALL_ITEMS, ADD_ITEM, DELETE_ITEM_BY_ID, GET_DEPARTMENT_BY_ID, UPDATE_ITEM
+  DELETE_ALL_ITEMS, ADD_ITEM, DELETE_ITEM_BY_ID, GET_DEPARTMENT_BY_ID, UPDATE_ITEM, GET_MY_BORROW_ITEM
 }

@@ -174,3 +174,15 @@ exports.updateItem = async (req, res, next) => {
     res.status(500).json({ result: 'false', msg: err });
   }
 };
+
+exports.getMyBorrowItems = async (req, res, next) => {
+  try {
+    const itemWithDepartment = await borrowItem.getMyBorrowItem(true, res.locals.authData.user[0].userId)
+    const itemwithUser = await borrowItem.getMyBorrowItem(false, res.locals.authData.user[0].userId)
+    const data = [...itemWithDepartment, ...itemwithUser]
+    res.status(200).json({ result: 'success', data: data });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ result: 'false', msg: err });
+  }
+};
