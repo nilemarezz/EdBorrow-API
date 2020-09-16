@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 const AWS = require("aws-sdk");
 const config = require("../../config.json");
 const printlog = require('../../config/logColor')
-exports.sendEmailRequest = async (value, email, url) => {
+exports.sendEmailRequest = async (value, email, url, type) => {
   try {
     printlog("Magenta", `Send mail to ${email}`)
     AWS.config.update({
@@ -11,7 +11,6 @@ exports.sendEmailRequest = async (value, email, url) => {
       secretAccessKey: config.ACCESSKEY_SECRET,
       region: "ap-south-1"
     });
-
     // create Nodemailer SES transporter
     let transporter = nodemailer.createTransport({
       SES: new AWS.SES({
@@ -24,7 +23,7 @@ exports.sendEmailRequest = async (value, email, url) => {
       from: '"[Request Borrow]" <equipmentproject63@gmail.com>',
       to: email,
       subject: "Borrow Item request on student",
-      html: temp(value.data, url)
+      html: temp(type === "create request" ? value.data : value.data.item, url)
     });
     return true;
   } catch (err) {

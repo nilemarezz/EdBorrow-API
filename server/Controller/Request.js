@@ -18,7 +18,8 @@ exports.postCreateRequest = async (req, res, next) => {
     await sendEmailRequest(
       { data: borrowRequest },
       req.body.personalInformation.advisorEmail,
-      url
+      url,
+      "create request"
     );
     printlog(
       'Green',
@@ -127,7 +128,8 @@ exports.approveAllItem = async (req, res, next) => {
             await sendEmailRequest(
               { data: newItems[j] },
               newItems[j].email,
-              url
+              url,
+              "approve"
             );
           }
           printlog('Green', 'Success sending email to the item owner.');

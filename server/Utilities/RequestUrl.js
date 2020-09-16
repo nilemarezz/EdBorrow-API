@@ -10,9 +10,9 @@ const CREATE_REQUEST = requestId => {
 
 const CHANGE_STATUS_APPROVE = item => {
   if (config.NODE_ENV === 'development') {
-    return `http://localhost:3000/api/request/approve/?requestId=${item.requestId}&approver=department&departmentId=${item.departmentId}`;
+    return `http://localhost:3000/api/request/approve/?requestId=${item[0].requestId}&approver=department&departmentId=${item[0].departmentId}`;
   } else {
-    return `http://edborrow.ga/api/request/approve/?requestId=${item.requestId}&approver=department&departmentId=${item.departmentId}`;
+    return `http://edborrow.ga/api/request/approve/?requestId=${item[0].requestId}&approver=department&departmentId=${item[0].departmentId}`;
   }
 };
 
