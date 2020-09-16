@@ -23,7 +23,7 @@ exports.postCreateRequest = async (req, res, next) => {
     );
     printlog(
       'Green',
-      `Send request success - ${res.locals.authData.user[0].userId}`
+      `Send request success -  ${res.locals.authData.user[0].userId}`
     );
     await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, true, 'Success');
     res
