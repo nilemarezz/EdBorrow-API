@@ -6,7 +6,6 @@ const printlog = require('../../config/logColor')
 exports.sendEmailRequest = async (value, email, url) => {
   try {
     printlog("Magenta", `Send mail to ${email}`)
-
     AWS.config.update({
       accessKeyId: config.ACCESSKEY_ID,
       secretAccessKey: config.ACCESSKEY_SECRET,
@@ -25,7 +24,7 @@ exports.sendEmailRequest = async (value, email, url) => {
       from: '"[Request Borrow]" <equipmentproject63@gmail.com>',
       to: email,
       subject: "Borrow Item request on student",
-      html: temp(value.data.item, url)
+      html: temp(value.data, url)
     });
     return true;
   } catch (err) {
