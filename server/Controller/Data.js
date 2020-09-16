@@ -31,6 +31,7 @@ exports.DepartmentList = async (req, res, next) => {
     const department = await pool.query('SELECT departmentId , departmentName FROM ItemDepartment')
     res.status(200).json({ result: 'success', data: department });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: 'false', msg: err });
   }
 }
@@ -40,6 +41,7 @@ exports.SystemLogs = async (req, res, next) => {
     const logs = await pool.query('select * from UserActionLog ual')
     res.status(200).json({ result: 'success', data: logs });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: 'false', msg: err });
   }
 }
@@ -54,6 +56,7 @@ exports.SystemData = async (req, res, next) => {
     `)
     res.status(200).json({ result: 'success', data: data });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: 'false', msg: err });
   }
 }

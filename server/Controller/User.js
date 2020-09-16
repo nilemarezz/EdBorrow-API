@@ -98,6 +98,7 @@ exports.getUserDetail = async (req, res, next) => {
     let role = await checkUserRole(userRole)
     res.status(200).json({ result: 'success', data: { ...userDetails[0], ...role } });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: 'false', msg: err });
   }
 };
@@ -114,6 +115,7 @@ exports.getUserRole = async id => {
 
     return role;
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: 'false', msg: err });
   }
 };
@@ -170,6 +172,7 @@ exports.GetAdvisorList = async (req, res, next) => {
     const advisorList = await users.getAdvisorList()
     res.status(200).json({ result: "success", data: advisorList });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: "false", msg: err });
   }
 }
@@ -186,6 +189,7 @@ exports.GetUserList = async (req, res, next) => {
       res.status(500).json({ result: "false", msg: err });
     }
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: "false", msg: err });
   }
 }
@@ -208,6 +212,7 @@ exports.DeleteUser = async (req, res, next) => {
       res.status(500).json({ result: "false", msg: err });
     }
   } catch (err) {
+    console.log(err)
     await actionLogs.DELETE_USER_LOG(res.locals.authData.user[0].userId, false, err);
     res.status(500).json({ result: "false", msg: err });
   }

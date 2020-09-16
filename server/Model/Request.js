@@ -104,6 +104,11 @@ class ItemRequest {
 
     return this.request;
   }
+
+  async getAllRequestItem() {
+    this.request = await pool.query(`select * from RequestItem ri;`);
+    return this.request
+  }
 }
 
 module.exports = ItemRequest;

@@ -23,6 +23,7 @@ exports.getSearchBorrowItems = async (req, res, next) => {
     let getborrowItems = await borrowItem.searchItem(req.query);
     res.status(200).json({ result: 'success', data: getborrowItems });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: 'false', msg: err });
   }
 };
@@ -41,6 +42,7 @@ exports.getUnAvailableItem = async (req, res, next) => {
 
     res.status(200).json({ result: 'success', data: { itemId: getborrowItems[0].itemId, unAvailable: unAvailableDate } });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: 'false', msg: err });
   }
 }
@@ -70,6 +72,7 @@ exports.getCategoryNameOrDepartmentName = async (req, res, next) => {
 
     res.status(200).json({ result: 'success', data: borrowItems });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ result: 'false', msg: err });
   }
 };
@@ -146,7 +149,6 @@ exports.updateItem = async (req, res, next) => {
         itemImage: image,
         userId: res.locals.authData.user[0].userId,
       };
-      console.log(data)
       const userDepartment = await checkDepartmentId(res.locals.authData.user[0].userId)
       const editItem = await borrowItem.updateItem(data, userDepartment, res.locals.authData.user[0].userId);
       if (editItem.affectedRows === 0) {
