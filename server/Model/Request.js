@@ -72,7 +72,7 @@ class ItemRequest {
     if (query.approver === "department" && query.status === "TRUE") {
       await pool.query(DEPARTMENT_CHANGE_REQUEST_STATUS(query).DEPARTMENT_ALL_APPROVE)
     } else if (query.approver === "department" && query.status === "FALSE") {
-      await pool.query(pool.query(DEPARTMENT_CHANGE_REQUEST_STATUS(query).DEPARTMENT_ALL_REJECT));
+      await pool.query((DEPARTMENT_CHANGE_REQUEST_STATUS(query).DEPARTMENT_ALL_REJECT));
     }
     return this.request;
   }

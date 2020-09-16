@@ -157,7 +157,7 @@ exports.approveAllItem = async (req, res, next) => {
         approvedRequest = await requests.departmentAllApprove(req.query);
         rejectApproveItem = await requests.rejectAllRequest(
           req.query,
-          (type = 'department')
+          type = 'department'
         );
         printlog('Yellow', 'Department Reject the request');
 
