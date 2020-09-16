@@ -13,17 +13,18 @@ const addItemDepartment = async (departmentName, departmentTelNo, departmentEmai
   return department.insertId
 }
 
-const addUserDepartment = async (userId, firstName, lastName, password, departmentId) => {
+const addUserDepartment = async (userId, firstName, lastName, password, departmentId, departmentName) => {
   const user = await pool.query(`INSERT INTO Users (userId ,firstName , lastName , password  , email) VALUES ("${userId}" , "${firstName}" , "${lastName}" , "${password}" , ${null})`)
-  await addDepartmentRole(departmentId, firstName)
+  await addDepartmentRole(departmentId, departmentName)
   await addUserRole(userId, departmentId)
   return user
 }
 
-const addDepartmentRole = async (roleId, firstName) => {
-  await pool.query(`INSERT INTO Roles (roleId ,roleTag) VALUES (${roleId} , "${firstName}");`)
+const addDepartmentRole = async (roleId, departmentName) => {
+  await pool.query(`INSERT INTO Roles (roleId ,roleTag) VALUES (${roleId} , "${departmentName}");`)
 }
 const addUserRole = async (userId, roleId) => {
+  console.log(userId, roleId)
   await pool.query(`INSERT INTO UserRole VALUES  ("${userId}", ${roleId}) `)
   return true
 }

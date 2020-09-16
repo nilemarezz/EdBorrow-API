@@ -38,7 +38,7 @@ exports.addDepartment = async (req, res, next) => {
         .toString();
 
       const addDepartment = await addItemDepartment(departmentName, departmentTelNo, departmentEmail, placeBuilding, placeFloor, placeRoom)
-      await addUserDepartment(userId, firstName, lastName, cipherPassword, addDepartment)
+      await addUserDepartment(userId, firstName, lastName, cipherPassword, addDepartment, departmentName)
       await actionLogs.ADD_DEPARTMENT_LOG(res.locals.authData.user[0].userId, true, null);
       res.status(200).json({ result: 'success', });
     } else {
