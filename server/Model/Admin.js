@@ -38,7 +38,7 @@ const addDepartmentPlace = async (placeBuilding, placeFloor, placeRoom) => {
 
 const getItems = async () => {
   const items = await pool.query(`
-  SELECT i.itemId , i.itemBrand , i.itemName , i.itemModel, i.createDate,i.itemImage , i.itemDescription , ic.categoryName ,
+  SELECT i.itemId , i.itemBrand , i.itemName , i.itemModel, i.createDate,i.itemImage , i.itemStatusId , i.itemDescription , ic.categoryName ,
   id.departmentName , id.departmentTelNo , id.departmentEmail , dp.placeBuilding , dp.placeFloor , dp.placeRoom 
   FROM Items i join ItemCategory ic on ic.categoryId = i.categoryId 
   join ItemDepartment id on id.departmentId = i.departmentId 
