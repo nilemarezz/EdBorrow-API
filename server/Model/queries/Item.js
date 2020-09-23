@@ -62,7 +62,7 @@ const GET_UN_AVAILABLE_ITEM = (value) => {
   return `
   SELECT ri.requestId , ri.itemId , DATE_ADD(ri.borrowDate, INTERVAL 1 DAY) as borrowDate , DATE_ADD(ri.returnDate, INTERVAL 1 DAY) as returnDate
   FROM Items i LEFT JOIN RequestItem ri ON i.itemId = ri.itemId 
-  WHERE ri.itemId = ${value.itemId} AND ri.returnDate >= CURRENT_DATE();
+  WHERE ri.itemId = ${value} AND ri.returnDate >= CURRENT_DATE();
   `
 }
 const GET_DEPARTMENT_BY_ID = (userId, department) => {
