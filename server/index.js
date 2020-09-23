@@ -11,7 +11,7 @@ const port = 3000;
 const cron = require("node-cron");
 const AdminRoute = require('./Route/AdminRoute')
 const SystemRoute = require('./Route/SystemRoute')
-const { checkLateItem } = require("./Controller/Request");
+const { checkLateItem, checkExpRequest } = require("./Controller/Request");
 
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :date'));
@@ -35,6 +35,7 @@ app.use("/api/system", SystemRoute)
 // Check item late by cron-job (every 1.00 AM)
 cron.schedule("0 1 * * *", () => {
   checkLateItem();
+  checkExpRequest();
 })
 
 

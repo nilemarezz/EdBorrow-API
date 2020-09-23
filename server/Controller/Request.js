@@ -84,8 +84,8 @@ exports.approveAllItem = async (req, res, next) => {
   try {
     let borrowRequest = await requests.getRequest(req.query.requestId);
     if (req.query.approver === 'advisor') {
-      if (borrowRequest[0].requestApprove !== 2) {
-        printlog('Yellow', 'Advisor Already Action this report');
+      if (borrowRequest[0].requestApprove !== 2 || borrowRequest[0].requestApprove !== 3) {
+        printlog('Yellow', 'Advisor already action or this report expired');
         res.redirect(REDIRECT_APPROVE_URL().APPROVE_ALREADY);
       } else {
         if (req.query.status === 'TRUE') {
@@ -173,11 +173,11 @@ exports.approveAllItem = async (req, res, next) => {
 exports.checkLateItem = async () => {
   const todayDate = await new Date();
   const request = await requests.getAllRequestItem();
-  printlog('Yellow', 'Check late...');
+  printlog('Yellow', 'Check late item...');
 
   for (let i = 0; i < requests.length; i++) {
     if (request[i].returnDate < todayDate) {
-      printlog('Yellow', `Late: ${request[i].requestId}`);
+      printlog('Yellow', `Late Item Id: ${request[i].requestId}`);
 
       requests.departmentChangeStatus({
         itemBorrowingStatusId: 3,
@@ -187,6 +187,19 @@ exports.checkLateItem = async () => {
     }
   }
 };
+
+exports.checkExpRequest = async (req, res, next) => {
+  let borrowRequest = await requests.checkExpRequests();
+  printlog('Yellow', 'Check expired request...');
+  for (let i = 0; i < borrowRequest.length; i++) {
+    if (borrowRequest[i].dateDiff === 3) {
+      if (borrowRequest[i].requestApprove === 2) {
+        printlog('Yellow', `Expired Request Id: ${borrowRequest[i].requestId}`);
+        await requests.updateRequestApprove(borrowRequest[i].requestId);
+      }
+    }
+  }
+}
 
 exports.getRequestList = async (req, res, next) => {
   try {

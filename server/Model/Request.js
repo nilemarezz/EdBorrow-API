@@ -109,6 +109,19 @@ class ItemRequest {
     this.request = await pool.query(`select * from RequestItem ri;`);
     return this.request
   }
+
+  async checkExpRequests() {
+    this.request = await pool.query(`
+      SELECT requestId , requestApprove , transactionDate , DATEDIFF(CURRENT_DATE() , transactionDate) as 'dateDiff'
+      FROM BorrowRequest;`);
+    return this.request
+  }
+
+  async updateRequestApprove(requestId) {
+    this.request = await pool.query(`
+      UPDATE BorrowRequest SET requestApprove = 3 WHERE requestId = ${requestId}`);
+    return this.request
+  }
 }
 
 module.exports = ItemRequest;

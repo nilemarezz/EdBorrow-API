@@ -38,11 +38,9 @@ const GET_REQUEST_ADMIN = (userId, departmentId) => {
 const DEPARTMENT_APPROVE_EACH_ITEM = (body) => {
   return `
   UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
-  SET ri.itemApprove = ${body.itemApprove} , ri.itemBorrowingStatusId = ${
-    body.itemApprove === 1 ? 6 : 5
+  SET ri.itemApprove = ${body.itemApprove} , ri.itemBorrowingStatusId = ${body.itemApprove === 1 ? 6 : 5
     } , i.itemAvailability = ${body.itemApprove === 1 ? "FALSE" : "TRUE"}
-  WHERE (ri.requestId = ${body.requestId} AND ri.itemId = ${
-    body.itemId
+  WHERE (ri.requestId = ${body.requestId} AND ri.itemId = ${body.itemId
     }) AND i.itemId = ${body.itemId};
 `
 }
