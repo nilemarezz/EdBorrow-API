@@ -143,7 +143,7 @@ exports.approveAllItem = async (req, res, next) => {
           );
           printlog('Yellow', 'Advisor Reject the request');
           res.redirect(
-            REDIRECT_APPROVE_URL(req.body.requestId).APPROVE_FAIL_REQUEST_ID
+            REDIRECT_APPROVE_URL(req.query.requestId).APPROVE_FAIL_REQUEST_ID
           );
         }
       }

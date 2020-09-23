@@ -50,5 +50,3 @@ deploy:
     # - docker ps
     - docker-compose down
     - docker-compose up --build -d
-    
-  when: manual

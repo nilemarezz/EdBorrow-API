@@ -36,8 +36,7 @@ const GET_USER_LIST = () => {
   return `
   select u.userId , CONCAT(u.firstName , " ", u.lastName) as Name, u.email , u.createDate , u.userTelNo , r.roleTag , r.roleId from Users u 
 join UserRole ur on ur.userId = u.userId  
-join Roles r on r.roleId = ur.roleId 
-where r.roleId = 10 or r.roleId = 20 or r.roleId = 30 or r.roleId = 99;`
+join Roles r on r.roleId = ur.roleId`
 }
 const DELETE_USER_ROLE = (id) => {
   return `DELETE FROM UserRole WHERE userId = "${id}";`
