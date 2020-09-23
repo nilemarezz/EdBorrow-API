@@ -2,7 +2,10 @@ const GET_REQUEST = (requestId) => {
   return `SELECT * FROM BorrowRequest WHERE requestId = ${requestId}`
 }
 const GET_REQUEST_LIST = (userId) => {
-  return `SELECT br.requestId , br.transactionDate , br.requestApprove FROM BorrowRequest br WHERE userId  = "${userId}";`
+  return `SELECT br.requestId , br.transactionDate ,COUNT(ri.requestId) as itemAmount , br.requestApprove 
+          FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
+          WHERE userId  = "${userId}"
+          GROUP BY br.requestId;`
 }
 const GET_REQUEST_DETAIL = (requestId, userId) => {
   return `SELECT br.requestId , br.userId ,CONCAT(u.firstName , " " , u.lastName ) AS Name, 
