@@ -84,9 +84,14 @@ exports.approveAllItem = async (req, res, next) => {
   try {
     let borrowRequest = await requests.getRequest(req.query.requestId);
     if (req.query.approver === 'advisor') {
-      if (borrowRequest[0].requestApprove !== 2 || borrowRequest[0].requestApprove !== 3) {
-        printlog('Yellow', 'Advisor already action or this report expired');
-        res.redirect(REDIRECT_APPROVE_URL().APPROVE_ALREADY);
+      if (borrowRequest[0].requestApprove !== 2) {
+        if (borrowRequest[0].requestApprove === 3) {
+          printlog('Yellow', 'This report is expired');
+          res.redirect(REDIRECT_APPROVE_URL().REQUEST_EXPIRED);
+        } else {
+          printlog('Yellow', 'Advisor already action or this report expired');
+          res.redirect(REDIRECT_APPROVE_URL().APPROVE_ALREADY);
+        }
       } else {
         if (req.query.status === 'TRUE') {
           const approvedRequest = await requests.advisorAllApprove(req.query);

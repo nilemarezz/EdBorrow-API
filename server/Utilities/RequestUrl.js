@@ -20,6 +20,7 @@ const REDIRECT_APPROVE_URL = requestId => {
   return {
     APPROVE_ALREADY: `https://edborrow.netlify.com/#/approve/type/already`,
     APPROVE_SUCCESS: `https://edborrow.netlify.com/#/approve/type/success`,
+    REQUEST_EXPIRED: `https://edborrow.netlify.com/#/approve/type/expire`,
     APPROVE_FAIL: `https://edborrow.netlify.com/#/approve/type/fail`,
     APPROVE_FAIL_REQUEST_ID: `https://edborrow.netlify.com/#/approve/type/fail?requestId=${requestId}`,
   };
