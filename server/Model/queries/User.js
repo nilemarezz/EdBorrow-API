@@ -2,7 +2,7 @@ const GET_LOGIN = (userId) => {
   return `SELECT userId,firstName,password FROM Users WHERE userId = '${userId}';`
 }
 const GET_USER_DETAIL = (id) => {
-  return `SELECT u.userId ,u.firstName ,u.lastName ,u.email , CONCAT(a.firstName , " " , a.lastName) as advisorName
+  return `SELECT u.userId ,u.firstName ,u.lastName ,u.email , CONCAT(a.firstName , " " , a.lastName) as advisorName, u.userTelNo 
   FROM Users u left join Users a on a.userId = u.studentAdvisor
   WHERE u.userId = '${id}'`
 }
