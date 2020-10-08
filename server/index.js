@@ -12,6 +12,8 @@ const cron = require("node-cron");
 const AdminRoute = require('./Route/AdminRoute')
 const SystemRoute = require('./Route/SystemRoute')
 const { checkLateItem, checkExpRequest } = require("./Controller/Request");
+const handleSocket = require("./Utilities/socketHandle");
+const { listen } = require("socket.io");
 
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :date'));
@@ -40,9 +42,13 @@ cron.schedule("0 1 * * *", () => {
 
 
 if (process.env.NODE_ENV !== "test") {
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Server start at port: ${port}`);
   });
+
+  const io = listen(server);
+  app.io = io;
+  handleSocket(io);
 }
 
 module.exports = app;
