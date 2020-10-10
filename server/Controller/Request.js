@@ -25,6 +25,15 @@ exports.postCreateRequest = async (req, res, next) => {
       'Green',
       `Send request success -  ${res.locals.authData.user[0].userId}`
     );
+    let dataSocket = []
+    for (let i = 0; i < borrowRequest.length; i++) {
+      dataSocket.push({
+        requestId: borrowRequest[i].requestId,
+        itemId: borrowRequest[i].itemId,
+        borrowDate: borrowRequest[i].borrowDate,
+        returnDate: borrowRequest[i].returnDate
+      })
+    }
     await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, true, 'Success');
     res
       .status(200)

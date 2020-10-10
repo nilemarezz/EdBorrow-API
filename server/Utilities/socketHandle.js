@@ -6,9 +6,9 @@ const handleSocket = (io) => {
       console.log('Disconnected - ' + socket.id);
     });
 
-    socket.on('date', (date) => {
-      socket.join(date)
-      console.log('date return', date)
+    socket.on('room', (room) => {
+      socket.join(room)
+      console.log('join room', room)
     })
 
   })
