@@ -9,6 +9,7 @@ const requestRoute = require("./Route/requestRoute");
 const dataRoute = require("./Route/DataRoute")
 const port = 3000;
 const cron = require("node-cron");
+var path = require('path');
 const AdminRoute = require('./Route/AdminRoute')
 const SystemRoute = require('./Route/SystemRoute')
 const { checkLateItem, checkExpRequest } = require("./Controller/Request");
@@ -20,9 +21,10 @@ app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.static(__dirname + '/public'));
 
-app.get("/api", (req, res) => {
-  res.redirect("https://edborrow.gitbook.io/api-doc/");
+app.get('/api', function (req, res) {
+  res.sendFile(__dirname + '/public/index.html');
 });
 
 app.use("/api/items", BorrowitemRoute);
