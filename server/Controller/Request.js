@@ -1,4 +1,5 @@
 const RequestModel = require('../Model/Request');
+const io = require("socket.io");
 const { actionLogs } = require(`../Model/Data`);
 const { sendEmailRequest } = require('../Utilities/EmailService/SendEmail');
 const requests = new RequestModel();
@@ -34,6 +35,8 @@ exports.postCreateRequest = async (req, res, next) => {
         returnDate: borrowRequest[i].returnDate
       })
     }
+    //socket real-time
+    req.app.io.emit('Date update', { key: dataSocket });
     await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, true, 'Success');
     res
       .status(200)
