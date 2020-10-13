@@ -37,6 +37,7 @@ exports.postCreateRequest = async (req, res, next) => {
     }
     //socket real-time
     req.app.io.emit('Date update', { key: dataSocket });
+    console.log(dataSocket);
     await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, true, 'Success');
     res
       .status(200)
