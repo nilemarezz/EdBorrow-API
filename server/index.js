@@ -19,6 +19,7 @@ const handleSocket = require("./config/socket");
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :date'));
 
 app.use(cors());
+
 app.options('*', cors());
 
 app.use(bodyParser.urlencoded({ extended: false }));
