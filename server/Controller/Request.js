@@ -67,6 +67,7 @@ exports.departmentChangeStatus = async (req, res, next) => {
       'Green',
       `Change Status Success - ${res.locals.authData.user[0].userId}`
     );
+    req.app.io.sockets.emit('changeStatus', req.body)
     res
       .status(200)
       .json({ result: 'success', msg: 'Item Change Status Success' });

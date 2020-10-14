@@ -9,10 +9,11 @@ const requestRoute = require("./Route/requestRoute");
 const dataRoute = require("./Route/DataRoute")
 const port = 3000;
 const cron = require("node-cron");
-var path = require('path');
 const AdminRoute = require('./Route/AdminRoute')
 const SystemRoute = require('./Route/SystemRoute')
 const { checkLateItem, checkExpRequest } = require("./Controller/Request");
+const { listen } = require("socket.io");
+const handleSocket = require("./config/socket");
 
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :date'));
@@ -42,9 +43,13 @@ cron.schedule("0 1 * * *", () => {
 
 
 if (process.env.NODE_ENV !== "test") {
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Server start at port: ${port}`);
   });
+  const io = listen(server);
+  app.io = io;
+  handleSocket(io);
 }
+
 
 module.exports = app;
