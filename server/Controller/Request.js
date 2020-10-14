@@ -26,6 +26,17 @@ exports.postCreateRequest = async (req, res, next) => {
       `Send request success -  ${res.locals.authData.user[0].userId}`
     );
     await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, true, 'Success');
+    let dataSocket = []
+    for (let i = 0; i < borrowRequest.length; i++) {
+      dataSocket.push({
+        requestId: borrowRequest[i].requestId,
+        itemId: borrowRequest[i].itemId,
+        borrowDate: borrowRequest[i].borrowDate,
+        returnDate: borrowRequest[i].returnDate
+      })
+    }
+    //socket real-time
+    req.app.io.sockets.emit('dateUpdate', { key: dataSocket });
     res
       .status(200)
       .json({ result: 'success', msg: '[Email] sent request success' });
@@ -48,7 +59,7 @@ exports.departmentApproveEachItem = async (req, res, next) => {
       'Green',
       `Approve Item success - ${res.locals.authData.user[0].userId}`
     );
-
+    req.app.io.sockets.emit('changeItemApprove', req.body)
     res.status(200).json({ result: 'success', msg: 'Item Approve Success' });
   } catch (err) {
     printlog(
@@ -257,6 +268,11 @@ exports.rejectPurpose = async (req, res, next) => {
       req.body.type
     );
     printlog('Yellow', 'Add reject Purpose');
+    req.app.io.sockets.emit('rejectPurpose', {
+      requestId: req.body.requestId,
+      itemId: req.body.itemId,
+      rejectPurpose: req.body.text
+    });
     res.status(200).json({ result: 'success' });
   } catch (err) {
     console.log(err);

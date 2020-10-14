@@ -19,6 +19,13 @@ exports.Dashboard = async (req, res, next) => {
       late: late[0].count,
       items: items[0].count
     }
+    setInterval(() => {
+      req.app.io.sockets.emit('updateLastestBorrow', lastestBorrow);
+      req.app.io.sockets.emit('updateMostBorrow', mostBorrow)
+      req.app.io.sockets.emit('updateWaitingRequest', waiting);
+      req.app.io.sockets.emit('updateLateRequest', late);
+      req.app.io.sockets.emit('updateOwnItems', items);
+    }, 10000)
     res.status(500).json({ result: 'success', data: data });
   } catch (err) {
     console.log(err)

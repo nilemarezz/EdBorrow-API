@@ -111,6 +111,7 @@ exports.removeItemById = async (req, res, next) => {
   try {
     await borrowItem.removeItemById(req.query.itemId);
     await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, true, `Id : ${req.query.itemId}`);
+    req.app.io.sockets.emit('removeItemById', req.query.itemId);
     res.status(200).json({ result: 'success', msg: 'Remove item success', });
   } catch (err) {
     console.log(err);
@@ -164,6 +165,7 @@ exports.updateItem = async (req, res, next) => {
           `Update item success : ${data.itemId} - ${res.locals.authData.user[0].userId}`
         );
         await actionLogs.UPDATE_ITEM_LOG(res.locals.authData.user[0].userId, true, 'Success');
+        req.app.io.sockets.emit('updateStatusItem', data);
         res.status(200).json({ result: 'success', msg: 'Edit Item Success' });
       }
 
