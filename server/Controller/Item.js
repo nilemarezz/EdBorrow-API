@@ -150,6 +150,7 @@ exports.updateItem = async (req, res, next) => {
         itemImage: image,
         userId: res.locals.authData.user[0].userId,
       };
+      console.log(data)
       const userDepartment = await checkDepartmentId(res.locals.authData.user[0].userId)
       const editItem = await borrowItem.updateItem(data, userDepartment, res.locals.authData.user[0].userId);
       if (editItem.affectedRows === 0) {
@@ -165,7 +166,7 @@ exports.updateItem = async (req, res, next) => {
           `Update item success : ${data.itemId} - ${res.locals.authData.user[0].userId}`
         );
         await actionLogs.UPDATE_ITEM_LOG(res.locals.authData.user[0].userId, true, 'Success');
-        req.app.io.sockets.emit('updateStatusItem', data);
+        req.app.io.sockets.emit('updateItem', data);
         res.status(200).json({ result: 'success', msg: 'Edit Item Success' });
       }
 
