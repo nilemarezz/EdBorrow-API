@@ -26,6 +26,7 @@ exports.postCreateRequest = async (req, res, next) => {
       `Send request success -  ${res.locals.authData.user[0].userId}`
     );
     await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, true, 'Success');
+    await req.app.io.sockets.emit('updateLogs', "");
     // let dataSocket = []
     // for (let i = 0; i < borrowRequest.length; i++) {
     //   dataSocket.push({
@@ -47,6 +48,7 @@ exports.postCreateRequest = async (req, res, next) => {
     );
     console.log(err);
     await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, false, err.code);
+    await req.app.io.sockets.emit('updateLogs', "");
     res.status(500).json({ result: 'false', msg: err });
     next(err);
   }
@@ -59,7 +61,8 @@ exports.departmentApproveEachItem = async (req, res, next) => {
       'Green',
       `Approve Item success - ${res.locals.authData.user[0].userId}`
     );
-    req.app.io.sockets.emit('changeItemApprove', req.body)
+    await req.app.io.sockets.emit('changeItemApprove', req.body)
+    await req.app.io.sockets.emit('updateDashboard', "");
     res.status(200).json({ result: 'success', msg: 'Item Approve Success' });
   } catch (err) {
     printlog(
@@ -78,7 +81,8 @@ exports.departmentChangeStatus = async (req, res, next) => {
       'Green',
       `Change Status Success - ${res.locals.authData.user[0].userId}`
     );
-    req.app.io.sockets.emit('changeStatus', req.body)
+    await req.app.io.sockets.emit('changeStatus', req.body)
+    await req.app.io.sockets.emit('updateDashboard', "");
     res
       .status(200)
       .json({ result: 'success', msg: 'Item Change Status Success' });
@@ -109,6 +113,7 @@ exports.approveAllItem = async (req, res, next) => {
           const approvedRequest = await requests.advisorAllApprove(req.query);
 
           printlog('Green', 'Advisor Approve the request');
+          //
 
           let newItems = [];
           let data;
@@ -149,8 +154,13 @@ exports.approveAllItem = async (req, res, next) => {
               "approve"
             );
           }
+          await req.app.io.sockets.emit('changeApproveAll', {
+            requestId: req.query.requestId,
+            requestApprove: 1
+          });
+          await req.app.io.sockets.emit('updateDashboard', "");
           printlog('Green', 'Success sending email to the item owner.');
-          res.redirect(REDIRECT_APPROVE_URL().APPROVE_SUCCESS);
+          await res.redirect(REDIRECT_APPROVE_URL().APPROVE_SUCCESS);
 
         } else {
           approvedRequest = await requests.advisorAllApprove(req.query);
@@ -158,8 +168,14 @@ exports.approveAllItem = async (req, res, next) => {
             req.query,
             (type = 'advisor')
           );
+          //
+          await req.app.io.sockets.emit('changeApproveAll', {
+            requestId: req.query.requestId,
+            requestApprove: 0
+          });
           printlog('Yellow', 'Advisor Reject the request');
-          res.redirect(
+
+          await res.redirect(
             REDIRECT_APPROVE_URL(req.query.requestId).APPROVE_FAIL_REQUEST_ID
           );
         }
@@ -268,7 +284,8 @@ exports.rejectPurpose = async (req, res, next) => {
       req.body.type
     );
     printlog('Yellow', 'Add reject Purpose');
-    req.app.io.sockets.emit('rejectPurpose', {
+    await res.redirect(REDIRECT_APPROVE_URL().APPROVE_SUCCESS);
+    await req.app.io.sockets.emit('rejectPurpose', {
       requestId: req.body.requestId,
       itemId: req.body.itemId,
       rejectPurpose: req.body.text

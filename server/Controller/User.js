@@ -145,7 +145,8 @@ exports.ChangePassword = async (req, res, next) => {
         `Change Password Success : ${res.locals.authData.user[0].userId}`
       );
       await actionLogs.CHANGE_PASSWORD_LOG(res.locals.authData.user[0].userId, true, 'Success');
-      res
+      await req.app.io.sockets.emit('updateLogs', "");
+      await res
         .status(200)
         .json({ result: 'success', msg: 'Change password success.' });
     } else {
@@ -154,6 +155,7 @@ exports.ChangePassword = async (req, res, next) => {
         `Change Password Fail : ${res.locals.authData.user[0].userId}`
       );
       await actionLogs.CHANGE_PASSWORD_LOG(res.locals.authData.user[0].userId, false, 'password not correct');
+      await req.app.io.sockets.emit('updateLogs', "");
       res.status(403).json({ result: 'false', msg: 'password not correct' });
     }
   } catch (err) {
@@ -163,6 +165,7 @@ exports.ChangePassword = async (req, res, next) => {
     );
     console.log(err);
     await actionLogs.CHANGE_PASSWORD_LOG(res.locals.authData.user[0].userId, false, err);
+    await req.app.io.sockets.emit('updateLogs', "");
     res.status(500).json({ result: 'false', msg: err });
   }
 };
@@ -206,6 +209,7 @@ exports.DeleteUser = async (req, res, next) => {
         `Delete User Success : ${req.query.userId}`
       );
       await actionLogs.DELETE_USER_LOG(res.locals.authData.user[0].userId, true, `id : ${req.query.userId}`);
+      await req.app.io.sockets.emit('updateLogs', "");
       res.status(200).json({ result: "success", data: req.query.userId });
     } else {
       await actionLogs.DELETE_USER_LOG(res.locals.authData.user[0].userId, false, "Access Deny");
@@ -214,6 +218,7 @@ exports.DeleteUser = async (req, res, next) => {
   } catch (err) {
     console.log(err)
     await actionLogs.DELETE_USER_LOG(res.locals.authData.user[0].userId, false, err);
+    await req.app.io.sockets.emit('updateLogs', "");
     res.status(500).json({ result: "false", msg: err });
   }
 }
@@ -238,6 +243,7 @@ exports.CreateUser = async (req, res, next) => {
   } catch (err) {
     console.log(err)
     await actionLogs.CREATE_USER_LOG(res.locals.authData.user[0].userId, false, 'null value');
+    await req.app.io.sockets.emit('updateLogs', "");
     printlog(
       'Red',
       `Create User Fail : ${req.body.userId}`

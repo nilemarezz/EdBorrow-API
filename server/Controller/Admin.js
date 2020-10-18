@@ -40,9 +40,11 @@ exports.addDepartment = async (req, res, next) => {
       const addDepartment = await addItemDepartment(departmentName, departmentTelNo, departmentEmail, placeBuilding, placeFloor, placeRoom)
       await addUserDepartment(userId, firstName, lastName, cipherPassword, addDepartment, departmentName)
       await actionLogs.ADD_DEPARTMENT_LOG(res.locals.authData.user[0].userId, true, null);
+      req.app.io.sockets.emit('updateLogs', "");
       res.status(200).json({ result: 'success', });
     } else {
       await actionLogs.ADD_DEPARTMENT_LOG(res.locals.authData.user[0].userId, false, 'Permission deny');
+      req.app.io.sockets.emit('updateLogs', "");
       res.status(500).json({ result: 'false', msg: 'Permission deny' });
 
     }
@@ -54,6 +56,7 @@ exports.addDepartment = async (req, res, next) => {
     );
     console.log(err);
     await actionLogs.ADD_DEPARTMENT_LOG(res.locals.authData.user[0].userId, false, err.code);
+    req.app.io.sockets.emit('updateLogs', "");
     res.status(500).json({ result: 'false', msg: err });
   }
 };
@@ -97,6 +100,7 @@ exports.deleteDepartment = async (req, res, next) => {
       await deleteDepartment(req.body.departmentId)
       await deleteUser(req.body.userId, req.body.departmentId)
       await actionLogs.DELETE_DEPARTMENT_LOG(res.locals.authData.user[0].userId, true, req.body.departmentId);
+      req.app.io.sockets.emit('updateLogs', "");
       res.status(200).json({ result: 'success' });
     } else {
       res.status(500).json({ result: 'false', msg: 'Permission Deny' });
@@ -104,6 +108,7 @@ exports.deleteDepartment = async (req, res, next) => {
   } catch (err) {
     console.log(err)
     await actionLogs.DELETE_DEPARTMENT_LOG(res.locals.authData.user[0].userId, false, err.code);
+    req.app.io.sockets.emit('updateLogs', "");
     res.status(500).json({ result: 'false', msg: err });
   }
 }

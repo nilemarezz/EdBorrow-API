@@ -98,11 +98,13 @@ exports.addItem = async (req, res, next) => {
         `Add item success : ${addItem.insertId} - ${res.locals.authData.user[0].userId}`
       );
       await actionLogs.ADD_ITEM_LOG(res.locals.authData.user[0].userId, true, 'Success');
+      await req.app.io.sockets.emit('updateLogs', "");
       res.status(200).json({ result: 'success', msg: 'Add Item Success' });
     });
   } catch (err) {
     console.log(err);
     await actionLogs.ADD_ITEM_LOG(res.locals.authData.user[0].userId, false, err.code);
+    await req.app.io.sockets.emit('updateLogs', "");
     res.status(500).json({ result: 'false', msg: err });
   }
 };
@@ -111,11 +113,13 @@ exports.removeItemById = async (req, res, next) => {
   try {
     await borrowItem.removeItemById(req.query.itemId);
     await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, true, `Id : ${req.query.itemId}`);
-    req.app.io.sockets.emit('removeItemById', req.query.itemId);
+    await req.app.io.sockets.emit('removeItemById', req.query.itemId);
+    await req.app.io.sockets.emit('updateLogs', "");
     res.status(200).json({ result: 'success', msg: 'Remove item success', });
   } catch (err) {
     console.log(err);
     await actionLogs.DELETE_ITEM_LOG(res.locals.authData.user[0].userId, false, err.code);
+    await req.app.io.sockets.emit('updateLogs', "");
     res.status(500).json({ result: 'false', msg: err });
   }
 }
@@ -159,6 +163,7 @@ exports.updateItem = async (req, res, next) => {
           `Update item fale : ${data.itemId} - ${res.locals.authData.user[0].userId} - Not own item`
         );
         await actionLogs.UPDATE_ITEM_LOG(res.locals.authData.user[0].userId, false, 'Not own item');
+        await req.app.io.sockets.emit('updateLogs', "");
         res.status(500).json({ result: 'false', msg: "It's not your Item" });
       } else {
         printlog(
@@ -166,7 +171,8 @@ exports.updateItem = async (req, res, next) => {
           `Update item success : ${data.itemId} - ${res.locals.authData.user[0].userId}`
         );
         await actionLogs.UPDATE_ITEM_LOG(res.locals.authData.user[0].userId, true, 'Success');
-        req.app.io.sockets.emit('updateItem', data);
+        await req.app.io.sockets.emit('updateItem', data);
+        await req.app.io.sockets.emit('updateLogs', "");
         res.status(200).json({ result: 'success', msg: 'Edit Item Success' });
       }
 
@@ -176,6 +182,7 @@ exports.updateItem = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     await actionLogs.UPDATE_ITEM_LOG(res.locals.authData.user[0].userId, false, err.code);
+    await req.app.io.sockets.emit('updateLogs', "");
     res.status(500).json({ result: 'false', msg: err });
   }
 };
