@@ -24,7 +24,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
-app.get('/api', function (req, res) {
+app.get('/', function (req, res) {
+  res.redirect('https://edborrow.netlify.app/#/')
+});
+
+app.get('/doc', function (req, res) {
   res.sendFile(__dirname + '/public/index.html');
 });
 
