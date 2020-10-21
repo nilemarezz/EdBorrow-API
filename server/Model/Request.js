@@ -112,8 +112,8 @@ class ItemRequest {
 
   async checkExpRequests() {
     this.request = await pool.query(`
-      SELECT requestId , requestApprove , transactionDate , DATEDIFF(CURRENT_DATE() , transactionDate) as 'dateDiff'
-      FROM BorrowRequest;`);
+      SELECT ri.requestId , ri.itemId , br.requestApprove , br.transactionDate , DATEDIFF(CURRENT_DATE() , br.transactionDate) as 'dateDiff', ri.borrowDate , ri.returnDate 
+      FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId;`);
     return this.request
   }
 

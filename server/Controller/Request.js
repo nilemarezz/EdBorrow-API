@@ -227,6 +227,12 @@ exports.checkExpRequest = async (req, res, next) => {
   for (let i = 0; i < borrowRequest.length; i++) {
     if (borrowRequest[i].dateDiff === 3) {
       if (borrowRequest[i].requestApprove === 2) {
+        await req.app.io.sockets.emit('expiredRequest', {
+          requestId: borrowRequest[i].requestId,
+          itemId: borrowRequest[i].itemId,
+          borrowDate: borrowRequest[i].borrowDate,
+          returnDate: borrowRequest[i].returnDate
+        })
         printlog('Yellow', `Expired Request Id: ${borrowRequest[i].requestId}`);
         await requests.updateRequestApprove(borrowRequest[i].requestId);
       }
