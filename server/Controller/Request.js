@@ -27,17 +27,18 @@ exports.postCreateRequest = async (req, res, next) => {
     );
     await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, true, 'Success');
     await req.app.io.sockets.emit('updateLogs', "");
-    // let dataSocket = []
-    // for (let i = 0; i < borrowRequest.length; i++) {
-    //   dataSocket.push({
-    //     requestId: borrowRequest[i].requestId,
-    //     itemId: borrowRequest[i].itemId,
-    //     borrowDate: borrowRequest[i].borrowDate,
-    //     returnDate: borrowRequest[i].returnDate
-    //   })
-    // }
-    // //socket real-time
-    // req.app.io.sockets.emit('dateUpdate', { key: dataSocket });
+    let dataSocket = []
+    console.log(borrowRequest)
+    for (let i = 0; i < borrowRequest.length; i++) {
+      dataSocket.push({
+        requestId: borrowRequest[i].requestId,
+        itemId: borrowRequest[i].itemId,
+        borrowDate: borrowRequest[i].borrowDate,
+        returnDate: borrowRequest[i].returnDate
+      })
+    }
+    //socket real-time
+    await req.app.io.sockets.emit('dateUpdate', { data: dataSocket });
     res
       .status(200)
       .json({ result: 'success', msg: '[Email] sent request success' });

@@ -68,7 +68,7 @@ const CREATE_REQUEST = () => {
     SET ri.itemBorrowingStatusId = 4 , i.itemAvailability = FALSE WHERE ri.itemId = ${items[i].itemId};`,
     RETURN_REQUEST: (lastInsertId) => `
     select br.requestId ,u.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.email , u.userTelNo ,
-    br.borrowPurpose , ri.borrowDate , ri.returnDate , i.itemName , br.requestApprove
+    br.borrowPurpose , ri.borrowDate , ri.returnDate , i.itemName , br.requestApprove, i.itemId
     from RequestItem ri  
     join BorrowRequest br ON br.requestId  = ri.requestId 
     join Users u on u.userId = br.userId 
