@@ -8,6 +8,7 @@ const user = new UserModel();
 const singleUpload = upload.single('image');
 const isItemDepartment = require('../Utilities/isItemInDepartment')
 const checkDepartmentId = require('../Utilities/checkDepartmentId')
+const pool = require('../config/BorrowSystemDB')
 exports.getAllBorrowItems = async (req, res, next) => {
   try {
     let getborrowItems = await borrowItem.getAllItem();
@@ -157,6 +158,7 @@ exports.updateItem = async (req, res, next) => {
       console.log(data)
       const userDepartment = await checkDepartmentId(res.locals.authData.user[0].userId)
       const editItem = await borrowItem.updateItem(data, userDepartment, res.locals.authData.user[0].userId);
+      const updateAmount = await pool.query(` UPDATE Items SET amount = amount + ${data.amount} WHERE itemId = ${data.itemId};`)
       if (editItem.affectedRows === 0) {
         printlog(
           'Red',

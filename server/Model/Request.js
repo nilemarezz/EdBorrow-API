@@ -14,13 +14,19 @@ class ItemRequest {
   }
   async departmentChangeStatus(body) {
     this.request = await pool.query(DEPARTMENT_CHANGE_STATUS(body));
+
     return this.request;
   }
 
   async createRequest(body, items) {
     if (body.personalInformation) {
+      let sum = 0;
+      for (var i = 0; i < items.length; i++) {
+        sum = sum + parseInt(items[i].amount)
+      }
+      console.log(sum)
       this.request = await pool.query(
-        CREATE_REQUEST().INSERT_BORROWREQUEST_TO_DB(body)
+        CREATE_REQUEST().INSERT_BORROWREQUEST_TO_DB(body, sum)
       );
       let lastInsertId = this.request.insertId;
       if (body.items) {
@@ -29,7 +35,7 @@ class ItemRequest {
             CREATE_REQUEST().INSERT_ITEMREQUEST_TO_DB(items, lastInsertId, i)
           );
           await pool.query(
-            CREATE_REQUEST().UPDATE_ITEM_AVALIBILITY(items, i)
+            CREATE_REQUEST().CHANGE_AMOUNT(items, i)
           ); //chage status to Booking and availability to FALSE (booking and can't borrow in other request)
         }
       }

@@ -2,7 +2,7 @@ const GET_REQUEST = (requestId) => {
   return `SELECT * FROM BorrowRequest WHERE requestId = ${requestId}`
 }
 const GET_REQUEST_LIST = (userId) => {
-  return `SELECT br.requestId , br.transactionDate ,COUNT(ri.requestId) as itemAmount , br.requestApprove 
+  return `SELECT br.requestId , br.transactionDate ,totalAmount , br.requestApprove 
           FROM BorrowRequest br join RequestItem ri on br.requestId = ri.requestId 
           WHERE userId  = "${userId}"
           GROUP BY br.requestId;`
@@ -15,19 +15,19 @@ const GET_REQUEST_DETAIL = (requestId, userId) => {
 }
 const GET_REQUEST_ITEMS = (requestId) => {
   return `
-  SELECT ri.itemId  , i.itemName , i.itemImage ,ri.itemApprove ,ri.itemBorrowingStatusId ,ri.rejectPurpose , ri.borrowDate  , ri.returnDate 
+  SELECT ri.itemId  , i.itemName , i.itemImage ,ri.itemApprove ,ri.itemBorrowingStatusId ,ri.rejectPurpose , ri.borrowDate  , ri.returnDate  , ri.amount
   FROM RequestItem ri join Items i on i.itemId = ri.itemId WHERE requestId  = "${requestId}";
   `
 }
 const GET_REQUEST_ADMIN = (userId, departmentId) => {
   const depertmentQuery = `
-  select ri.borrowDate , b.borrowPurpose , ri.itemApprove , ri.itemBorrowingStatusId , 
+  select ri.borrowDate , b.borrowPurpose , ri.itemApprove , ri.itemBorrowingStatusId , ri.amount, i.itemImage,
   ri.itemId , i.itemName ,ri.requestId ,ri.returnDate ,b.transactionDate ,b.usePlace ,b.userId , CONCAT(u.firstName , " ", u.lastName) as Name 
   from RequestItem ri join Items i on ri.itemId = i.itemId join BorrowRequest b ON 
   b.requestId  = ri.requestId join Users u on u.userId = b.userId 
   where i.departmentId  = "${departmentId}" and b.requestApprove = 1`
   const userQuery = `
-  select ri.borrowDate , b.borrowPurpose , ri.itemApprove , ri.itemBorrowingStatusId , 
+  select ri.borrowDate , b.borrowPurpose , ri.itemApprove , ri.itemBorrowingStatusId , ri.amount, i.itemImage,
   ri.itemId , i.itemName ,ri.requestId ,ri.returnDate ,b.transactionDate ,b.usePlace ,b.userId , CONCAT(u.firstName , " ", u.lastName) as Name 
   from RequestItem ri join Items i on ri.itemId = i.itemId join BorrowRequest b ON 
   b.requestId  = ri.requestId join Users u on u.userId = b.userId 
@@ -54,18 +54,25 @@ const DEPARTMENT_CHANGE_STATUS = (body) => {
   WHERE (ri.requestId = ${body.requestId} AND ri.itemId = ${body.itemId}) AND i.itemId = ${body.itemId};
 `
 }
+// const addAmountBack = (body) => {
+
+// }
 
 const CREATE_REQUEST = () => {
   return {
-    INSERT_BORROWREQUEST_TO_DB: (body) =>
-      `INSERT INTO BorrowRequest (userId , borrowPurpose , usePlace) 
-    VALUES('${body.personalInformation.userId}' , '${body.personalInformation.borrowPurpose}' , '${body.personalInformation.usePlace}');`,
+    INSERT_BORROWREQUEST_TO_DB: (body, amount) =>
+      `INSERT INTO BorrowRequest (userId , borrowPurpose , usePlace , totalAmount) 
+    VALUES('${body.personalInformation.userId}' , '${body.personalInformation.borrowPurpose}' , '${body.personalInformation.usePlace}' , ${amount});`,
     INSERT_ITEMREQUEST_TO_DB: (items, lastInsertId, i) =>
-      `INSERT INTO RequestItem (requestId , itemId, borrowDate , returnDate ) 
-    VALUES(${lastInsertId}, ${items[i].itemId} , '${items[i].borrowDate}', '${items[i].returnDate}');`,
+      `INSERT INTO RequestItem (requestId , itemId, borrowDate , returnDate , amount) 
+    VALUES(${lastInsertId}, ${items[i].itemId} , '${items[i].borrowDate}', '${items[i].returnDate}' , ${items[i].amount});`,
     UPDATE_ITEM_AVALIBILITY: (items, i) =>
       `UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
     SET ri.itemBorrowingStatusId = 4 , i.itemAvailability = FALSE WHERE ri.itemId = ${items[i].itemId};`,
+    CHANGE_AMOUNT: (items, i) =>
+      `UPDATE Items set amount = amount - ${items[i].amount}
+    where itemId = ${items[i].itemId}; 
+    `,
     RETURN_REQUEST: (lastInsertId) => `
     select br.requestId ,u.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.email , u.userTelNo ,
     br.borrowPurpose , ri.borrowDate , ri.returnDate , i.itemName , br.requestApprove, i.itemId

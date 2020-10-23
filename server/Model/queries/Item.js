@@ -1,6 +1,6 @@
 const GET_ALL_ITEM = () => {
   return `
-  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage , its.itemStatusTag  
+  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.userId as ownerName , i.itemAvailability , i.itemImage , its.itemStatusTag  , i.amount
   FROM Items i left join ItemDepartment d on i.departmentId = d.departmentId 
         join ItemCategory c on i.categoryId = c.categoryId 
         join itemStatus its on i.itemStatusId = its.itemStatusId 
@@ -54,8 +54,8 @@ const DELETE_ITEM_BY_ID = (itemId) => {
 }
 const ADD_ITEM = (value) => {
   return `
-  INSERT INTO Items (itemBrand ,itemModel , itemName, createDate ,categoryId ,${value.departmentId === 'null' ? "userId" : "departmentId"} ,itemStatusId ,itemImage ,itemDescription ,itemBorrowable ,itemAvailability ) 
-  values ('${value.itemBrand}','${value.itemModel}','${value.itemName}','${value.createDate}',1,'${value.departmentId === 'null' ? value.userId : value.departmentId}',1,${value.itemImage === null ? 'NULL' : `'${value.itemImage}'`},'${value.itemDescription}',1,1) 
+  INSERT INTO Items (itemBrand ,itemModel , itemName, createDate ,categoryId ,${value.departmentId === 'null' ? "userId" : "departmentId"} ,itemStatusId ,itemImage ,itemDescription ,itemBorrowable ,itemAvailability, amount ) 
+  values ('${value.itemBrand}','${value.itemModel}','${value.itemName}','${value.createDate}',1,'${value.departmentId === 'null' ? value.userId : value.departmentId}',1,${value.itemImage === null ? 'NULL' : `'${value.itemImage}'`},'${value.itemDescription}',1,1 , ${value.amount}) 
   `
 }
 const GET_UN_AVAILABLE_ITEM = (value) => {
@@ -68,7 +68,7 @@ const GET_UN_AVAILABLE_ITEM = (value) => {
 const GET_DEPARTMENT_BY_ID = (userId, department) => {
   const departmentQuery =
     `
-  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.createDate , ist.itemStatusTag , i.userId as ownerName , i.itemAvailability , i.itemImage 
+  SELECT i.itemId , i.itemName , i.itemBrand , i.itemModel, d.departmentName , i.createDate , ist.itemStatusTag , i.userId as ownerName , i.itemAvailability , i.itemImage , i.amount
   FROM Items i left join ItemDepartment d on i.departmentId = d.departmentId 
   join ItemCategory c on i.categoryId = c.categoryId 
   join itemStatus ist on ist.itemStatusId  = i.itemStatusId 
@@ -107,7 +107,7 @@ const UPDATE_ITEM = (value, department, userId) => {
 
 const GET_MY_BORROW_ITEM = (isDepartment, user) => {
   const departmentQuery = `
-  select i.itemName  , i.itemImage , ri.itemBorrowingStatusId , ri.returnDate , i.itemId , id.departmentName as Owner
+  select i.itemName  , i.itemImage , ri.itemBorrowingStatusId , ri.returnDate , i.itemId , id.departmentName as Owner , ri.amount
   from BorrowRequest br join RequestItem ri on br.requestId = ri.requestId
   join Items i on i.itemId = ri.itemId 
   join ItemDepartment id on id.departmentId = i.departmentId 
@@ -116,7 +116,7 @@ const GET_MY_BORROW_ITEM = (isDepartment, user) => {
   and i.userId is null;`
   const userQuery = `
   select i.itemName  , i.itemImage , ri.itemBorrowingStatusId , ri.returnDate , i.itemId , 
-  CONCAT(u2.firstName , " ", u2.lastName) AS Owner 
+  CONCAT(u2.firstName , " ", u2.lastName) AS Owner , ri.amount
   from BorrowRequest br join RequestItem ri on br.requestId = ri.requestId
   join Items i on i.itemId = ri.itemId 
   join Users u2 on u2.userId = i.userId 

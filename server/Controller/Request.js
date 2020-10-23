@@ -9,10 +9,11 @@ const {
   REDIRECT_APPROVE_URL,
 } = require('../Utilities/RequestUrl');
 const checkDepartmentId = require('../Utilities/checkDepartmentId')
-
+const pool = require("../config/BorrowSystemDB");
 
 exports.postCreateRequest = async (req, res, next) => {
   try {
+    console.log(req.body)
     let borrowRequest = await requests.createRequest(req.body, req.body.items);
     let url = CREATE_REQUEST(borrowRequest[0].requestId);
     await sendEmailRequest(
@@ -28,17 +29,22 @@ exports.postCreateRequest = async (req, res, next) => {
     await actionLogs.CREATE_REQUEST_LOG(req.body.personalInformation.userId, true, 'Success');
     await req.app.io.sockets.emit('updateLogs', "");
     let dataSocket = []
-    console.log(borrowRequest)
     for (let i = 0; i < borrowRequest.length; i++) {
       dataSocket.push({
         requestId: borrowRequest[i].requestId,
         itemId: borrowRequest[i].itemId,
         borrowDate: borrowRequest[i].borrowDate,
-        returnDate: borrowRequest[i].returnDate
+        returnDate: borrowRequest[i].returnDate,
+        amount: borrowRequest[i].amount
       })
     }
     //socket real-time
     await req.app.io.sockets.emit('dateUpdate', { data: dataSocket });
+    let amount = []
+    req.body.items.map(item => {
+      amount.push({ itemId: item.itemId, amount: item.amount, type: "minus" })
+    })
+    await req.app.io.sockets.emit('amountUpdate', { data: amount });
     res
       .status(200)
       .json({ result: 'success', msg: '[Email] sent request success' });
@@ -58,6 +64,14 @@ exports.postCreateRequest = async (req, res, next) => {
 exports.departmentApproveEachItem = async (req, res, next) => {
   try {
     const change = await requests.departmentApproveEachItem(req.body);
+    // when department reject - add amount the item borrow back 
+    if (req.body.itemApprove === 0) {
+      let res = await pool.query(`select amount from RequestItem where itemId = ${req.body.itemId}`)
+      console.log(res)
+      await pool.query(`update Items set amount = amount+${res[0].amount} where itemId = ${req.body.itemId}`)
+      console.log({ itemId: req.body.itemId, amount: res[0].amount, type: "add" })
+      await req.app.io.sockets.emit('amountUpdate', { data: [{ itemId: req.body.itemId, amount: res[0].amount, type: "add" }] });
+    }
     printlog(
       'Green',
       `Approve Item success - ${res.locals.authData.user[0].userId}`
@@ -78,6 +92,12 @@ exports.departmentApproveEachItem = async (req, res, next) => {
 exports.departmentChangeStatus = async (req, res, next) => {
   try {
     await requests.departmentChangeStatus(req.body);
+    // when user return - add amount the item borrow back 
+    if (req.body.itemBorrowingStatusId === 2) {
+      let res = await pool.query(`select amount from RequestItem where itemId = ${req.body.itemId}`)
+      await pool.query(`update Items set amount = amount+${res[0].amount} where itemId = ${req.body.itemId}`)
+      await req.app.io.sockets.emit('amountUpdate', { data: [{ itemId: req.body.itemId, amount: res[0].amount, type: "add" }] });
+    }
     printlog(
       'Green',
       `Change Status Success - ${res.locals.authData.user[0].userId}`
@@ -155,6 +175,8 @@ exports.approveAllItem = async (req, res, next) => {
               "approve"
             );
           }
+          console.log([{ itemId: '', ammount: '', type: 'add' }])
+
           await req.app.io.sockets.emit('changeApproveAll', {
             requestId: req.query.requestId,
             requestApprove: 1
@@ -169,7 +191,22 @@ exports.approveAllItem = async (req, res, next) => {
             req.query,
             (type = 'advisor')
           );
-          //
+          // add item back when advisor reject
+
+          let resAmount = await pool.query(`select amount , itemId from RequestItem where requestId = ${req.query.requestId}`)
+          console.log('resAmount', resAmount)
+          await resAmount.map(item => {
+            item.type = "add"
+          })
+          // let res = await pool.query(`select amount from RequestItem where itemId = ${req.body.itemId}`)
+          await resAmount.map(async item => {
+            console.log('add')
+            await pool.query(`update Items set amount = amount+${item.amount} where itemId = ${item.itemId}`)
+          })
+          console.log('......', resAmount)
+          // await pool.query(`update Items set amount = amount+${res[0].amount} where itemId = ${req.body.itemId}`)
+          // await req.app.io.sockets.emit('amountUpdate', { data: [{ itemId: req.body.itemId, amount: res[0].amount, type: "add" }] });
+          await req.app.io.sockets.emit('amountUpdate', { data: resAmount });
           await req.app.io.sockets.emit('changeApproveAll', {
             requestId: req.query.requestId,
             requestApprove: 0
