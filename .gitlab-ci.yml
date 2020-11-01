@@ -11,32 +11,32 @@ stages:
   - unitTest
   - integrationTest
   - deploy
- unitTest:
-   image: node:10
-   stage: unitTest
-   only:
-     - develop
-     - master
-     - merge_requests
-   script:
-     - cd ./server
-     - ls
-     # - cat config.json
-     - npm install
-     - npm run test:unit
- integrationTest:
-   image: node:10
-   stage: integrationTest
-   only:
-     - develop
-     - master
-     - merge_requests
-   script:
-     - cd ./server
-     - ls
-     # - cat config.json
-     - npm install
-     - npm run test:sit
+unitTest:
+  image: node:10
+  stage: unitTest
+  only:
+    - develop
+    - master
+    - merge_requests
+  script:
+    - cd ./server
+    - ls
+    # - cat config.json
+    - npm install
+    - npm run test:unit
+integrationTest:
+  image: node:10
+  stage: integrationTest
+  only:
+    - develop
+    - master
+    - merge_requests
+  script:
+    - cd ./server
+    - ls
+    # - cat config.json
+    - npm install
+    - npm run test:sit
 deploy:
   stage: deploy
   image: node:10
