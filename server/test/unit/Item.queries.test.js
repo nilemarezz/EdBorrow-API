@@ -20,16 +20,16 @@ describe('/queries/Item', () => {
       expect(DELETE_ALL_ITEMS()).to.equal(expectedqueries);
     });
   })
-  describe('ADD_ITEM', () => {
-    it('should return the string same as expected queries', () => {
+  // describe('ADD_ITEM', () => {
+  //   it('should return the string same as expected queries', () => {
 
-      const expectedqueries = `
-  INSERT INTO Items (itemBrand ,itemModel , itemName, createDate ,categoryId ,userId ,itemStatusId ,itemImage ,itemDescription ,itemBorrowable ,itemAvailability ) 
-  values ('${item.itemBrand}','${item.itemModel}','${item.itemName}','${item.createDate}',1,'${item.userId}',1,${item.itemImage === null ? 'NULL' : `'${item.itemImage}'`},'${item.itemDescription}',1,1) 
-  `
-      expect(ADD_ITEM(item)).to.equal(expectedqueries);
-    });
-  })
+  //     const expectedqueries = `
+  // INSERT INTO Items (itemBrand ,itemModel , itemName, createDate ,categoryId ,userId ,itemStatusId ,itemImage ,itemDescription ,itemBorrowable ,itemAvailability ) 
+  // values ('${item.itemBrand}','${item.itemModel}','${item.itemName}','${item.createDate}',1,'${item.userId}',1,${item.itemImage === null ? 'NULL' : `'${item.itemImage}'`},'${item.itemDescription}',1,1) 
+  // `
+  //     expect(ADD_ITEM(item)).to.equal(expectedqueries);
+  //   });
+  // })
   // describe('GET_ALL_ITEM', () => {
   //   it('should return the string same as expected queries', () => {
   //     const expectedqueries = `

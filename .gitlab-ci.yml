@@ -4,11 +4,11 @@ services:
 before_script:
   - ls
   - cd ./server
-  - echo '{test:'$test',test2:'$test2'}' > config.json
+#   - echo '{test:'$test',test2:'$test2'}' > config.json
   - echo '{"NODE_ENV":"'$NODE_ENV'","MARIADB":"'$MARIADB'","DBUSER":"'$DBUSER'","DBPASSWORD":"'$DBPASSWORD'","EMAIL_PASS":"'$EMAIL_PASS'","ACCESSKEY_ID":"'$ACCESSKEY_ID'","ACCESSKEY_SECRET":"'$ACCESSKEY_SECRET'","ACCESS_TOKEN_SECRET":"'$ACCESS_TOKEN_SECRET'","CRYPTO_SECRET_KEY":"'CRYPTO_SECRET_KEY'"}' > config.json
   - cd ..
 stages:
-   - unitTest
+  - unitTest
   - integrationTest
   - deploy
  unitTest:
