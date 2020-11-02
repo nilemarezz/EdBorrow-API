@@ -26,8 +26,8 @@ describe('/queries/User', () => {
   describe('CREATE_USER', () => {
     it('should return the string same as expected queries', () => {
       const expectedqueries = `
-  INSERT INTO Users (userId, password, email, firstName, lastName, userTelNo , studentAdvisor) 
-  VALUES ("1", "2", "3", "4", "5" , "6" , "undefined");
+  INSERT INTO Users (userId, email, firstName, lastName) 
+  VALUES ('1', "2", "3", "4" )
 `
       expect(CREATE_USER(1, 2, 3, 4, 5, 6)).to.equal(expectedqueries)
     })
