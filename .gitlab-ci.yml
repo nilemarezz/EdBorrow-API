@@ -8,35 +8,35 @@ before_script:
   - echo '{"NODE_ENV":"'$NODE_ENV'","MARIADB":"'$MARIADB'","DBUSER":"'$DBUSER'","DBPASSWORD":"'$DBPASSWORD'","EMAIL_PASS":"'$EMAIL_PASS'","ACCESSKEY_ID":"'$ACCESSKEY_ID'","ACCESSKEY_SECRET":"'$ACCESSKEY_SECRET'","ACCESS_TOKEN_SECRET":"'$ACCESS_TOKEN_SECRET'","CRYPTO_SECRET_KEY":"'CRYPTO_SECRET_KEY'"}' > config.json
   - cd ..
 stages:
-  # - unitTest
-  # - integrationTest
+  - unitTest
+  - integrationTest
   - deploy
-# unitTest:
-#   image: node:10
-#   stage: unitTest
-#   only:
-#     - develop
-#     - master
-#     - merge_requests
-#   script:
-#     - cd ./server
-#     - ls
-#     # - cat config.json
-#     - npm install
-#     - npm run test:unit
-# integrationTest:
-#   image: node:10
-#   stage: integrationTest
-#   only:
-#     - develop
-#     - master
-#     - merge_requests
-#   script:
-#     - cd ./server
-#     - ls
-#     # - cat config.json
-#     - npm install
-#     - npm run test:sit
+unitTest:
+  image: node:10
+  stage: unitTest
+  only:
+    - develop
+    - master
+    - merge_requests
+  script:
+    - cd ./server
+    - ls
+    # - cat config.json
+    - npm install
+    - npm run test:unit
+integrationTest:
+  image: node:10
+  stage: integrationTest
+  only:
+    - develop
+    - master
+    - merge_requests
+  script:
+    - cd ./server
+    - ls
+    # - cat config.json
+    - npm install
+    - npm run test:sit
 deploy:
   stage: deploy
   image: node:10
