@@ -43,12 +43,67 @@ exports.userRegister = async (req, res, next) => {
   }
 };
 
+exports.userAuthSSO = async (req, res, next) => {
+  try {
+    let userLogin, userRole;
+    userLogin = await users.getLogin(req.body.user_id);
+    const name = req.body.name_en.split(" ");
+    if (userLogin.length === 0) {
+      await users.createUser(
+        req.body.user_id,
+        req.body.email,
+        name[0],
+        name[1],
+      );
+      let userRole;
+      if (req.body.user_type === "st_group") {
+        userRole = { id: 10, role: [{ roleId: 10 }] }
+      } else {
+        userRole = { id: 20, role: [{ roleId: 20 }] }
+      }
+      await users.assignRole(req.body.user_id, userRole.id);
+      let role = await checkUserRole(userRole.role)
+      jwt.sign(
+        { user: userLogin },
+        config.ACCESS_TOKEN_SECRET,
+        (err, accessToken) => {
+          res.status(200).json({
+            result: 'success',
+            accessToken,
+            user: name[0],
+            ...role
+          });
+        }
+      );
+    } else {
+      let userRole = await users.getUserRole(req.body.user_id);
+      console.log(userLogin)
+      let role = await checkUserRole(userRole)
+      jwt.sign(
+        { user: userLogin },
+        config.ACCESS_TOKEN_SECRET,
+        (err, accessToken) => {
+          res.status(200).json({
+            result: 'success',
+            accessToken,
+            user: name[0],
+            ...role
+          });
+        }
+      );
+    }
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ result: false })
+  }
+}
+
 exports.userLogin = async (req, res, next) => {
   try {
     let userLogin, userRole;
-    userLogin = await users.getLogin(req.body.userId);
-
-    //get password in database to decrypt
+    console.log(req.body)
+    userLogin = await users.getLogin(req.body.username);
+    console.log(userLogin)
     var bytes = CryptoJS.AES.decrypt(
       userLogin[0].password,
       config.CRYPTO_SECRET_KEY
@@ -56,10 +111,16 @@ exports.userLogin = async (req, res, next) => {
     var passwordDecrypt = bytes.toString(CryptoJS.enc.Utf8);
 
     if (passwordDecrypt === req.body.password) {
-      let userRole = await users.getUserRole(req.body.userId);
+      let userRole = await users.getUserRole(req.body.username);
       let role = await checkUserRole(userRole)
-
-      printlog('Green', `Login Success : ${req.body.userId}`);
+      if (role.student === true) {
+        res
+          .status(403)
+          .json({ result: 'false', msg: 'Invalid user id or password' });
+        printlog('Red', `Login Fail : ${req.body.username} - not student login with admon method`);
+        return
+      }
+      printlog('Green', `Login Success : ${req.body.username}`);
       jwt.sign(
         { user: userLogin },
         config.ACCESS_TOKEN_SECRET,
@@ -73,13 +134,13 @@ exports.userLogin = async (req, res, next) => {
         }
       );
     } else {
-      printlog('Red', `Login Fail : ${req.body.userId}`);
+      printlog('Red', `Login Fail : ${req.body.username} `);
       res
         .status(403)
         .json({ result: 'false', msg: 'Invalid user id or password' });
     }
   } catch (err) {
-    printlog('Red', `Login Fail : ${req.body.userId}`);
+    printlog('Red', `Login Fail: ${req.body.username} `);
     console.log(err);
     res
       .status(403)
@@ -142,7 +203,7 @@ exports.ChangePassword = async (req, res, next) => {
       );
       printlog(
         'Green',
-        `Change Password Success : ${res.locals.authData.user[0].userId}`
+        `Change Password Success: ${res.locals.authData.user[0].userId} `
       );
       await actionLogs.CHANGE_PASSWORD_LOG(res.locals.authData.user[0].userId, true, 'Success');
       await req.app.io.sockets.emit('updateLogs', "");
@@ -152,7 +213,7 @@ exports.ChangePassword = async (req, res, next) => {
     } else {
       printlog(
         'Red',
-        `Change Password Fail : ${res.locals.authData.user[0].userId}`
+        `Change Password Fail: ${res.locals.authData.user[0].userId} `
       );
       await actionLogs.CHANGE_PASSWORD_LOG(res.locals.authData.user[0].userId, false, 'password not correct');
       await req.app.io.sockets.emit('updateLogs', "");
@@ -161,7 +222,7 @@ exports.ChangePassword = async (req, res, next) => {
   } catch (err) {
     printlog(
       'Red',
-      `Change Password Fail : ${res.locals.authData.user[0].userId}`
+      `Change Password Fail: ${res.locals.authData.user[0].userId} `
     );
     console.log(err);
     await actionLogs.CHANGE_PASSWORD_LOG(res.locals.authData.user[0].userId, false, err);
@@ -206,9 +267,9 @@ exports.DeleteUser = async (req, res, next) => {
       await users.deleteUser(req.query.userId)
       printlog(
         'Green',
-        `Delete User Success : ${req.query.userId}`
+        `Delete User Success: ${req.query.userId} `
       );
-      await actionLogs.DELETE_USER_LOG(res.locals.authData.user[0].userId, true, `id : ${req.query.userId}`);
+      await actionLogs.DELETE_USER_LOG(res.locals.authData.user[0].userId, true, `id: ${req.query.userId} `);
       await req.app.io.sockets.emit('updateLogs', "");
       res.status(200).json({ result: "success", data: req.query.userId });
     } else {
@@ -235,7 +296,7 @@ exports.CreateUser = async (req, res, next) => {
 
       printlog(
         'Green',
-        `Add User Success : ${req.body.userId}`
+        `Add User Success: ${req.body.userId} `
       );
       res.status(200).json({ result: "success" });
     }
@@ -246,7 +307,7 @@ exports.CreateUser = async (req, res, next) => {
     await req.app.io.sockets.emit('updateLogs', "");
     printlog(
       'Red',
-      `Create User Fail : ${req.body.userId}`
+      `Create User Fail: ${req.body.userId} `
     );
     res.status(500).json({ result: "false", msg: err });
   }

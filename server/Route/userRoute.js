@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getUserDetail, userLogin, getUserRole, userRegister, ChangePassword, GetAdvisorList, GetUserList, DeleteUser, CreateUser } = require("../Controller/User")
+const { getUserDetail, userLogin, getUserRole, userRegister, ChangePassword, GetAdvisorList, GetUserList, DeleteUser, CreateUser, userAuthSSO } = require("../Controller/User")
 const verifyToken = require('../middleware/verify')
 const validUser = require('../middleware/validUser')
 const config = require('../config.json')
@@ -25,6 +25,9 @@ router
 router
   .route("/list/advisor")
   .get(GetAdvisorList)
+router
+  .route("/auth")
+  .post(userAuthSSO)
 
 router.post("/createAdvisor", async (req, res) => {
   var cipherPassword = CryptoJS.AES.encrypt(

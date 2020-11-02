@@ -11,16 +11,18 @@ const GET_USER_BY_ID = (userId) => {
   FROM Users
   WHERE userId = '${userId}';`
 }
-const CREATE_USER = (userId, password, email, firstname, lastname, phonenumber, advisor) => {
+const CREATE_USER = (userId, email, firstname, lastname) => {
+  console.log(userId, email, firstname, lastname)
   return `
-  INSERT INTO Users (userId, password, email, firstName, lastName, userTelNo , studentAdvisor) 
-  VALUES ("${userId}", "${password}", "${email}", "${firstname}", "${lastname}" , "${phonenumber}" , ${advisor === null ? null : `"${advisor}"`});
+  INSERT INTO Users (userId, email, firstName, lastName) 
+  VALUES ('${userId}', "${email}", "${firstname}", "${lastname}" )
 `
 }
 const USER_ROLE = (id) => {
   return `select ur.roleId from UserRole ur where userId = "${id}" `
 }
 const ASSIGN_ROLE = (id, role) => {
+  console.log(id, role)
   return `INSERT INTO UserRole values ('${id}' , ${role}) `
 }
 const GET_PASSWORD = (id) => {
