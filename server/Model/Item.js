@@ -2,7 +2,7 @@ const pool = require('../config/BorrowSystemDB');
 const {
   GET_ALL_ITEM, GET_ITEM_BY_ID, GET_CATEGORY, GET_DEPARTMENT, GET_OWNER,
   DELETE_ALL_ITEMS, ADD_ITEM, GET_DEPARTMENT_BY_ID,
-  UPDATE_ITEM, GET_UN_AVAILABLE_ITEM, DELETE_ITEM_BY_ID, GET_MY_BORROW_ITEM } = require('./queries/Item')
+  UPDATE_ITEM, GET_UN_AVAILABLE_ITEM, DELETE_ITEM_BY_ID, GET_MY_BORROW_ITEM, GET_AVALIABLE } = require('./queries/Item')
 const refactorItemDetail = require('../Utilities/refactorItemDetail')
 class BorrowItem {
   constructor() {
@@ -67,6 +67,10 @@ class BorrowItem {
 
   async getMyBorrowItem(isDepartment, user) {
     this.borrowItem = await pool.query(GET_MY_BORROW_ITEM(isDepartment, user))
+    return this.borrowItem;
+  }
+  async getAvaliable(id, borrowDate, returnDate) {
+    this.borrowItem = await pool.query(GET_AVALIABLE(id, borrowDate, returnDate))
     return this.borrowItem;
   }
 }

@@ -130,7 +130,16 @@ const GET_MY_BORROW_ITEM = (isDepartment, user) => {
 
 }
 
+const GET_AVALIABLE = (id, borrowDate, returnDate) => {
+  const query = `SELECT i.itemId, i.itemName, (i.amount - IFNULL(sum(ri.amount),0)) as avaiAmount
+  FROM Items i left join RequestItem ri on i.itemId = ri.itemId 
+        left join BorrowRequest br on br.requestId = ri.requestId 
+  WHERE i.itemId = ${id} AND ('${borrowDate}' <= ri.returnDate AND '${returnDate}' >= ri.borrowDate) 
+          AND ri.itemBorrowingStatusId != 2 AND br.requestApprove != 3;`
+  return query
+}
+
 module.exports = {
   GET_ALL_ITEM, GET_ITEM_BY_ID, GET_CATEGORY, GET_UN_AVAILABLE_ITEM, GET_DEPARTMENT, GET_OWNER,
-  DELETE_ALL_ITEMS, ADD_ITEM, DELETE_ITEM_BY_ID, GET_DEPARTMENT_BY_ID, UPDATE_ITEM, GET_MY_BORROW_ITEM
+  DELETE_ALL_ITEMS, ADD_ITEM, DELETE_ITEM_BY_ID, GET_DEPARTMENT_BY_ID, UPDATE_ITEM, GET_MY_BORROW_ITEM, GET_AVALIABLE
 }

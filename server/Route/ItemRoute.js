@@ -7,7 +7,7 @@ const validUser = require('../middleware/validUser')
 const {
   getAllBorrowItems, getCategoryNameOrDepartmentName, getBorrowItemById,
   getSearchBorrowItems, addItem, getItemByDepartment,
-  updateItem, getUnAvailableItem, removeItemById, getMyBorrowItems } = require("../Controller/Item")
+  updateItem, getUnAvailableItem, removeItemById, getMyBorrowItems, getAmountAvaliable } = require("../Controller/Item")
 router
   .route("/")
   .get(getAllBorrowItems)
@@ -27,6 +27,9 @@ router
   .route("/getColumn/unavaliable")
   .get(getUnAvailableItem)
   .post(getCategoryNameOrDepartmentName)
+router
+  .route("/getAvaliableAmount/amount")
+  .post(getAmountAvaliable)
 router
   .route("/:id")
   .get(getBorrowItemById)

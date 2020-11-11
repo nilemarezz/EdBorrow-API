@@ -158,7 +158,6 @@ exports.updateItem = async (req, res, next) => {
       console.log(data)
       const userDepartment = await checkDepartmentId(res.locals.authData.user[0].userId)
       const editItem = await borrowItem.updateItem(data, userDepartment, res.locals.authData.user[0].userId);
-      const updateAmount = await pool.query(` UPDATE Items SET amount = amount + ${data.amount} WHERE itemId = ${data.itemId};`)
       if (editItem.affectedRows === 0) {
         printlog(
           'Red',
@@ -200,3 +199,13 @@ exports.getMyBorrowItems = async (req, res, next) => {
     res.status(500).json({ result: 'false', msg: err });
   }
 };
+
+exports.getAmountAvaliable = async (req, res, next) => {
+  try {
+    const avaliable = await borrowItem.getAvaliable(req.body.itemId, req.body.borrowDate, req.body.returnDate)
+    const data = { itemId: avaliable[0].itemId, amount: avaliable[0].avaiAmount }
+    res.status(200).json({ result: 'success', data: data });
+  } catch (err) {
+    console.log(err)
+  }
+}

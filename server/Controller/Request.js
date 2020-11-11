@@ -68,7 +68,6 @@ exports.departmentApproveEachItem = async (req, res, next) => {
     if (req.body.itemApprove === 0) {
       let res = await pool.query(`select amount from RequestItem where itemId = ${req.body.itemId}`)
       console.log(res)
-      await pool.query(`update Items set amount = amount+${res[0].amount} where itemId = ${req.body.itemId}`)
       console.log({ itemId: req.body.itemId, amount: res[0].amount, type: "add" })
       await req.app.io.sockets.emit('amountUpdate', { data: [{ itemId: req.body.itemId, amount: res[0].amount, type: "add" }] });
     }
@@ -95,7 +94,6 @@ exports.departmentChangeStatus = async (req, res, next) => {
     // when user return - add amount the item borrow back 
     if (req.body.itemBorrowingStatusId === 2) {
       let res = await pool.query(`select amount from RequestItem where itemId = ${req.body.itemId}`)
-      await pool.query(`update Items set amount = amount+${res[0].amount} where itemId = ${req.body.itemId}`)
       await req.app.io.sockets.emit('amountUpdate', { data: [{ itemId: req.body.itemId, amount: res[0].amount, type: "add" }] });
     }
     printlog(
@@ -193,20 +191,8 @@ exports.approveAllItem = async (req, res, next) => {
           );
           // add item back when advisor reject
 
-          let resAmount = await pool.query(`select amount , itemId from RequestItem where requestId = ${req.query.requestId}`)
-          console.log('resAmount', resAmount)
-          await resAmount.map(item => {
-            item.type = "add"
-          })
-          // let res = await pool.query(`select amount from RequestItem where itemId = ${req.body.itemId}`)
-          await resAmount.map(async item => {
-            console.log('add')
-            await pool.query(`update Items set amount = amount+${item.amount} where itemId = ${item.itemId}`)
-          })
-          console.log('......', resAmount)
           // await pool.query(`update Items set amount = amount+${res[0].amount} where itemId = ${req.body.itemId}`)
           // await req.app.io.sockets.emit('amountUpdate', { data: [{ itemId: req.body.itemId, amount: res[0].amount, type: "add" }] });
-          await req.app.io.sockets.emit('amountUpdate', { data: resAmount });
           await req.app.io.sockets.emit('changeApproveAll', {
             requestId: req.query.requestId,
             requestApprove: 0

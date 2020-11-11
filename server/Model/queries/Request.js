@@ -69,10 +69,6 @@ const CREATE_REQUEST = () => {
     UPDATE_ITEM_AVALIBILITY: (items, i) =>
       `UPDATE RequestItem ri join Items i on ri.itemId = i.itemId 
     SET ri.itemBorrowingStatusId = 4 , i.itemAvailability = FALSE WHERE ri.itemId = ${items[i].itemId};`,
-    CHANGE_AMOUNT: (items, i) =>
-      `UPDATE Items set amount = amount - ${items[i].amount}
-    where itemId = ${items[i].itemId}; 
-    `,
     RETURN_REQUEST: (lastInsertId) => `
     select br.requestId ,u.userId , CONCAT(u.firstName , " ", u.lastName) as Name , u.email , u.userTelNo ,
     br.borrowPurpose , ri.borrowDate , ri.returnDate , i.itemName , br.requestApprove, i.itemId

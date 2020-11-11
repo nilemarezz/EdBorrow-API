@@ -34,9 +34,6 @@ class ItemRequest {
           await pool.query(
             CREATE_REQUEST().INSERT_ITEMREQUEST_TO_DB(items, lastInsertId, i)
           );
-          await pool.query(
-            CREATE_REQUEST().CHANGE_AMOUNT(items, i)
-          ); //chage status to Booking and availability to FALSE (booking and can't borrow in other request)
         }
       }
       this.request = await pool.query(CREATE_REQUEST().RETURN_REQUEST(lastInsertId));
