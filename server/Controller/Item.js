@@ -204,6 +204,7 @@ exports.getAmountAvaliable = async (req, res, next) => {
   try {
     const avaliable = await borrowItem.getAvaliable(req.body.itemId, req.body.borrowDate, req.body.returnDate)
     const data = { itemId: avaliable[0].itemId, amount: avaliable[0].avaiAmount }
+    console.log(data)
     res.status(200).json({ result: 'success', data: data });
   } catch (err) {
     console.log(err)
