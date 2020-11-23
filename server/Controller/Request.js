@@ -77,6 +77,7 @@ exports.departmentApproveEachItem = async (req, res, next) => {
     );
     await req.app.io.sockets.emit('changeItemApprove', req.body)
     await req.app.io.sockets.emit('updateDashboard', "");
+    await actionLogs.OWNER_APPROVE(res.locals.authData.user[0].userId, `Approve:${req.body.itemApprove}`, true, `id:${req.body.requestId},item:${req.body.itemId}`);
     res.status(200).json({ result: 'success', msg: 'Item Approve Success' });
   } catch (err) {
     printlog(
@@ -86,6 +87,8 @@ exports.departmentApproveEachItem = async (req, res, next) => {
     console.log(err);
     res.status(500).json({ result: 'false', msg: err });
   }
+  console.log(req.body)
+  console.log(req.body)
 };
 
 exports.departmentChangeStatus = async (req, res, next) => {
@@ -102,6 +105,7 @@ exports.departmentChangeStatus = async (req, res, next) => {
     );
     await req.app.io.sockets.emit('changeStatus', req.body)
     await req.app.io.sockets.emit('updateDashboard', "");
+    await actionLogs.OWNER_CHANGE_STATUE_BORROW(res.locals.authData.user[0].userId, `Status:${req.body.itemBorrowingStatusId}`, true, `id:${req.body.requestId},item:${req.body.itemId}`);
     res
       .status(200)
       .json({ result: 'success', msg: 'Item Change Status Success' });
@@ -113,6 +117,7 @@ exports.departmentChangeStatus = async (req, res, next) => {
     console.log(err);
     res.status(500).json({ result: 'false', msg: err });
   }
+  console.log(req.body)
 };
 
 exports.approveAllItem = async (req, res, next) => {
