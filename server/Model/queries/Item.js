@@ -134,7 +134,7 @@ const GET_AVALIABLE = (id, borrowDate, returnDate) => {
   const query = `SELECT i.itemId, i.itemName, (i.amount - IFNULL(sum(ri.amount),0)) as avaiAmount
   FROM Items i left join RequestItem ri on i.itemId = ri.itemId 
         left join BorrowRequest br on br.requestId = ri.requestId 
-  WHERE i.itemId = ${id} AND ('${borrowDate}' <= ri.returnDate AND '${returnDate}' >= ri.borrowDate and ri.itemBorrowingStatusId != 2 ); `
+  WHERE i.itemId = ${id} AND ('${borrowDate}' <= ri.returnDate AND '${returnDate}' >= ri.borrowDate or ri.itemBorrowingStatusId != 2 ); `
   console.log(query)
   return query
 }
